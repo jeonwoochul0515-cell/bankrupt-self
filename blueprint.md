@@ -10,21 +10,21 @@
 
 이 섹션에는 애플리케이션의 모든 기능, 디자인, 스타일이 처음부터 현재 버전까지 순서대로 기록됩니다.
 
-### V4: Multi-Step Diagnosis Form
+### V4: Multi-Step Diagnosis Form & AI Calculator
 
-*   **Interactive Questionnaire:** 사용자의 관할지역, 소득, 채무, 재산 상태 등을 순차적으로 질문하는 다단계 폼을 구현했습니다. 각 답변에 따라 실시간으로 피드백(안내 메시지)을 제공하여 사용자 경험을 개선했습니다.
-*   **Progress Bar:** 사용자가 진단 과정에서 자신의 위치를 시각적으로 파악할 수 있도록 진행률 표시줄을 추가했습니다.
-*   **Dynamic Logic:** 사용자의 답변을 `userAnswers` 객체에 저장하고, 특정 답변(예: 소득 없음, 재산 초과)에 따라 진행을 멈추거나, 관할 지역에 맞는 특별 안내(예: 부산회생법원 혜택)를 제공하는 로직을 구현했습니다.
+*   **Interactive Questionnaire & Progress Bar:** 사용자의 상황을 파악하기 위한 다단계 질문과 진행률 표시줄을 구현했습니다.
+*   **Dynamic Logic:** 답변에 따라 실시간 피드백을 제공하고, 특정 조건에서는 진행을 제어하는 로직을 적용했습니다.
+*   **AI-Powered Calculator:** 2024년 최저생계비 기준 월 변제금을 자동으로 계산하고, 단축 변제 기간 적용 여부를 안내합니다.
+*   **Data Submission:** 진단 결과와 사용자 정보를 Google Sheets로 전송하여 전문가 상담으로 연결하는 기능을 완성했습니다.
 
 ### V3: Enhanced User Experience Features
 
 *   **App Introduction & Welcome Message:** 서비스 소개와 환영 메시지를 통해 앱의 목적을 명확히 전달했습니다.
-*   **AI Chatbot:** AI 챗봇 UI를 추가하여 사용자가 궁금한 점을 문의할 수 있도록 했습니다. 
+*   **AI Chatbot UI:** AI 챗봇의 사용자 인터페이스(UI)를 구현했습니다. 
 *   **Testimonial Carousel:** 고객 후기 캐러셀을 통해 신뢰도를 높였습니다.
 
 ### V2: Self-Diagnosis Form & Google Sheets Integration (Legacy)
-*   **Legacy Form:** 초기에 사용했던 단일 페이지의 자가진단 폼입니다.
-*   **Google Sheets Integration:** 폼 데이터를 구글 시트로 전송하는 기능을 구현했습니다.
+*   **Legacy Form & Google Sheets Integration:** 초기에 사용했던 단일 페이지 폼과 구글 시트 데이터 전송 기능을 구현했습니다.
 
 ### V1: Initial Project Setup
 
@@ -36,11 +36,11 @@
 
 이 섹션에는 현재 진행 중인 작업 계획이 기록됩니다.
 
-*   **Goal:** AI 변제금 계산 및 결과 표시 기능 구현
+*   **Goal:** AI 법률 비서 답변 기능 활성화
 *   **Status:** ⏳ **In Progress**
 *   **Steps:**
     *   [x] `blueprint.md` 계획 업데이트
-    *   [ ] `index.html`: 최종 정보 입력(월 소득, 부양가족) 및 결과 표시 영역 추가
-    *   [ ] `style.css`: 최종 입력 필드 및 결과 표시 영역 스타일링
-    *   [ ] `main.js`: 월 변제금 계산 로직 및 결과 표시 기능 구현
-    *   [ ] `main.js`: 최종 결과(진단 내용 + 계산 결과)를 구글 시트로 제출하는 기능 구현
+    *   [ ] `main.js`: 챗봇 메시지 전송 이벤트 리스너 추가
+    *   [ ] `main.js`: 사용자 메시지를 채팅창에 표시하는 기능 구현
+    *   [ ] `main.js`: 키워드 기반의 간단한 답변 생성 로직 추가 (예: '개인회생', '자격' 등)
+    *   [ ] `style.css`: 채팅 메시지 스타일 추가

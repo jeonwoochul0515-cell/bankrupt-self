@@ -20,29 +20,10 @@ body {
     padding: 20px;
 }
 
-.container {
-    max-width: 850px;
-    width: 100%;
-    margin: 0 auto;
-}
-
-header {
-    text-align: center;
-    margin-bottom: 40px;
-    padding: 20px 0;
-}
-
-header h1 {
-    font-size: 3rem;
-    font-weight: 900;
-    color: var(--text-color);
-    margin-bottom: 15px;
-}
-
-header p {
-    font-size: 1.2rem;
-    color: #555;
-}
+.container { max-width: 850px; width: 100%; margin: 0 auto; }
+header { text-align: center; margin-bottom: 40px; padding: 20px 0; }
+header h1 { font-size: 3rem; font-weight: 900; color: var(--text-color); margin-bottom: 15px; }
+header p { font-size: 1.2rem; color: #555; }
 
 /* Carousel Section */
 .carousel-section { margin-bottom: 40px; }
@@ -71,7 +52,7 @@ header p {
 @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 .question-box { text-align: center; }
 .question-box h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 30px; }
-.option-group { display: flex; justify-content: center; gap: 20px; }
+.option-group { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;}
 .option-group-col { display: flex; flex-direction: column; align-items: center; gap: 15px; }
 .option-btn { padding: 15px 30px; border: 2px solid var(--border-color); border-radius: 15px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; background-color: #fff; min-width: 200px; }
 .option-btn:hover { transform: translateY(-5px); box-shadow: 0 8px 20px rgba(0, 82, 255, 0.1); border-color: var(--primary-color); }
@@ -90,7 +71,6 @@ header p {
 .result-card p { font-size: 1.1rem; margin: 0; }
 #monthly-payment { font-size: 3rem; font-weight: 800; color: var(--primary-color); margin: 10px 0; }
 #repayment-period { font-size: 1rem; color: #555; }
-
 #final-submission h4 { text-align: center; font-size: 1.3rem; margin-bottom: 25px; }
 
 /* Chatbot */
@@ -102,10 +82,17 @@ header p {
 .chatbot-header { background: var(--primary-color); color: white; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
 .chatbot-header h3 { margin: 0; font-weight: 700; }
 #chatbot-close { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
-.chatbot-body { flex-grow: 1; padding: 20px; overflow-y: auto; }
-.chatbot-footer { display: flex; padding: 15px; border-top: 1px solid var(--border-color); }
+.chatbot-body { flex-grow: 1; padding: 20px; overflow-y: auto; background-color: #f9f9f9; }
+
+/* Chat Messages */
+.chat-message { padding: 10px 15px; border-radius: 18px; margin-bottom: 10px; max-width: 80%; line-height: 1.5; }
+.user-message { background-color: var(--primary-color); color: white; align-self: flex-end; margin-left: auto; }
+.bot-message { background-color: #e5e5ea; color: black; align-self: flex-start; }
+.chatbot-body { display: flex; flex-direction: column; }
+
+.chatbot-footer { display: flex; padding: 15px; border-top: 1px solid var(--border-color); background-color: #fff; }
 #chatbot-input { flex-grow: 1; border: 1px solid var(--border-color); border-radius: 20px; padding: 10px 15px; font-size: 1rem; margin-right: 10px; }
 #chatbot-input:focus { outline: none; border-color: var(--primary-color); }
-#chatbot-send { background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 1.2rem; line-height: 40px; text-align: center; }
+#chatbot-send { background: var(--primary-color); color: white; border: none; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; font-size: 1.2rem; line-height: 40px; text-align: center; flex-shrink: 0; }
 
 footer { text-align: center; margin-top: 50px; padding-top: 20px; color: #999; border-top: 1px solid var(--border-color); }
