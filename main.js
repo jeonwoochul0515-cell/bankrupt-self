@@ -77,13 +77,37 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // --- Multi-step Form Logic ---
-    // ... (The rest of the form logic remains the same)
     const form = document.getElementById('diagnosis-form');
     const formSteps = document.querySelectorAll('.form-step');
     const progressBar = document.getElementById('progress-bar');
     const totalSteps = formSteps.length;
     const userAnswers = {};
     let currentStep = 1;
+
+    const privacyCheckbox = document.getElementById('privacy-agree');
+    const submitFinalBtn = document.getElementById('submit-final-data');
+
+    // Disable submit button initially
+    if (submitFinalBtn) {
+        submitFinalBtn.disabled = true;
+        submitFinalBtn.style.backgroundColor = '#ccc'; // Add a visual cue for disabled state
+        submitFinalBtn.style.cursor = 'not-allowed';
+    }
+
+    // Add event listener to checkbox
+    if (privacyCheckbox && submitFinalBtn) {
+        privacyCheckbox.addEventListener('change', () => {
+            if (privacyCheckbox.checked) {
+                submitFinalBtn.disabled = false;
+                submitFinalBtn.style.backgroundColor = ''; // Revert to original color
+                submitFinalBtn.style.cursor = 'pointer';
+            } else {
+                submitFinalBtn.disabled = true;
+                submitFinalBtn.style.backgroundColor = '#ccc';
+                 submitFinalBtn.style.cursor = 'not-allowed';
+            }
+        });
+    }
 
     const MIN_COST_OF_LIVING = {
         1: 1246735, // 1-person household
@@ -193,6 +217,14 @@ document.addEventListener('DOMContentLoaded', () => {
         const periodText = isReducedPeriod ? '최대 36개월 미만, 평균 24개월' : '기본 36개월';
         document.getElementById('repayment-period').innerText = `(변제 기간: ${periodText})`;
 
+        // Reset privacy checkbox and disable submit button when recalculating
+        if(privacyCheckbox) privacyCheckbox.checked = false;
+        if(submitFinalBtn) {
+            submitFinalBtn.disabled = true;
+            submitFinalBtn.style.backgroundColor = '#ccc';
+            submitFinalBtn.style.cursor = 'not-allowed';
+        }
+
         document.getElementById('final-inputs').style.display = 'none';
         document.getElementById('result-display').style.display = 'block';
         progressBar.style.width = '100%';
@@ -201,9 +233,15 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleSubmitFinalData() {
         const finalName = document.getElementById('final-name').value;
         const finalPhone = document.getElementById('final-phone').value;
+        const isPrivacyAgreed = privacyCheckbox.checked;
 
         if (!finalName || !finalPhone) {
             alert('이름과 연락처를 입력해주세요.');
+            return;
+        }
+        
+        if (!isPrivacyAgreed) {
+            alert('개인정보 수집 및 이용에 동의해야 상담 신청이 가능합니다.');
             return;
         }
 
