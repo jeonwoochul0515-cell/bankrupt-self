@@ -1,5 +1,5 @@
 /**
- * Google Apps Script for Bankrupt Self-Diagnosis Form
+ * Google Apps Script for Personal Rehabilitation Self-Diagnosis Form
  *
  * This script collects data from the HTML form and adds it as a new row in a Google Sheet.
  * 
@@ -7,9 +7,9 @@
  * 
  * 1.  CREATE A GOOGLE SHEET:
  *     - Go to https://sheets.new and create a new spreadsheet.
- *     - Name it (e.g., "파산 진단 결과").
+ *     - Name it (e.g., "개인회생 진단 결과").
  *     - Set up the headers in the first row: 
- *       Timestamp, Income, Debt, Overdue, Name, Phone
+ *       Timestamp, Name, Phone, Income, Income Type, Workplace, Debt, Debt Type, Creditors, Assets, Asset Value, Overdue, Overdue Period, Dependents, ETC
  *
  * 2.  CREATE A GOOGLE APPS SCRIPT:
  *     - In your Google Sheet, go to "Extensions" > "Apps Script".
@@ -19,7 +19,7 @@
  *     - Click the "Deploy" button > "New deployment".
  *     - For "Select type," choose "Web app".
  *     - In the "Deployment configuration" settings:
- *         - Description: "Bankrupt Self Diagnosis Collector"
+ *         - Description: "Personal Rehabilitation Self Diagnosis Collector"
  *         - Execute as: "Me"
  *         - Who has access: "Anyone" (This is important for the form to be able to send data)
  *     - Click "Deploy".
@@ -28,8 +28,8 @@
  *
  * 4.  CONNECT TO YOUR WEBSITE:
  *     - Open the `main.js` file in your project.
- *     - Find the line: `const APPS_SCRIPT_URL = 'YOUR_APPS_SCRIPT_URL';`
- *     - Replace `'YOUR_APPS_SCRIPT_URL'` with the URL you copied in the previous step.
+ *     - Find the line: `const APPS_SCRIPT_URL = '...';`
+ *     - Paste the URL you copied in the previous step.
  * 
  * 5.  SAVE AND TEST:
  *     - Save the changes to `main.js`.
@@ -43,16 +43,25 @@ function doPost(e) {
     const data = JSON.parse(e.postData.contents);
 
     // Open the Google Sheet by name. Make sure this matches your sheet name.
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("파산 진단 결과");
+    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("개인회생 진단 결과");
 
     // Append a new row with the data
     sheet.appendRow([
       new Date(),
-      data.income,
-      data.debt,
-      data.overdue,
       data.name,
-      data.phone
+      data.phone,
+      data.income,
+      data.incomeType,
+      data.workplace,
+      data.debt,
+      data.debtType,
+      data.creditors,
+      data.assets,
+      data.assetValue,
+      data.overdue,
+      data.overduePeriod,
+      data.dependents,
+      data.etc
     ]);
 
     // Return a success response
