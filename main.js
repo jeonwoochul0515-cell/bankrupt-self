@@ -3,8 +3,36 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Carousel Logic ---
     const carouselInner = document.querySelector('.carousel-inner');
-    if (carouselInner) {
-        // ... (carousel logic remains the same)
+    const carouselItems = document.querySelectorAll('.carousel-item');
+    const prevBtn = document.querySelector('.carousel-control.prev');
+    const nextBtn = document.querySelector('.carousel-control.next');
+    let currentIndex = 0;
+
+    function showSlide(index) {
+        const totalItems = carouselItems.length;
+        if (index >= totalItems) {
+            currentIndex = 0;
+        } else if (index < 0) {
+            currentIndex = totalItems - 1;
+        } else {
+            currentIndex = index;
+        }
+
+        carouselItems.forEach((item, i) => {
+            item.classList.remove('active');
+            if (i === currentIndex) {
+                item.classList.add('active');
+            }
+        });
+    }
+
+    if(prevBtn && nextBtn) {
+        prevBtn.addEventListener('click', () => showSlide(currentIndex - 1));
+        nextBtn.addEventListener('click', () => showSlide(currentIndex + 1));
+        // Auto-play
+        setInterval(() => {
+            showSlide(currentIndex + 1);
+        }, 5000); // Change slide every 5 seconds
     }
 
     // --- Chatbot UI & Core Logic ---
@@ -90,22 +118,12 @@ document.addEventListener('DOMContentLoaded', () => {
     // Disable submit button initially
     if (submitFinalBtn) {
         submitFinalBtn.disabled = true;
-        submitFinalBtn.style.backgroundColor = '#ccc'; // Add a visual cue for disabled state
-        submitFinalBtn.style.cursor = 'not-allowed';
     }
 
     // Add event listener to checkbox
     if (privacyCheckbox && submitFinalBtn) {
         privacyCheckbox.addEventListener('change', () => {
-            if (privacyCheckbox.checked) {
-                submitFinalBtn.disabled = false;
-                submitFinalBtn.style.backgroundColor = ''; // Revert to original color
-                submitFinalBtn.style.cursor = 'pointer';
-            } else {
-                submitFinalBtn.disabled = true;
-                submitFinalBtn.style.backgroundColor = '#ccc';
-                 submitFinalBtn.style.cursor = 'not-allowed';
-            }
+            submitFinalBtn.disabled = !privacyCheckbox.checked;
         });
     }
 
@@ -221,8 +239,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if(privacyCheckbox) privacyCheckbox.checked = false;
         if(submitFinalBtn) {
             submitFinalBtn.disabled = true;
-            submitFinalBtn.style.backgroundColor = '#ccc';
-            submitFinalBtn.style.cursor = 'not-allowed';
         }
 
         document.getElementById('final-inputs').style.display = 'none';
@@ -280,3 +296,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Initialize
     goToStep(1);
 });
+
+// Register Service Worker for PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').then(registration => {
+      console.log('SW registered: ', registration);
+    }).catch(registrationError => {
+      console.log('SW registration failed: ', registrationError);
+    });
+  });
+}
