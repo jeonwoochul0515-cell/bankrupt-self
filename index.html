@@ -3,514 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>희망 브릿지 - 무료 개인회생 AI 자가진단</title>
-    <style>
-        :root {
-            --primary-color: #2E8B57; /* 안도감을 주는 숲색 */
-            --accent-color: #FF7F50; /* 따뜻한 코랄색 */
-            --bg-color: #F9FAFB;
-            --text-color: #333;
-            --light-gray: #e5e7eb;
-        }
-
-        body {
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            display: flex;
-            justify-content: center;
-            min-height: 100vh;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 480px; /* 모바일 친화적 폭 */
-            background: white;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        /* Header */
-        header {
-            padding: 20px;
-            text-align: center;
-            background: white;
-            border-bottom: 1px solid var(--light-gray);
-        }
-        .badge {
-            background: var(--primary-color);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-        h1 { font-size: 1.2rem; margin: 10px 0 5px; }
-        .subtitle { color: #666; font-size: 0.9rem; }
-
-        /* Progress Bar */
-        .progress-container {
-            height: 4px;
-            background: var(--light-gray);
-            width: 100%;
-        }
-        .progress-bar {
-            height: 100%;
-            background: var(--primary-color);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        /* Content Sections */
-        .step {
-            display: none; /* 기본적으로 숨김 */
-            padding: 25px;
-            flex: 1;
-            flex-direction: column;
-            animation: fadeIn 0.5s;
-        }
-        .step.active { display: flex; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Form Elements */
-        label {
-            font-weight: 600;
-            margin-bottom: 8px;
-            display: block;
-            margin-top: 15px;
-        }
-        .description {
-            font-size: 0.85rem;
-            color: #777;
-            margin-bottom: 10px;
-            line-height: 1.4;
-        }
-        input, select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 1rem;
-            box-sizing: border-box; /* 패딩 포함 */
-        }
-        input:focus {
-            border-color: var(--primary-color);
-            outline: none;
-        }
-
-        /* Buttons */
-        .btn-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-        button {
-            padding: 15px;
-            border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-            width: 100%;
-        }
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-            margin-top: auto; /* 하단 고정 느낌 */
-        }
-        .btn-outline {
-            background-color: white;
-            border: 1px solid #ddd;
-            color: var(--text-color);
-        }
-        .btn-outline.selected {
-            border-color: var(--primary-color);
-            background-color: #effcf5;
-            color: var(--primary-color);
-        }
-
-        /* Result Card */
-        .result-card {
-            background: #f0fdf4;
-            border: 1px solid #bbf7d0;
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .amount {
-            font-size: 1.8rem;
-            color: var(--primary-color);
-            font-weight: bold;
-            margin: 10px 0;
-        }
-        .warning-box {
-            background: #fff7ed;
-            border-left: 4px solid var(--accent-color);
-            padding: 15px;
-            font-size: 0.9rem;
-            margin-top: 15px;
-            text-align: left;
-        }
-
-        /* Busan Special Notice */
-        .busan-notice {
-            background: #e0f2fe;
-            color: #0369a1;
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            margin-bottom: 15px;
-            display: none; /* JS로 제어 */
-        }
-
-        /* Input highlight for money */
-        .input-wrapper { position: relative; }
-        .input-wrapper::after {
-            content: "원";
-            position: absolute;
-            right: 15px;
-            top: 13px;
-            color: #999;
-        }
-    </style>
+    <title>파산 셀프 진단</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="container">
+        <header>
+            <h1>파산 셀프 진단</h1>
+            <p>간단한 질문에 답변하고 당신의 재정 상태를 진단해보세요.</p>
+        </header>
 
-<div class="container">
-    <header>
-        <span class="badge">100% 무료 · 익명 보장</span>
-        <h1>개인회생 AI 자가진단</h1>
-        <div class="subtitle">2025년 개정법률 & 법원 실무준칙 반영</div>
-    </header>
-    <div class="progress-container">
-        <div class="progress-bar" id="progressBar"></div>
+        <main>
+            <form id="diagnosis-form">
+                <div class="card">
+                    <h2>진단 질문</h2>
+                    <div class="question">
+                        <label>1. 현재 당신의 월 소득은 얼마입니까?</label>
+                        <input type="number" id="income" placeholder="예: 3000000" required>
+                    </div>
+                    <div class="question">
+                        <label>2. 현재 당신의 총 부채는 얼마입니까?</label>
+                        <input type="number" id="debt" placeholder="예: 50000000" required>
+                    </div>
+                    <div class="question">
+                        <label>3. 최근 1년 내에 연체 경험이 있습니까?</label>
+                        <select id="overdue">
+                            <option value="yes">예</option>
+                            <option value="no">아니오</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2>개인 정보</h2>
+                    <div class="question">
+                        <label for="name">이름</label>
+                        <input type="text" id="name" placeholder="홍길동" required>
+                    </div>
+                    <div class="question">
+                        <label for="phone">연락처</label>
+                        <input type="tel" id="phone" placeholder="010-1234-5678" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">진단 결과 제출하기</button>
+            </form>
+        </main>
+
+        <footer>
+            <p>&copy; 2024 파산 셀프 진단. All rights reserved.</p>
+        </footer>
     </div>
 
-    <!-- Step 0: Intro -->
-    <div class="step active" id="step0">
-        <div style="text-align: center; margin-top: 30px;">
-            <h2 style="margin-bottom: 10px;">빚 독촉 없는<br>새로운 출발</h2>
-            <p class="description" style="font-size: 1rem;">
-                복잡한 법률 용어 없이,<br>
-                나의 예상 탕감 금액을 1분 만에 확인하세요.<br><br>
-                🔒 입력하신 정보는 결과 산출에만 사용됩니다.
-            </p>
-        </div>
-        <button class="btn-primary" onclick="nextStep(1)">무료 진단 시작하기</button>
-    </div>
-
-    <!-- Step 1: Residence (Busan Logic) -->
-    <div class="step" id="step1">
-        <h2>거주지를 알려주세요</h2>
-        <p class="description">관할 법원에 따라 적용되는 실무 준칙이 다릅니다.</p>
-        
-        <div class="btn-group" style="flex-direction: column;">
-            <button class="btn-outline" onclick="selectRegion('busan')">부산 / 울산 / 경남</button>
-            <button class="btn-outline" onclick="selectRegion('other')">서울 / 수도권 / 기타 지역</button>
-        </div>
-        <input type="hidden" id="region">
-        <div id="busanAlert" class="busan-notice" style="margin-top:15px;">
-            ⚖️ <strong>부산회생법원 관할입니다.</strong><br>
-            부산회생법원 실무준칙에 따라 신속한 절차와 폭넓은 면책 기준(주식/코인 손실금 처리 등)이 적용될 수 있습니다.
-        </div>
-    </div>
-
-    <!-- Step 2: Basic Eligibility -->
-    <div class="step" id="step2">
-        <h2>기본 자격 확인</h2>
-        
-        <label>현재 소득 활동을 하고 계신가요?</label>
-        <div class="btn-group">
-            <button class="btn-outline" onclick="setIncomeType('salary', this)">직장인/알바</button>
-            <button class="btn-outline" onclick="setIncomeType('business', this)">사업자/프리랜서</button>
-        </div>
-        <input type="hidden" id="incomeType">
-
-        <label>총 채무(빚) 규모는?</label>
-        <p class="description">담보대출 15억, 신용대출 10억 이하만 가능합니다.</p>
-        <div class="btn-group">
-            <button class="btn-outline" onclick="setDebtLevel('ok', this)">기준 금액 이하</button>
-            <button class="btn-outline" onclick="setDebtLevel('over', this)">기준 금액 초과</button>
-        </div>
-
-        <label>재산보다 빚이 더 많으신가요?</label>
-        <div class="btn-group">
-            <button class="btn-outline" onclick="setInsolvency('yes', this)">네, 빚이 더 많아요</button>
-            <button class="btn-outline" onclick="setInsolvency('no', this)">아니요, 재산이 더 많아요</button>
-        </div>
-
-        <button class="btn-primary" style="margin-top: 20px;" onclick="checkEligibility()">다음 단계로</button>
-    </div>
-
-    <!-- Step 3: Financial Data Input -->
-    <div class="step" id="step3">
-        <h2>상세 정보 입력</h2>
-        <p class="description">정확한 분석을 위해 대략적인 금액을 입력해주세요.</p>
-
-        <label>월 평균 실수령 소득 (세후)</label>
-        <div class="input-wrapper">
-            <input type="number" id="monthlyIncome" placeholder="예: 2500000">
-        </div>
-
-        <label>부양 가족 수 (본인 포함)</label>
-        <p class="description">2025년 기준: 미성년 자녀, 소득 없는 고령 부모님 등</p>
-        <select id="dependents">
-            <option value="1">1인 가구 (본인 혼자)</option>
-            <option value="2">2인 가구</option>
-            <option value="3">3인 가구</option>
-            <option value="4">4인 가구 이상</option>
-        </select>
-
-        <label>추가 생계비 (선택)</label>
-        <p class="description">주거비, 의료비 등 (2025년부터 인정 범위 확대)</p>
-        <div class="input-wrapper">
-            <input type="number" id="extraLivingCost" placeholder="0" value="0">
-        </div>
-
-        <label>총 재산 가치 (청산가치)</label>
-        <p class="description">부동산, 차량, 보증금 등에서 대출을 뺀 순수 가치</p>
-        <div class="input-wrapper">
-            <input type="number" id="assetValue" placeholder="예: 10000000">
-        </div>
-
-        <label>총 채무액 (원금 기준)</label>
-        <div class="input-wrapper">
-            <input type="number" id="totalDebt" placeholder="예: 50000000">
-        </div>
-
-        <button class="btn-primary" style="margin-top: 20px;" onclick="calculateResult()">AI 진단 결과 보기</button>
-    </div>
-
-    <!-- Step 4: Result Analysis -->
-    <div class="step" id="step4">
-        <h2>진단 결과 리포트</h2>
-        
-        <div class="result-card">
-            <div>월 예상 변제금</div>
-            <div class="amount" id="monthlyPaymentResult">0원</div>
-            <div style="font-size: 0.9rem; color: #555;">
-                예상 탕감률: <span id="forgivenessRate" style="color:var(--accent-color); font-weight:bold;">0%</span>
-            </div>
-        </div>
-
-        <div class="warning-box">
-            <strong>💡 분석 포인트</strong>
-            <ul style="padding-left: 20px; margin: 10px 0;">
-                <li id="busanResultComment" style="display:none;">부산회생법원 관할이므로 <strong>실무준칙 제424호</strong> 등에 따라 3년 미만 변제 기간 단축 가능성도 검토해볼 수 있습니다.</li>
-                <li>2025년 기준 중위소득(생계비)이 적용되었습니다.</li>
-                <li>청산가치 보장 원칙에 따라 재산보다 많이 갚아야 합니다.</li>
-            </ul>
-        </div>
-
-        <p class="description" style="text-align: center; margin-top: 20px;">
-            "이 결과는 AI 추정치이며, 법원의 최종 결정과 다를 수 있습니다.<br>
-            정확한 탕감을 위해 전문가의 <strong>정밀 검토</strong>가 필요합니다."
-        </p>
-
-        <button class="btn-primary" onclick="nextStep(5)">전문가에게 정밀 검토 요청하기 (무료)</button>
-    </div>
-
-    <!-- Step 5: Lead Generation (Consultation) -->
-    <div class="step" id="step5">
-        <h2>거의 다 되었습니다!</h2>
-        <p class="description">
-            현재 <strong><span id="displayRegion"></span></strong> 지역 담당 변호사가 배정 대기 중입니다.<br>
-            결과를 저장하고 1:1 비공개 상담을 예약하세요.
-        </p>
-
-        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-            <label>성함 (익명 가능)</label>
-            <input type="text" id="userName" placeholder="홍길동">
-            
-            <label>연락처</label>
-            <input type="tel" id="userPhone" placeholder="010-1234-5678">
-            <p class="description" style="margin-top:5px;">* 상담 목적 외에는 절대 사용되지 않습니다.</p>
-        </div>
-
-        <button class="btn-primary" onclick="submitLead()">무료 상담 예약 완료</button>
-        <button class="btn-outline" style="margin-top: 10px;" onclick="alert('정보가 저장되지 않았습니다. 앱을 종료합니다.')">종료하기</button>
-    </div>
-
-</div>
-
-<script>
-    // 2025년 기준 중위소득 (60%) 데이터 (대략적 수치)
-    const LIVING_COST_2025 = {
-        1: 1337000,
-        2: 2209000,
-        3: 2828000,
-        4: 3437000
-    };
-
-    let currentStep = 0;
-    let formData = {
-        region: '',
-        incomeType: '',
-        debtLevel: '',
-        insolvency: '',
-        monthlyIncome: 0,
-        dependents: 1,
-        extraLiving: 0,
-        assetValue: 0,
-        totalDebt: 0
-    };
-
-    function nextStep(step) {
-        document.getElementById(`step${currentStep}`).classList.remove('active');
-        currentStep = step;
-        document.getElementById(`step${currentStep}`).classList.add('active');
-        updateProgressBar();
-    }
-
-    function updateProgressBar() {
-        const percent = (currentStep / 5) * 100;
-        document.getElementById('progressBar').style.width = `${percent}%`;
-    }
-
-    // Step 1 Logic: Region
-    function selectRegion(region) {
-        formData.region = region;
-        document.getElementById('region').value = region;
-        
-        // 버튼 스타일 초기화 및 선택 표시
-        const buttons = document.querySelectorAll('#step1 .btn-outline');
-        buttons.forEach(btn => btn.classList.remove('selected'));
-        event.target.classList.add('selected');
-
-        // 부산회생법원 안내 로직 [1]
-        if (region === 'busan') {
-            document.getElementById('busanAlert').style.display = 'block';
-            document.getElementById('displayRegion').innerText = "부산/경남";
-        } else {
-            document.getElementById('busanAlert').style.display = 'none';
-            document.getElementById('displayRegion').innerText = "해당";
-        }
-        
-        setTimeout(() => nextStep(2), 500); // 약간의 딜레이 후 이동
-    }
-
-    // Step 2 Logic: Eligibility Helpers
-    function setIncomeType(type, btn) {
-        formData.incomeType = type;
-        highlightBtn(btn);
-    }
-    function setDebtLevel(level, btn) {
-        formData.debtLevel = level;
-        highlightBtn(btn);
-    }
-    function setInsolvency(status, btn) {
-        formData.insolvency = status;
-        highlightBtn(btn);
-    }
-    function highlightBtn(btn) {
-        const parent = btn.parentElement;
-        const siblings = parent.querySelectorAll('.btn-outline');
-        siblings.forEach(s => s.classList.remove('selected'));
-        btn.classList.add('selected');
-    }
-
-    function checkEligibility() {
-        if (!formData.incomeType || !formData.debtLevel || !formData.insolvency) {
-            alert("모든 항목을 선택해주세요.");
-            return;
-        }
-        if (formData.debtLevel === 'over') {
-            alert("죄송합니다. 개인회생 채무 한도를 초과하여 '일반회생'을 고려하셔야 합니다.");
-            return;
-        }
-        if (formData.insolvency === 'no') {
-            alert("재산이 채무보다 많으면 원칙적으로 개인회생 신청이 어렵습니다 (지급불능 요건 미달).");
-            return;
-        }
-        nextStep(3);
-    }
-
-    // Step 3 & 4 Logic: Calculation
-    function calculateResult() {
-        // 입력값 가져오기
-        const income = parseInt(document.getElementById('monthlyIncome').value) || 0;
-        const dependents = parseInt(document.getElementById('dependents').value);
-        const extraLiving = parseInt(document.getElementById('extraLivingCost').value) || 0;
-        const assets = parseInt(document.getElementById('assetValue').value) || 0;
-        const debt = parseInt(document.getElementById('totalDebt').value) || 0;
-
-        if (income === 0 || debt === 0) {
-            alert("소득과 채무액을 입력해주세요.");
-            return;
-        }
-
-        // 1. 인정 생계비 계산 (2025 기준 + 추가생계비) [5][6]
-        const baseLivingCost = LIVING_COST_2025[dependents] || LIVING_COST_2025[7];
-        const totalLivingCost = baseLivingCost + extraLiving;
-
-        // 2. 월 변제금 계산 (소득 - 생계비)
-        let monthlyPayment = income - totalLivingCost;
-        if (monthlyPayment < 0) monthlyPayment = 0;
-
-        // 3. 청산가치 보장 원칙 검증 [4]
-        // 36개월 변제 총액
-        let totalPayment36 = monthlyPayment * 36;
-        let months = 36;
-
-        // 변제 총액이 재산가치보다 작으면 월 변제금을 올리거나 기간을 늘려야 함 (단순화 로직)
-        if (totalPayment36 < assets) {
-            // 재산가치만큼은 갚아야 함.
-            // 월 변제금을 늘릴 수 있는지 확인 (가용소득 한계) -> 여기서는 기간을 60개월로 늘리는 로직 가정
-            let totalPayment60 = monthlyPayment * 60;
-            if (totalPayment60 < assets) {
-                // 60개월로도 재산가치 못 미침 -> 월 변제금을 강제로 상향 (재산가치 / 60)
-                monthlyPayment = Math.ceil(assets / 60);
-                months = 60;
-            } else {
-                months = 60; // 기간 연장으로 해결
-            }
-        }
-
-        // 최종 예상 변제금 포맷팅
-        document.getElementById('monthlyPaymentResult').innerText = monthlyPayment.toLocaleString() + "원";
-        
-        // 탕감률 계산
-        const totalPay = monthlyPayment * months;
-        let forgiveness = ((debt - totalPay) / debt) * 100;
-        if (forgiveness < 0) forgiveness = 0; // 이자 등으로 빚보다 더 갚는 경우 0% 처리
-        
-        document.getElementById('forgivenessRate').innerText = forgiveness.toFixed(1) + "%";
-
-        // 부산회생법원 코멘트 노출 여부
-        if (formData.region === 'busan') {
-            document.getElementById('busanResultComment').style.display = 'list-item';
-        }
-
-        nextStep(4);
-    }
-
-    // Step 5: Lead Gen
-    function submitLead() {
-        const name = document.getElementById('userName').value;
-        const phone = document.getElementById('userPhone').value;
-
-        if (!name || !phone) {
-            alert("원활한 상담 예약을 위해 성함과 연락처를 남겨주세요.");
-            return;
-        }
-
-        // 실제로는 여기서 서버로 데이터를 전송합니다 (AJAX/Fetch)
-        // 예시 로직:
-        alert(`${name}님, 상담 예약이 접수되었습니다.\n\n담당자가 ${phone} 번호로 곧 연락드리겠습니다.\n(상담시간: 평일 09:00~18:00)`);
-        
-        // 완료 후 처음으로 혹은 닫기
-        location.reload(); 
-    }
-</script>
-
+    <script src="main.js"></script>
 </body>
 </html>
