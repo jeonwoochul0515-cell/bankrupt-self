@@ -1,79 +1,38 @@
-/**
- * Google Apps Script for Personal Rehabilitation Self-Diagnosis Form
- *
- * This script collects data from the HTML form and adds it as a new row in a Google Sheet.
- * 
- * HOW TO USE:
- * 
- * 1.  CREATE A GOOGLE SHEET:
- *     - Go to https://sheets.new and create a new spreadsheet.
- *     - Name it (e.g., "개인회생 진단 결과").
- *     - Set up the headers in the first row: 
- *       Timestamp, Name, Phone, Income, Income Type, Workplace, Debt, Debt Type, Creditors, Assets, Asset Value, Overdue, Overdue Period, Dependents, ETC
- *
- * 2.  CREATE A GOOGLE APPS SCRIPT:
- *     - In your Google Sheet, go to "Extensions" > "Apps Script".
- *     - Delete any default code in the `Code.gs` file and paste the code below.
- * 
- * 3.  DEPLOY AS A WEB APP:
- *     - Click the "Deploy" button > "New deployment".
- *     - For "Select type," choose "Web app".
- *     - In the "Deployment configuration" settings:
- *         - Description: "Personal Rehabilitation Self Diagnosis Collector"
- *         - Execute as: "Me"
- *         - Who has access: "Anyone" (This is important for the form to be able to send data)
- *     - Click "Deploy".
- *     - Authorize the script to access your Google Account and Sheets.
- *     - Copy the "Web app URL" that is generated.
- *
- * 4.  CONNECT TO YOUR WEBSITE:
- *     - Open the `main.js` file in your project.
- *     - Find the line: `const APPS_SCRIPT_URL = '...';`
- *     - Paste the URL you copied in the previous step.
- * 
- * 5.  SAVE AND TEST:
- *     - Save the changes to `main.js`.
- *     - Open your `index.html` file in a browser, fill out the form, and submit.
- *     - A new row with the submitted data should appear in your Google Sheet.
- */
+
+// 1. Google Apps Script 에디터에 이 코드를 복사하여 붙여넣으세요.
+// 2. 'YOUR_SHEET_ID'를 실제 Google Sheet ID로 바꾸세요.
+// 3. '배포' > '새 배포'를 클릭하고, '웹 앱'으로 유형을 선택한 후 배포하세요.
+// 4. 표시되는 웹 앱 URL을 복사하여 main.js 파일의 'YOUR_APPS_SCRIPT_URL'에 붙여넣으세요.
+
+const SHEET_ID = 'YOUR_SHEET_ID'; // <-- 여기에 구글 시트 ID를 입력하세요.
+const sheet = SpreadsheetApp.openById(SHEET_ID).getActiveSheet();
 
 function doPost(e) {
   try {
-    // Parse the JSON data from the request body
     const data = JSON.parse(e.postData.contents);
+    const newRow = sheet.getLastRow() + 1;
 
-    // Open the Google Sheet by name. Make sure this matches your sheet name.
-    const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("개인회생 진단 결과");
+    // 데이터 순서에 맞게 시트에 추가 (순서가 중요합니다)
+    sheet.getRange(newRow, 1).setValue(new Date()); // 제출 시간
+    sheet.getRange(newRow, 2).setValue(data.loanType);
+    sheet.getRange(newRow, 3).setValue(data.loanPeriod);
+    sheet.getRange(newRow, 4).setValue(data.interestRate);
+    sheet.getRange(newRow, 5).setValue(data.loanAmount);
+    sheet.getRange(newRow, 6).setValue(data.incomeType);
+    sheet.getRange(newRow, 7).setValue(data.incomeAmount);
+    sheet.getRange(newRow, 8).setValue(data.residence);
+    sheet.getRange(newRow, 9).setValue(data.property);
+    sheet.getRange(newRow, 10).setValue(data.dependents);
 
-    // Append a new row with the data
-    sheet.appendRow([
-      new Date(),
-      data.name,
-      data.phone,
-      data.income,
-      data.incomeType,
-      data.workplace,
-      data.debt,
-      data.debtType,
-      data.creditors,
-      data.assets,
-      data.assetValue,
-      data.overdue,
-      data.overduePeriod,
-      data.dependents,
-      data.etc
-    ]);
-
-    // Return a success response
-    return ContentService.createTextOutput(JSON.stringify({ result: 'success' }))
-      .setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({
+      "result": "success",
+      "data": JSON.stringify(data)
+    })).setMimeType(ContentService.MimeType.JSON);
 
   } catch (error) {
-    // Log any errors for debugging
-    console.error("Error in doPost: " + error.toString());
-    
-    // Return an error response
-    return ContentService.createTextOutput(JSON.stringify({ result: 'error', error: error.toString() }))
-      .setMimeType(ContentService.MimeType.JSON);
+    return ContentService.createTextOutput(JSON.stringify({
+      "result": "error",
+      "error": error.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
   }
 }
