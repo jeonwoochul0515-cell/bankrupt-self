@@ -1,4 +1,3 @@
-
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('diagnosis-form');
     const steps = [...form.querySelectorAll('.form-step')];
@@ -7,7 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const calculateBtn = document.getElementById('calculate-btn');
     const qaItems = document.querySelectorAll('.qa-item');
 
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymcZcKxVVfgFoIr8V6-m8nU4v-XVQZxeK8FkhRriUxUdm0gMhY9mv-DSkVrl8HQXQ1/exec';
+    // ⚠️ 새로운 URL로 교체되었습니다.
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzhTJMD8WlClxSKS826ONbVqH7xCteXgVR13u2clIZ5P3UteCiJdpTS87fC-Qwgj6uG/exec';
 
     let currentStep = 1;
     const totalSteps = 3;
@@ -71,35 +71,33 @@ document.addEventListener('DOMContentLoaded', () => {
         const investment = form.querySelector('[data-question="q5_investment"] .selected')?.dataset.value === 'yes';
         const isYoung = form.querySelector('[data-value="under_30"]').classList.contains('selected');
 
-        // Calculation Logic for 2026
         const monthlyIncome = parseFloat(document.getElementById('monthly-income').value) || 0;
         const dependents = parseInt(form.querySelector('[data-question="q7_dependents"] .selected')?.dataset.value || '1');
         const totalDebt = parseInt(form.querySelector('[data-question="q3_total_debt"] .selected')?.dataset.value || '0');
 
         const livelihoodCosts = {
-            1: 1538543, // 2026년 1인 가구 개인회생 최저생계비
-            2: 2538600, // 2026년 기준 2인 가구 예상 생계비
-            3: 3246325, // 2026년 기준 3인 가구 예상 생계비
-            4: 3954600  // 2026년 기준 4인 가구 예상 생계비
+            1: 1538543,
+            2: 2538600,
+            3: 3246325,
+            4: 3954600
         };
         const baseLivelihood = livelihoodCosts[dependents] || livelihoodCosts[4];
         let monthlyPayment = Math.max(0, monthlyIncome - baseLivelihood);
 
         let period = 36;
         if (isYoung) {
-            period = Math.max(24, period - 6); 
+            period = Math.max(24, period - 6);
         }
-        
+
         const totalRepayment = monthlyPayment * period;
         const writeOffRate = totalDebt > 0 ? Math.round((1 - (totalRepayment / totalDebt)) * 100) : 0;
 
-        // Displaying results
         document.getElementById('result-payment').textContent = `약 ${Math.round(monthlyPayment / 10000).toLocaleString()}만 원`;
         document.getElementById('result-payment-detail').textContent = `(월 소득 ${(monthlyIncome / 10000).toLocaleString()}만 원 - ${dependents}인 생계비 ${(Math.round(baseLivelihood / 10000)).toLocaleString()}만 원)`;
         document.getElementById('result-period').textContent = `${period}개월`;
         document.getElementById('result-period-detail').textContent = isYoung ? "(청년 단축 적용)" : "(기본)";
         document.getElementById('result-write-off').textContent = `약 ${writeOffRate}%`;
-        document.getElementById('result-write-off-detail').textContent = `(총 채무 ${(totalDebt/10000).toLocaleString()}만 원)`;
+        document.getElementById('result-write-off-detail').textContent = `(총 채무 ${(totalDebt / 10000).toLocaleString()}만 원)`;
 
         resultTitle.textContent = "AI 진단 결과: 회생 가능성이 매우 높습니다.";
         let specialAnalysis = "";
@@ -110,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
             specialAnalysis += "- 만 30세 미만 청년의 경우, 법원은 사회초년생의 어려움을 감안하여 변제 기간 단축이나 추가 생계비 인정에 긍정적일 수 있습니다. 2026년부터는 소득 공제 혜택도 확대됩니다."
         }
         if (!specialAnalysis) {
-             specialAnalysis = "- 부산회생법원의 실무준칙에 따라 추가 생계비를 적극적으로 주장하여 월 변제금을 줄일 수 있는 가능성이 있습니다."
+            specialAnalysis = "- 부산회생법원의 실무준칙에 따라 추가 생계비를 적극적으로 주장하여 월 변제금을 줄일 수 있는 가능성이 있습니다."
         }
         resultSpecial.textContent = specialAnalysis;
     };
@@ -133,37 +131,26 @@ document.addEventListener('DOMContentLoaded', () => {
         submitFinalDataBtn.disabled = true;
         submitFinalDataBtn.textContent = '전송 중...';
 
-        // 1. 모든 폼 데이터 수집 (수정됨)
-        const formData = {
-            name: document.getElementById('final-name').value,
-            phone: document.getElementById('final-phone').value,
-            region: form.querySelector('[data-question="q1_region"] .selected')?.dataset.value || '',
-            incomeType: form.querySelector('[data-question="q2_income_type"] .selected')?.dataset.value || '',
-            totalDebt: form.querySelector('[data-question="q3_total_debt"] .selected')?.dataset.value || '',
-            assetRatio: form.querySelector('[data-question="q4_asset_ratio"] .selected')?.dataset.value || '',
-            investment: form.querySelector('[data-question="q5_investment"] .selected')?.dataset.value || '',
-            reductionReasons: [...form.querySelectorAll('[data-question="q6_reduction_reasons"] .selected')].map(el => el.textContent.trim()).join(', '),
-            dependents: form.querySelector('[data-question="q7_dependents"] .selected')?.dataset.value || '',
-            extraCosts: [...form.querySelectorAll('[data-question="q8_extra_costs"] .selected')].map(el => el.textContent.trim()).join(', '),
-            monthlyIncome: document.getElementById('monthly-income').value,
-        };
+        const formData = new FormData();
+        formData.append('name', document.getElementById('final-name').value);
+        formData.append('phone', document.getElementById('final-phone').value);
+        formData.append('region', form.querySelector('[data-question="q1_region"] .selected')?.dataset.value || '');
+        formData.append('incomeType', form.querySelector('[data-question="q2_income_type"] .selected')?.dataset.value || '');
+        formData.append('totalDebt', form.querySelector('[data-question="q3_total_debt"] .selected')?.dataset.value || '');
+        formData.append('assetRatio', form.querySelector('[data-question="q4_asset_ratio"] .selected')?.dataset.value || '');
+        formData.append('investment', form.querySelector('[data-question="q5_investment"] .selected')?.dataset.value || '');
+        formData.append('reductionReasons', [...form.querySelectorAll('[data-question="q6_reduction_reasons"] .selected')].map(el => el.textContent.trim()).join(', '));
+        formData.append('dependents', form.querySelector('[data-question="q7_dependents"] .selected')?.dataset.value || '');
+        formData.append('extraCosts', [...form.querySelectorAll('[data-question="q8_extra_costs"] .selected')].map(el => el.textContent.trim()).join(', '));
+        formData.append('monthlyIncome', document.getElementById('monthly-income').value);
 
         fetch(APPS_SCRIPT_URL, {
             method: 'POST',
-            body: JSON.stringify(formData),
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            body: formData,
         })
-        .then(response => {
-            if (!response.ok) {
-                // For CORS or other network errors, response.ok will be false
-                throw new Error(`Network response was not ok: ${response.statusText}`);
-            }
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
-            if (data.result === 'success') {
+            if (data.result === "success") {
                 alert('상담 신청이 성공적으로 접수되었습니다. 감사합니다.');
                 consultForm.style.display = 'none';
                 requestConsultBtn.style.display = 'block';
@@ -176,7 +163,7 @@ document.addEventListener('DOMContentLoaded', () => {
         })
         .catch(error => {
             console.error('Error submitting data:', error);
-            alert(`신청 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요. 오류: ${error.message}`);
+            alert(`신청 중 오류가 발생했습니다: ${error.message}`);
         })
         .finally(() => {
             submitFinalDataBtn.disabled = false;
