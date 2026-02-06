@@ -6,13 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const calculateBtn = document.getElementById('calculate-btn');
     const qaItems = document.querySelectorAll('.qa-item');
 
-    // -------------------------------------------------------------------
-    // ✅ URL이 성공적으로 업데이트되었습니다.
-    // -------------------------------------------------------------------
     const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyRLpto9DzOY6-sOPFhr4WjXftNlKv1W6ppELyAdD-68rLNDp8hbVyNVwpNOVJuQEiC/exec';
 
     let currentStep = 1;
-    const totalSteps = 3; // Excluding the result step
+    const totalSteps = 3;
 
     const updateProgressBar = () => {
         const progress = (currentStep - 1) / totalSteps * 100;
@@ -73,13 +70,43 @@ document.addEventListener('DOMContentLoaded', () => {
         const investment = form.querySelector('[data-question="q5_investment"] .selected')?.dataset.value === 'yes';
         const isYoung = form.querySelector('[data-value="under_30"]').classList.contains('selected');
 
+        // Calculation Logic for 2026
+        const monthlyIncome = parseFloat(document.getElementById('monthly-income').value) || 0;
+        const dependents = parseInt(form.querySelector('[data-question="q7_dependents"] .selected')?.dataset.value || '1');
+        const totalDebt = parseInt(form.querySelector('[data-question="q3_total_debt"] .selected')?.dataset.value || '0');
+
+        const livelihoodCosts = {
+            1: 1538543, // 2026년 1인 가구 개인회생 최저생계비
+            2: 2538600, // 2026년 기준 2인 가구 예상 생계비
+            3: 3246325, // 2026년 기준 3인 가구 예상 생계비
+            4: 3954600  // 2026년 기준 4인 가구 예상 생계비
+        };
+        const baseLivelihood = livelihoodCosts[dependents] || livelihoodCosts[4];
+        let monthlyPayment = Math.max(0, monthlyIncome - baseLivelihood);
+
+        let period = 36;
+        if (isYoung) {
+            period = Math.max(24, period - 6); 
+        }
+        
+        const totalRepayment = monthlyPayment * period;
+        const writeOffRate = totalDebt > 0 ? Math.round((1 - (totalRepayment / totalDebt)) * 100) : 0;
+
+        // Displaying results
+        document.getElementById('result-payment').textContent = `약 ${Math.round(monthlyPayment / 10000).toLocaleString()}만 원`;
+        document.getElementById('result-payment-detail').textContent = `(월 소득 ${(monthlyIncome / 10000).toLocaleString()}만 원 - ${dependents}인 생계비 ${(Math.round(baseLivelihood / 10000)).toLocaleString()}만 원)`;
+        document.getElementById('result-period').textContent = `${period}개월`;
+        document.getElementById('result-period-detail').textContent = isYoung ? "(청년 단축 적용)" : "(기본)";
+        document.getElementById('result-write-off').textContent = `약 ${writeOffRate}%`;
+        document.getElementById('result-write-off-detail').textContent = `(총 채무 ${(totalDebt/10000).toLocaleString()}만 원)`;
+
         resultTitle.textContent = "AI 진단 결과: 회생 가능성이 매우 높습니다.";
         let specialAnalysis = "";
         if (investment) {
             specialAnalysis += "- 주식/코인 투자 손실금은 사행성 채무로 분류될 수 있지만, 부산회생법원은 채무자의 상황을 고려하여 변제율을 조정하는 경향이 있습니다. 투자 경위를 명확히 소명하는 것이 중요합니다.\n";
         }
         if (isYoung) {
-            specialAnalysis += "- 만 30세 미만 청년의 경우, 법원은 사회초년생의 어려움을 감안하여 변제 기간 단축이나 추가 생계비 인정에 긍정적일 수 있습니다."
+            specialAnalysis += "- 만 30세 미만 청년의 경우, 법원은 사회초년생의 어려움을 감안하여 변제 기간 단축이나 추가 생계비 인정에 긍정적일 수 있습니다. 2026년부터는 소득 공제 혜택도 확대됩니다."
         }
         if (!specialAnalysis) {
              specialAnalysis = "- 부산회생법원의 실무준칙에 따라 추가 생계비를 적극적으로 주장하여 월 변제금을 줄일 수 있는 가능성이 있습니다."
@@ -87,7 +114,6 @@ document.addEventListener('DOMContentLoaded', () => {
         resultSpecial.textContent = specialAnalysis;
     };
 
-    // --- Form Submission Logic ---
     const requestConsultBtn = document.getElementById('request-consult-btn');
     const consultForm = document.getElementById('consult-form');
     const privacyAgree = document.getElementById('privacy-agree');
@@ -102,12 +128,10 @@ document.addEventListener('DOMContentLoaded', () => {
         submitFinalDataBtn.disabled = !privacyAgree.checked;
     });
 
-    // --- 데이터 수집 및 Google Sheet 전송 함수 ---
     const submitDataToSheet = () => {
         submitFinalDataBtn.disabled = true;
         submitFinalDataBtn.textContent = '전송 중...';
 
-        // 1. 모든 폼 데이터 수집
         const formData = {
             name: document.getElementById('final-name').value,
             phone: document.getElementById('final-phone').value,
@@ -118,10 +142,9 @@ document.addEventListener('DOMContentLoaded', () => {
             investment: form.querySelector('[data-question="q5_investment"] .selected')?.dataset.value || '',
             incomeSource: form.querySelector('[data-question="q6_income_source"] .selected')?.dataset.value || '',
             monthlyIncome: document.getElementById('monthly-income').value,
-            dependents: form.querySelector('[data-question="q8_dependents"] .selected')?.dataset.value || ''
+            dependents: form.querySelector('[data-question="q7_dependents"] .selected')?.dataset.value || ''
         };
 
-        // 2. Fetch API로 Google Apps Script에 POST 요청 전송
         fetch(APPS_SCRIPT_URL, {
             method: 'POST',
             body: JSON.stringify(formData),
@@ -133,7 +156,6 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(data => {
             if (data.result === 'success') {
                 alert('상담 신청이 성공적으로 접수되었습니다. 감사합니다.');
-                // 폼 초기화
                 consultForm.style.display = 'none';
                 requestConsultBtn.style.display = 'block';
                 document.getElementById('final-name').value = '';
@@ -154,7 +176,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     submitFinalDataBtn.addEventListener('click', (e) => {
-        e.preventDefault(); // 기본 폼 제출 방지
+        e.preventDefault();
         const name = document.getElementById('final-name').value;
         const phone = document.getElementById('final-phone').value;
 
@@ -170,7 +192,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Q&A Accordion
     qaItems.forEach(item => {
         const question = item.querySelector('.qa-question');
         question.addEventListener('click', () => {
@@ -182,5 +203,5 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    updateProgressBar(); // Initial call
+    updateProgressBar();
 });
