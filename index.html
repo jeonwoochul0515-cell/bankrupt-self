@@ -24,77 +24,6 @@
         </header>
 
         <main>
-            <!-- Testimonial Carousel -->
-            <section class="carousel-section"> 
-                <h2>개인회생 성공 후기</h2>
-                <div class="carousel">
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <div class="testimonial-card"> 
-                                <p>"과도한 빚 때문에 힘들었는데, 덕분에 새 삶을 시작할 수 있었어요. 정말 감사합니다!"</p>
-                                <div class="testimonial-footer">
-                                    <span class="testimonial-author">- 김OO님 (부산, 40대)</span>
-                                    <div class="testimonial-rating">★★★★★</div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="carousel-item">
-                            <div class="testimonial-card">
-                                <p>"혼자서는 막막했는데, 전문적인 도움으로 회생 절차를 잘 마칠 수 있었습니다. 추천합니다!"</p>
-                                <div class="testimonial-footer">
-                                    <span class="testimonial-author">- 박OO님 (울산, 50대)</span>
-                                    <div class="testimonial-rating">★★★★☆</div>
-                                </div>
-                            </div>
-                        </div>
-                         <div class="carousel-item">
-                            <div class="testimonial-card">
-                                <p>"주식 투자 실패로 절망했지만, 부산회생법원 특화 상담 덕분에 재산은 지키고 빚은 크게 줄일 수 있었어요."</p>
-                               <div class="testimonial-footer">
-                                    <span class="testimonial-author">- 이OO님 (경남, 30대)</span>
-                                    <div class="testimonial-rating">★★★★★</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <button class="carousel-control prev"><i class="fas fa-chevron-left"></i></button>
-                    <button class="carousel-control next"><i class="fas fa-chevron-right"></i></button>
-                </div>
-            </section>
-
-            <!-- Q&A Section -->
-            <section id="qa-section">
-                <h2>자주 묻는 질문 (Q&A)</h2>
-                <div class="qa-item">
-                    <button class="qa-question">
-                        <span>개인회생 신청 시 배우자 명의의 재산은 어떻게 처리되나요?</span>
-                        <i class="fas fa-plus"></i>
-                    </button>
-                    <div class="qa-answer">
-                        <p>과거에는 배우자 재산의 50%를 채무자의 재산으로 일괄 산정하는 '1/2 룰'이 엄격했지만, 최근 서울회생법원과 **부산회생법원**은 이러한 형식적 기준에서 벗어나고 있습니다. 현재 실무는 **채무자가 배우자의 재산 형성에 얼마나 실질적으로 기여했는지**를 중심으로 판단합니다. 만약 채무자의 기여도가 없거나 미미하다면(예: 혼인 전 취득 재산, 상속/증여 재산), 배우자 재산은 채무자의 변제금 산정에 포함되지 않을 가능성이 매우 높습니다. 이는 채무자에게 훨씬 유리한 경향입니다.</p>
-                    </div>
-                </div>
-                <div class="qa-item">
-                    <button class="qa-question">
-                        <span>주식이나 코인 투자 손실이 있어도 개인회생이 가능한가요?</span>
-                        <i class="fas fa-plus"></i>
-                    </button>
-                    <div class="qa-answer">
-                        <p>네, 가능합니다. 특히 부산회생법원은 다른 법원과 달리 주식/코인 투자 손실금을 개인 재산으로 산정하지 않는 실무준칙을 적용하고 있어 매우 유리합니다. 즉, 투자로 잃은 돈을 갚으라고 요구하지 않기 때문에 월 변제금을 크게 낮출 수 있습니다.</p>
-                    </div>
-                </div>
-                <div class="qa-item">
-                    <button class="qa-question">
-                        <span>2026년 기준 월 최소 생계비는 얼마인가요?</span>
-                        <i class="fas fa-plus"></i>
-                    </button>
-                    <div class="qa-answer">
-                        <p>2026년 기준은 아직 발표되지 않았습니다. 매년 8월경 다음 해의 기준이 발표되므로, 2026년 기준은 2025년 하반기에 확정될 예정입니다. **가장 최신 기준인 2025년 기준 중위소득이 최근 발표되었으며, 이에 따른 1인 가구 최저 생계비(기준 중위소득의 60%)는 약 144만원입니다.** 개인회생에서는 이 생계비를 보장받고, 월 소득에서 이 금액을 제외한 나머지를 변제금으로 납부하게 됩니다. <br>(*정확한 금액은 부양가족 수에 따라 달라집니다.)</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Self-Diagnosis Form -->
             <section id="diagnosis-section">
                 <h2>AI 변제금 계산기</h2>
                 <div id="progress-bar-container">
@@ -102,16 +31,150 @@
                 </div>
 
                 <form id="diagnosis-form">
-                    <!-- Steps remain the same -->
+                    <!-- Step 1: Basic Qualification -->
+                    <div class="form-step active" data-step="1">
+                        <div class="question-box">
+                            <h3>[1단계] 관할 및 기본 자격 확인</h3>
+                            
+                            <p class="question-title">Q1. 현재 거주하시거나 근무하시는 지역은 어디입니까?</p>
+                            <div class="option-group-col" data-question="q1_region">
+                                <button type="button" class="option-btn" data-value="busan">부산광역시</button>
+                                <button type="button" class="option-btn" data-value="ulsan">울산광역시</button>
+                                <button type="button" class="option-btn" data-value="gyeongnam">경상남도</button>
+                                <button type="button" class="option-btn" data-value="other">그 외 지역</button>
+                            </div>
+
+                            <p class="question-title">Q2. 현재 귀하의 소득 활동 형태는 무엇입니까?</p>
+                            <div class="option-group-col" data-question="q2_income_type">
+                                <button type="button" class="option-btn" data-value="employee_insured">직장인 (4대보험 가입)</button>
+                                <button type="button" class="option-btn" data-value="employee_uninsured">직장인 (4대보험 미가입 등)</button>
+                                <button type="button" class="option-btn" data-value="business_freelancer">개인사업자 / 프리랜서</button>
+                                <button type="button" class="option-btn" data-value="no_income">현재 소득 없음</button>
+                            </div>
+
+                            <p class="question-title">Q3. 현재 보유하신 총 채무(빚)의 규모는 어느 정도입니까?</p>
+                            <div class="option-group-col" data-question="q3_debt_size">
+                                <button type="button" class="option-btn" data-value="under_10m">1,000만 원 미만</button>
+                                <button type="button" class="option-btn" data-value="eligible">1,000만 원 ~ 10억 원 (무담보) / 15억 원 (담보)</button>
+                                <button type="button" class="option-btn" data-value="over_limit">기준 금액 초과</button>
+                            </div>
+
+                            <p class="question-title">Q4. 현재 보유하신 재산이 빚보다 많습니까?</p>
+                            <div class="option-group-col" data-question="q4_asset_ratio">
+                                <button type="button" class="option-btn" data-value="debt_higher">아니오, 빚이 더 많습니다.</button>
+                                <button type="button" class="option-btn" data-value="asset_higher">예, 재산이 더 많습니다.</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2: In-depth Diagnosis -->
+                    <div class="form-step" data-step="2">
+                        <div class="question-box">
+                            <h3>[2단계] 부산회생법원 특화 정밀 진단</h3>
+
+                            <p class="question-title">Q5. 채무 발생의 주된 원인 중 '주식'이나 '코인' 투자가 포함되어 있습니까?</p>
+                            <div class="option-group-col" data-question="q5_investment">
+                                <button type="button" class="option-btn" data-value="yes">예 (주식/코인 손실 비중이 큼)</button>
+                                <button type="button" class="option-btn" data-value="no">아니오</button>
+                            </div>
+
+                            <p class="question-title">Q6. 귀하는 다음 중 해당되는 사항이 있습니까? (중복 선택 가능)</p>
+                            <div class="option-group-col checkbox-group" data-question="q6_reduction_reasons">
+                                <button type="button" class="option-btn checkbox" data-value="under_30">만 30세 미만 청년</button>
+                                <button type="button" class="option-btn checkbox" data-value="over_65">만 65세 이상 고령자</button>
+                                <button type="button" class="option-btn checkbox" data-value="multiple_children">미성년 자녀 2명 이상 양육</button>
+                                <button type="button" class="option-btn checkbox" data-value="disabled">중증 장애인</button>
+                                <button type="button" class="option-btn checkbox" data-value="single_parent">한부모 가정</button>
+                                <button type="button" class="option-btn checkbox" data-value="rental_fraud">전세사기 피해자</button>
+                            </div>
+                             <button type="button" class="next-btn">다음</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Step 3: Data Input -->
+                    <div class="form-step" data-step="3">
+                        <div class="question-box">
+                            <h3>[3단계] 변제금 산출을 위한 데이터 입력</h3>
+
+                            <p class="question-title">Q7. 부양해야 할 가족 수는 본인을 포함해 몇 명입니까?</p>
+                            <div class="option-group-col" data-question="q7_dependents">
+                                <button type="button" class="option-btn" data-value="1">1인 가구 (본인 혼자)</button>
+                                <button type="button" class="option-btn" data-value="2">2인 가구</button>
+                                <button type="button" class="option-btn" data-value="3">3인 가구</button>
+                                <button type="button" class="option-btn" data-value="4">4인 가구 이상</button>
+                            </div>
+
+                            <p class="question-title">Q8. 추가로 지출되는 비용 중 인정받고 싶은 항목이 있습니까? (중복 선택)</p>
+                            <div class="option-group-col checkbox-group" data-question="q8_extra_costs">
+                               <button type="button" class="option-btn checkbox" data-value="rent">주거비 (월세 등)</button>
+                               <button type="button" class="option-btn checkbox" data-value="medical">의료비</button>
+                               <button type="button" class="option-btn checkbox" data-value="education">교육비</button>
+                            </div>
+
+                            <p class="question-title">Q9. 월 평균 소득(세후 실수령액)을 입력해주세요.</p>
+                            <div class="input-group" data-question="q9_income">
+                                <input type="number" id="monthly-income" placeholder="숫자만 입력 (예: 3000000)">
+                                <span>원</span>
+                            </div>
+                            <button type="button" id="calculate-btn" class="submit-btn">결과 확인하기</button>
+                        </div>
+                    </div>
+
+                    <!-- Step 4 & 5: Results & CTA -->
+                    <div class="form-step" data-step="4">
+                        <div class="question-box">
+                            <h3 id="result-title"></h3>
+                            <div id="result-wrapper">
+                                <div class="result-item">
+                                    <h4>신청 자격</h4>
+                                    <p id="result-eligibility">✅ 적합</p>
+                                </div>
+                                <div class="result-item">
+                                    <h4>예상 월 변제금</h4>
+                                    <p id="result-payment">약 450,000원</p>
+                                    <small id="result-payment-detail">(월 소득 200만 원 - 1인 생계비 133만 원)</small>
+                                </div>
+                                <div class="result-item">
+                                    <h4>예상 변제 기간</h4>
+                                    <p id="result-period">36개월</p>
+                                    <small id="result-period-detail">(기본)</small>
+                                </div>
+                                <div class="result-item">
+                                    <h4>예상 총 탕감액</h4>
+                                    <p id="result-write-off">약 78%</p>
+                                    <small id="result-write-off-detail">(원금 기준)</small>
+                                </div>
+                                <div class="result-item special">
+                                    <h4>부산회생법원 특화 분석</h4>
+                                    <p id="result-special"></p>
+                                </div>
+                            </div>
+                            
+                            <div id="final-cta">
+                                <p class="final-intro">AI 진단은 참고용이며, 정확한 확정을 위해 법률 전문가의 검토가 필요합니다.</p>
+                                <button type="button" id="request-consult-btn" class="submit-btn">내 결과 저장하고 무료 정밀 상담 신청하기</button>
+                                <div id="consult-form" style="display: none;">
+                                     <div class="input-group">
+                                        <input type="text" id="final-name" placeholder="이름">
+                                    </div>
+                                    <div class="input-group">
+                                        <input type="tel" id="final-phone" placeholder="연락처 ('-' 없이 입력)">
+                                    </div>
+                                    <div class="input-group-checkbox">
+                                        <input type="checkbox" id="privacy-agree">
+                                        <label for="privacy-agree">개인정보 수집 및 이용 동의</label>
+                                    </div>
+                                    <button type="button" id="submit-final-data" class="submit-btn" disabled>신청 완료</button>
+                                </div>
+                                <button type="button" id="recommend-lawyer-btn">부산회생법원 인근 전문 변호사 추천받기</button>
+                            </div>
+                        </div>
+                    </div>
+
                 </form>
             </section>
-
         </main>
-
-        <!-- AI Chatbot & Footer remain the same -->
-
     </div>
-
     <script src="main.js"></script>
 </body>
 </html>

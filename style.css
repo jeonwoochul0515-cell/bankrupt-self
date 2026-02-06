@@ -9,218 +9,72 @@
     --card-background: #ffffff;
     --shadow-color: rgba(44, 62, 80, 0.08);
     --border-color: #e9eef2;
-    --border-radius: 24px;
+    --border-radius: 20px;
     --font-sans: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 }
 
-body {
-    font-family: var(--font-sans);
-    background-color: var(--background-color);
-    color: var(--text-color);
-    line-height: 1.7;
-    margin: 0;
-    padding: 15px;
-}
-
+body { font-family: var(--font-sans); background-color: var(--background-color); color: var(--text-color); line-height: 1.7; margin: 0; padding: 15px; }
 .container { max-width: 800px; width: 100%; margin: 0 auto; }
 
-section { 
-    margin-bottom: 60px; 
-}
+header { text-align: center; margin: 40px 0; }
+h1 { font-size: 2.6rem; font-weight: 900; margin-bottom: 10px; line-height: 1.3; }
+h2 { font-size: 2rem; font-weight: 800; margin-bottom: 30px; text-align: center;}
+header p { font-size: 1.1rem; color: #576574; }
 
-header { 
-    text-align: center; 
-    margin-top: 40px;
-    margin-bottom: 60px; 
-}
-header h1 { 
-    font-size: 2.8rem; 
-    font-weight: 900; 
-    color: var(--text-color); 
-    margin-bottom: 15px; 
-    line-height: 1.3;
-}
-header p { 
-    font-size: 1.15rem; 
-    color: #576574; 
-}
+#diagnosis-section { background: var(--card-background); border-radius: var(--border-radius); box-shadow: 0 15px 45px var(--shadow-color); padding: 30px; }
+#progress-bar-container { width: 100%; background-color: #e9eef2; border-radius: 10px; margin-bottom: 30px; height: 10px; overflow: hidden; }
+#progress-bar { width: 10%; height: 100%; background: linear-gradient(90deg, var(--primary-color), #00aaff); transition: width 0.5s ease; }
 
-/* Universal Section Title */
-h2 {
-    text-align: center; 
-    font-size: 2.2rem; 
-    font-weight: 800; 
-    margin-bottom: 40px; 
-    color: var(--text-color); 
-}
-
-/* Carousel Section */
-.carousel { position: relative; }
-.carousel-inner { display: flex; overflow: hidden; width: 100%; }
-.carousel-item { min-width: 100%; transition: transform 0.5s ease; display: none; }
-.carousel-item.active { display: block; }
-.testimonial-card { 
-    background: var(--card-background);
-    border-radius: var(--border-radius);
-    box-shadow: 0 12px 35px var(--shadow-color);
-    padding: 35px 40px;
-    margin: 0 10px;
-    border: 1px solid var(--border-color);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
-}
-.testimonial-card p { 
-    font-size: 1.1rem; 
-    color: #485460; 
-    line-height: 1.8; 
-    margin: 0 0 25px 0;
-    flex-grow: 1;
-}
-.testimonial-footer { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    font-size: 1rem;
-}
-.testimonial-author { font-weight: 600; color: #576574;}
-.testimonial-rating { color: #f9ca24; font-weight: 700; }
-
-.carousel-control { 
-    position: absolute; 
-    top: 50%; 
-    transform: translateY(-50%); 
-    background-color: var(--card-background);
-    border: 1px solid var(--border-color);
-    border-radius: 50%; 
-    width: 48px; 
-    height: 48px; 
-    cursor: pointer; 
-    transition: all 0.3s ease; 
-    font-size: 1.3rem; 
-    color: var(--primary-color); 
-    box-shadow: 0 5px 15px rgba(0,0,0,0.06);
-}
-.carousel-control:hover { background-color: var(--primary-color); color: white; }
-.carousel-control.prev { left: -24px; }
-.carousel-control.next { right: -24px; }
-
-/* Q&A Section */
-#qa-section { margin: 60px auto; }
-.qa-item { 
-    background: var(--card-background);
-    border-radius: 18px;
-    margin-bottom: 15px;
-    box-shadow: 0 8px 25px var(--shadow-color);
-    border: 1px solid var(--border-color);
-    transition: margin 0.3s ease;
-}
-.qa-item.active {
-    margin-bottom: 25px;
-}
-.qa-question {
-    width: 100%;
-    background: none;
-    border: none;
-    text-align: left;
-    padding: 20px 25px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    color: var(--text-color);
-}
-.qa-question i {
-    font-size: 1.2rem;
-    color: var(--primary-color);
-    transition: transform 0.3s ease-in-out;
-}
-.qa-item.active .qa-question i {
-    transform: rotate(45deg);
-}
-.qa-answer {
-    max-height: 0;
-    overflow: hidden;
-    transition: max-height 0.4s ease-in-out, padding 0.4s ease;
-}
-.qa-answer p {
-    margin: 0;
-    padding: 0 25px 25px 25px;
-    font-size: 1.05rem;
-    line-height: 1.8;
-    color: #485460;
-}
-.qa-item.active .qa-answer {
-    max-height: 200px; /* Adjust as needed */
-}
-
-/* Diagnosis Form Section */
-#diagnosis-section {
-    background: var(--card-background); 
-    border-radius: var(--border-radius); 
-    box-shadow: 0 15px 45px var(--shadow-color); 
-    padding: 40px;
-}
-
-/* Other styles remain largely the same, minor tweaks for consistency */
-#progress-bar-container { width: 100%; background-color: #e9eef2; border-radius: 10px; margin-bottom: 40px; height: 12px; }
-#progress-bar { width: 0%; height: 100%; background: linear-gradient(90deg, var(--primary-color), #00aaff); border-radius: 10px; transition: width 0.5s ease; }
-
-.form-step { display: none; animation: fadeIn 0.5s ease; }
+.form-step { display: none; animation: fadeIn 0.5s; }
 .form-step.active { display: block; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-.question-box h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 30px; text-align: center;}
-.option-group { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;}
-.option-group-col { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.question-box h3 { font-size: 1.6rem; font-weight: 700; margin-bottom: 25px; text-align: center; border-bottom: 1px solid var(--border-color); padding-bottom: 20px;}
+.question-title { font-size: 1.2rem; font-weight: 600; margin: 25px 0 15px 0; }
 
+.option-group-col { display: flex; flex-direction: column; gap: 10px; }
 .option-btn {
-    padding: 14px 28px;
-    border: 1px solid var(--border-color);
-    border-radius: 14px; 
-    font-size: 1.05rem; 
-    font-weight: 600; 
-    cursor: pointer; 
-    transition: all 0.25s ease;
-    background-color: var(--card-background);
-    min-width: 180px;
-    text-align: center;
+    width: 100%; padding: 15px 20px; border: 1px solid var(--border-color); border-radius: 12px; 
+    font-size: 1.05rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease;
+    background-color: var(--card-background); text-align: left;
 }
-.option-btn:hover { 
-    transform: translateY(-4px); 
-    box-shadow: 0 6px 18px rgba(0, 82, 255, 0.12);
-    border-color: var(--primary-color); 
-}
-.option-btn.selected { 
-    background-color: var(--primary-color); 
-    color: white; 
-    border-color: var(--primary-color); 
-    box-shadow: 0 8px 25px var(--primary-glow); 
-}
+.option-btn:hover { border-color: var(--primary-color); }
+.option-btn.selected { background-color: #e7f0ff; border-color: var(--primary-color); font-weight: 600; }
 
-#final-inputs, #result-display { max-width: 450px; margin: 40px auto 0; }
-
-/* Re-using and ensuring consistency for other elements */
-.input-group, .input-group-checkbox, .submit-btn, .result-card, footer, .chatbot-container {
-    /* Styles from before are fine, just ensure they match the new aesthetic */
-    /* For example, update border-radius, shadows, etc. if needed */
+.checkbox-group .option-btn.selected { background-color: #dbeaff; }
+.next-btn, .submit-btn { 
+    width: 100%; padding: 16px; margin-top: 25px; border: none; border-radius: 14px; 
+    font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: all 0.3s ease;
+    background-color: var(--primary-color); color: white; 
 }
+.next-btn:hover, .submit-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px var(--primary-glow); }
 
-/* Ensuring Chatbot styles are consistent */
-.chatbot-window { border-radius: var(--border-radius); box-shadow: 0 20px 60px rgba(0,0,0,0.15); }
-.chatbot-header { border-radius: var(--border-radius) var(--border-radius) 0 0; }
+.input-group { display: flex; align-items: center; margin-top: 15px; }
+.input-group input { flex: 1; padding: 14px; border: 1px solid var(--border-color); border-radius: 12px; font-size: 1.1rem; text-align: right; }
+.input-group span { margin-left: 10px; font-size: 1.1rem; }
+
+#result-wrapper { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 30px; text-align: center; }
+#result-title { font-size: 1.8rem; font-weight: 800; text-align: center; margin-bottom: 20px; }
+.result-item { background: #f7f9fc; padding: 20px; border-radius: 15px; }
+.result-item h4 { margin: 0 0 10px; font-size: 1.1rem; color: #576574; }
+.result-item p { margin: 0; font-size: 1.5rem; font-weight: 700; color: var(--primary-color);}
+.result-item small { font-size: 0.9rem; color: #7f8c8d; }
+.result-item.special { grid-column: 1 / -1; background-color: #e7f0ff; border: 1px solid var(--primary-color);}
+.result-item.special p { font-size: 1.1rem; font-weight: 500; color: var(--text-color); white-space: pre-wrap; line-height: 1.6;}
+
+#final-cta { margin-top: 40px; text-align: center; }
+.final-intro { font-size: 1.1rem; margin-bottom: 20px; }
+#consult-form { margin-top: 20px; display: flex; flex-direction: column; gap: 15px; }
+.input-group-checkbox { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.95rem; }
+.submit-btn:disabled { background-color: #ccc; cursor: not-allowed; box-shadow: none; }
+#recommend-lawyer-btn { background: none; border: 1px solid var(--primary-color); color: var(--primary-color); margin-top: 15px; padding: 15px; width:100%; border-radius: 12px; font-size: 1.05rem; cursor: pointer; }
 
 @media (max-width: 768px) {
     body { padding: 10px; }
-    header h1 { font-size: 2.2rem; }
-    header p { font-size: 1.1rem; }
-    h2 { font-size: 1.8rem; }
-    #diagnosis-section, .testimonial-card { padding: 25px; }
-    .carousel-control { width: 40px; height: 40px; font-size: 1rem; }
-    .carousel-control.prev { left: -15px; }
-    .carousel-control.next { right: -15px; }
+    header h1 { font-size: 2rem; }
+    h2 { font-size: 1.6rem; }
+    #diagnosis-section { padding: 20px; }
+    .question-box h3 { font-size: 1.4rem; }
+    .question-title { font-size: 1.1rem; }
+    #result-wrapper { grid-template-columns: 1fr; }
 }
-
