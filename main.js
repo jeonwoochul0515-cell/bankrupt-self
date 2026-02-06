@@ -6,8 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const calculateBtn = document.getElementById('calculate-btn');
     const qaItems = document.querySelectorAll('.qa-item');
 
-    // ⚠️ 새로운 URL로 교체되었습니다.
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzhTJMD8WlClxSKS826ONbVqH7xCteXgVR13u2clIZ5P3UteCiJdpTS87fC-Qwgj6uG/exec';
+    // ⚠️ 사용자께서 제공해주신 새로운 URL로 교체합니다.
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyntEpHjXIqD9M_0KqkyLFo2HG9tTrAEyl09j1aUvQBckbalDvk0FrZL_rfrM7-Uz8/exec';
 
     let currentStep = 1;
     const totalSteps = 3;
