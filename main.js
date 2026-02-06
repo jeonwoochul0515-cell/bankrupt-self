@@ -1,3 +1,4 @@
+
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('diagnosis-form');
     const steps = [...form.querySelectorAll('.form-step')];
@@ -6,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const calculateBtn = document.getElementById('calculate-btn');
     const qaItems = document.querySelectorAll('.qa-item');
 
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyRLpto9DzOY6-sOPFhr4WjXftNlKv1W6ppELyAdD-68rLNDp8hbVyNVwpNOVJuQEiC/exec';
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbymcZcKxVVfgFoIr8V6-m8nU4v-XVQZxeK8FkhRriUxUdm0gMhY9mv-DSkVrl8HQXQ1/exec';
 
     let currentStep = 1;
     const totalSteps = 3;
