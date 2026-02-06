@@ -72,6 +72,7 @@ header p { font-size: 1.1rem; color: #576574; }
 
 .review-carousel { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 20px; scroll-snap-type: x mandatory; }
 .review-card { flex: 0 0 80%; max-width: 80%; background: #f7f9fc; padding: 20px; border-radius: 15px; scroll-snap-align: center; }
+.review-stars { color: #ffc107; margin-bottom: 10px; }
 .review-text { font-style: italic; margin-bottom: 15px; }
 .reviewer { font-weight: 600; text-align: right; }
 
