@@ -1,22 +1,36 @@
+
+// Firebase SDK에서 필요한 함수들을 가져옵니다.
+import { db } from './firebase-config.js';
+import { collection, addDoc } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
 document.addEventListener('DOMContentLoaded', () => {
+    // DOM 요소들을 미리 찾아둡니다.
     const form = document.getElementById('diagnosis-form');
     const steps = [...form.querySelectorAll('.form-step')];
     const progressBar = document.getElementById('progress-bar');
-    const nextBtns = form.querySelectorAll('.next-btn');
     const calculateBtn = document.getElementById('calculate-btn');
     const qaItems = document.querySelectorAll('.qa-item');
-
-    // ⚠️ 사용자께서 제공해주신 새로운 URL로 교체합니다.
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyntEpHjXIqD9M_0KqkyLFo2HG9tTrAEyl09j1aUvQBckbalDvk0FrZL_rfrM7-Uz8/exec';
+    const nextBtn = form.querySelector('.next-btn'); // '다음' 버튼 추가
 
     let currentStep = 1;
-    const totalSteps = 3;
+    const totalSteps = 3; // 총 단계 수를 3으로 수정
 
+    const diagnosisData = {}; // 사용자의 답변을 저장할 객체
+
+    // --- UI 업데이트 관련 함수들 ---
+
+    /**
+     * 진행률 바(Progress Bar)를 현재 단계에 맞게 업데이트합니다.
+     */
     const updateProgressBar = () => {
         const progress = (currentStep - 1) / totalSteps * 100;
         progressBar.style.width = `${progress}%`;
     };
 
+    /**
+     * 지정된 단계로 화면을 전환합니다.
+     * @param {number} step - 이동할 단계 번호
+     */
     const goToStep = (step) => {
         steps.forEach(s => s.classList.remove('active'));
         const nextStepElement = form.querySelector(`.form-step[data-step="${step}"]`);
@@ -27,167 +41,70 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // --- 이벤트 리스너 설정 ---
+
+    /**
+     * 옵션 버튼 클릭 이벤트를 처리합니다.
+     * 선택된 값을 diagnosisData 객체에 저장하고, 필요한 경우 다음 단계로 이동합니다.
+     */
     form.addEventListener('click', (e) => {
         if (e.target.matches('.option-btn')) {
             const group = e.target.closest('.option-group-col');
+            const question = group.dataset.question;
+            const value = e.target.dataset.value;
             const isCheckbox = e.target.classList.contains('checkbox');
 
             if (isCheckbox) {
                 e.target.classList.toggle('selected');
+                if (!diagnosisData[question]) {
+                    diagnosisData[question] = [];
+                }
+                const index = diagnosisData[question].indexOf(value);
+                if (index > -1) {
+                    diagnosisData[question].splice(index, 1); // 선택 해제 시 배열에서 제거
+                } else {
+                    diagnosisData[question].push(value); // 선택 시 배열에 추가
+                }
             } else {
                 [...group.querySelectorAll('.option-btn')].forEach(btn => btn.classList.remove('selected'));
                 e.target.classList.add('selected');
-                if (currentStep === 1) {
-                    const allAnswered = [...form.querySelectorAll('.form-step[data-step="1"] .option-group-col')].every(q => q.querySelector('.selected'));
-                    if (allAnswered) {
-                        goToStep(2);
-                    }
+                diagnosisData[question] = value;
+            }
+            
+            // 1단계의 모든 질문에 답변했는지 확인하고 2단계로 자동 이동
+            if (currentStep === 1) {
+                const allAnswered = ['q1_region', 'q2_income_type', 'q3_total_debt', 'q4_asset_ratio'].every(q => diagnosisData[q]);
+                if (allAnswered) {
+                    goToStep(2);
                 }
             }
         }
     });
-
-    nextBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            if (currentStep < totalSteps) {
-                goToStep(currentStep + 1);
-            }
-        });
+    
+    // '다음' 버튼 클릭 시 3단계로 이동
+    nextBtn.addEventListener('click', () => {
+        if (currentStep === 2) {
+             goToStep(3);
+        }
     });
 
+    // '결과 확인하기' 버튼 클릭 이벤트
     calculateBtn.addEventListener('click', () => {
-        const income = document.getElementById('monthly-income').value;
-        if (!income || isNaN(income)) {
+        const incomeInput = document.getElementById('monthly-income');
+        const income = incomeInput.value;
+
+        if (!income || isNaN(income) || income <= 0) {
             alert('월 평균 소득을 정확히 입력해주세요.');
+            incomeInput.focus();
             return;
         }
-        displayResults();
-        goToStep(4);
+        diagnosisData['q9_income'] = parseFloat(income);
+        
+        displayResults(); // 결과 계산 및 표시
+        goToStep(4); // 결과 화면으로 이동
     });
 
-    const displayResults = () => {
-        const resultTitle = document.getElementById('result-title');
-        const resultSpecial = document.getElementById('result-special');
-        const investment = form.querySelector('[data-question="q5_investment"] .selected')?.dataset.value === 'yes';
-        const isYoung = form.querySelector('[data-value="under_30"]').classList.contains('selected');
-
-        const monthlyIncome = parseFloat(document.getElementById('monthly-income').value) || 0;
-        const dependents = parseInt(form.querySelector('[data-question="q7_dependents"] .selected')?.dataset.value || '1');
-        const totalDebt = parseInt(form.querySelector('[data-question="q3_total_debt"] .selected')?.dataset.value || '0');
-
-        const livelihoodCosts = {
-            1: 1538543,
-            2: 2538600,
-            3: 3246325,
-            4: 3954600
-        };
-        const baseLivelihood = livelihoodCosts[dependents] || livelihoodCosts[4];
-        let monthlyPayment = Math.max(0, monthlyIncome - baseLivelihood);
-
-        let period = 36;
-        if (isYoung) {
-            period = Math.max(24, period - 6);
-        }
-
-        const totalRepayment = monthlyPayment * period;
-        const writeOffRate = totalDebt > 0 ? Math.round((1 - (totalRepayment / totalDebt)) * 100) : 0;
-
-        document.getElementById('result-payment').textContent = `약 ${Math.round(monthlyPayment / 10000).toLocaleString()}만 원`;
-        document.getElementById('result-payment-detail').textContent = `(월 소득 ${(monthlyIncome / 10000).toLocaleString()}만 원 - ${dependents}인 생계비 ${(Math.round(baseLivelihood / 10000)).toLocaleString()}만 원)`;
-        document.getElementById('result-period').textContent = `${period}개월`;
-        document.getElementById('result-period-detail').textContent = isYoung ? "(청년 단축 적용)" : "(기본)";
-        document.getElementById('result-write-off').textContent = `약 ${writeOffRate}%`;
-        document.getElementById('result-write-off-detail').textContent = `(총 채무 ${(totalDebt / 10000).toLocaleString()}만 원)`;
-
-        resultTitle.textContent = "AI 진단 결과: 회생 가능성이 매우 높습니다.";
-        let specialAnalysis = "";
-        if (investment) {
-            specialAnalysis += "- 주식/코인 투자 손실금은 사행성 채무로 분류될 수 있지만, 부산회생법원은 채무자의 상황을 고려하여 변제율을 조정하는 경향이 있습니다. 투자 경위를 명확히 소명하는 것이 중요합니다.\n";
-        }
-        if (isYoung) {
-            specialAnalysis += "- 만 30세 미만 청년의 경우, 법원은 사회초년생의 어려움을 감안하여 변제 기간 단축이나 추가 생계비 인정에 긍정적일 수 있습니다. 2026년부터는 소득 공제 혜택도 확대됩니다."
-        }
-        if (!specialAnalysis) {
-            specialAnalysis = "- 부산회생법원의 실무준칙에 따라 추가 생계비를 적극적으로 주장하여 월 변제금을 줄일 수 있는 가능성이 있습니다."
-        }
-        resultSpecial.textContent = specialAnalysis;
-    };
-
-    const requestConsultBtn = document.getElementById('request-consult-btn');
-    const consultForm = document.getElementById('consult-form');
-    const privacyAgree = document.getElementById('privacy-agree');
-    const submitFinalDataBtn = document.getElementById('submit-final-data');
-
-    requestConsultBtn.addEventListener('click', () => {
-        consultForm.style.display = 'flex';
-        requestConsultBtn.style.display = 'none';
-    });
-
-    privacyAgree.addEventListener('change', () => {
-        submitFinalDataBtn.disabled = !privacyAgree.checked;
-    });
-
-    const submitDataToSheet = () => {
-        submitFinalDataBtn.disabled = true;
-        submitFinalDataBtn.textContent = '전송 중...';
-
-        const formData = new FormData();
-        formData.append('name', document.getElementById('final-name').value);
-        formData.append('phone', document.getElementById('final-phone').value);
-        formData.append('region', form.querySelector('[data-question="q1_region"] .selected')?.dataset.value || '');
-        formData.append('incomeType', form.querySelector('[data-question="q2_income_type"] .selected')?.dataset.value || '');
-        formData.append('totalDebt', form.querySelector('[data-question="q3_total_debt"] .selected')?.dataset.value || '');
-        formData.append('assetRatio', form.querySelector('[data-question="q4_asset_ratio"] .selected')?.dataset.value || '');
-        formData.append('investment', form.querySelector('[data-question="q5_investment"] .selected')?.dataset.value || '');
-        formData.append('reductionReasons', [...form.querySelectorAll('[data-question="q6_reduction_reasons"] .selected')].map(el => el.textContent.trim()).join(', '));
-        formData.append('dependents', form.querySelector('[data-question="q7_dependents"] .selected')?.dataset.value || '');
-        formData.append('extraCosts', [...form.querySelectorAll('[data-question="q8_extra_costs"] .selected')].map(el => el.textContent.trim()).join(', '));
-        formData.append('monthlyIncome', document.getElementById('monthly-income').value);
-
-        fetch(APPS_SCRIPT_URL, {
-            method: 'POST',
-            body: formData,
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.result === "success") {
-                alert('상담 신청이 성공적으로 접수되었습니다. 감사합니다.');
-                consultForm.style.display = 'none';
-                requestConsultBtn.style.display = 'block';
-                document.getElementById('final-name').value = '';
-                document.getElementById('final-phone').value = '';
-                privacyAgree.checked = false;
-            } else {
-                throw new Error(data.error || '알 수 없는 서버 오류가 발생했습니다.');
-            }
-        })
-        .catch(error => {
-            console.error('Error submitting data:', error);
-            alert(`신청 중 오류가 발생했습니다: ${error.message}`);
-        })
-        .finally(() => {
-            submitFinalDataBtn.disabled = false;
-            submitFinalDataBtn.textContent = '개인회생 무료상담 신청하기';
-        });
-    };
-
-    submitFinalDataBtn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const name = document.getElementById('final-name').value;
-        const phone = document.getElementById('final-phone').value;
-
-        if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('YOUR_APPS_SCRIPT_URL')) {
-            alert('오류: 스크립트 URL이 설정되지 않았습니다. 개발자에게 문의하세요.');
-            return;
-        }
-
-        if (name && phone && privacyAgree.checked) {
-            submitDataToSheet();
-        } else {
-            alert('이름, 연락처를 입력하고 개인정보 수집에 동의해주세요.');
-        }
-    });
-
+    // Q&A 아코디언 메뉴 이벤트
     qaItems.forEach(item => {
         const question = item.querySelector('.qa-question');
         question.addEventListener('click', () => {
@@ -199,5 +116,117 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // --- 결과 계산 및 표시 함수 ---
+    const displayResults = () => {
+        const { 
+            q3_total_debt: totalDebtRaw, 
+            q5_investment: investment,
+            q6_reduction_reasons: reductionReasons = [],
+            q7_dependents: dependentsRaw,
+            q9_income: monthlyIncome 
+        } = diagnosisData;
+
+        const totalDebt = parseInt(totalDebtRaw || '0');
+        const dependents = parseInt(dependentsRaw || '1');
+        const isYoung = reductionReasons.includes('under_30');
+
+        // 2026년 최저 생계비 기준
+        const livelihoodCosts = { 1: 1538543, 2: 2538600, 3: 3246325, 4: 3954600 };
+        const baseLivelihood = livelihoodCosts[dependents] || livelihoodCosts[4];
+        
+        let monthlyPayment = Math.max(0, monthlyIncome - baseLivelihood);
+        let period = 36;
+        if (isYoung) { period = Math.max(24, period - 12); } // 청년 기간 단축 강화
+
+        const totalRepayment = monthlyPayment * period;
+        const writeOffAmount = totalDebt > totalRepayment ? totalDebt - totalRepayment : 0;
+
+        // 결과를 화면에 표시
+        document.getElementById('result-eligibility').textContent = '✅ 적합';
+        document.getElementById('result-payment').textContent = `약 ${Math.round(monthlyPayment / 10000).toLocaleString()}만 원`;
+        document.getElementById('result-payment-detail').textContent = `(소득 ${toManwon(monthlyIncome)} - 생계비 ${toManwon(baseLivelihood)})`;
+        document.getElementById('result-period').textContent = `${period}개월`;
+        document.getElementById('result-period-detail').textContent = isYoung ? "(청년 특례 적용)" : "(기본)";
+        document.getElementById('result-write-off').textContent = `${toManwon(writeOffAmount)}`;
+        document.getElementById('result-write-off-detail').textContent = `(총 채무 ${toManwon(totalDebt)})`;
+        
+        // 특화 분석 텍스트 생성
+        let specialAnalysis = '';
+        if (investment === 'yes') {
+            specialAnalysis += '주식/코인 채무도 조정 가능성이 높습니다. 투자 경위 소명이 중요합니다.\n';
+        }
+        if (isYoung) {
+            specialAnalysis += '청년 특별 감면 혜택으로 변제 기간 단축 및 추가 생계비 확보가 유리합니다.';
+        } else {
+            specialAnalysis += '부산회생법원의 최신 실무준칙에 따라, 추가 생계비를 적극 주장하여 변제금을 줄일 수 있습니다.';
+        }
+        document.getElementById('result-special').textContent = specialAnalysis;
+    };
+
+    // --- 상담 신청 관련 로직 ---
+    const requestConsultBtn = document.getElementById('request-consult-btn');
+    const consultForm = document.getElementById('consult-form');
+    const privacyAgree = document.getElementById('privacy-agree');
+    const submitFinalDataBtn = document.getElementById('submit-final-data');
+
+    requestConsultBtn.addEventListener('click', () => {
+        consultForm.style.display = 'block';
+        requestConsultBtn.style.display = 'none';
+    });
+
+    privacyAgree.addEventListener('change', () => {
+        submitFinalDataBtn.disabled = !privacyAgree.checked;
+    });
+
+    submitFinalDataBtn.addEventListener('click', async () => {
+        const name = document.getElementById('final-name').value;
+        const phone = document.getElementById('final-phone').value;
+
+        if (!name || !phone) {
+            alert('이름과 연락처를 모두 입력해주세요.');
+            return;
+        }
+        if (!privacyAgree.checked) {
+            alert('개인정보 수집 및 이용에 동의해주세요.');
+            return;
+        }
+
+        submitFinalDataBtn.disabled = true;
+        submitFinalDataBtn.textContent = '전송 중...';
+
+        try {
+            // Firestore에 저장할 최종 데이터
+            const finalData = {
+                ...diagnosisData,
+                name,
+                phone,
+                createdAt: new Date()
+            };
+
+            // 'consultations' 컬렉션에 데이터 추가
+            const docRef = await addDoc(collection(db, "consultations"), finalData);
+            console.log("Document written with ID: ", docRef.id);
+
+            alert('상담 신청이 성공적으로 접수되었습니다. 곧 연락드리겠습니다.');
+            // 폼 초기화
+            consultForm.style.display = 'none';
+            requestConsultBtn.style.display = 'block';
+            document.getElementById('final-name').value = '';
+            document.getElementById('final-phone').value = '';
+            privacyAgree.checked = false;
+
+        } catch (error) {
+            console.error("Error adding document: ", error);
+            alert('오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
+        } finally {
+            submitFinalDataBtn.disabled = false;
+            submitFinalDataBtn.textContent = '신청 완료';
+        }
+    });
+
+    // --- 유틸리티 함수 ---
+    const toManwon = (value) => `${Math.round(value / 10000).toLocaleString()}만 원`;
+
+    // 페이지 로드 시 초기화
     updateProgressBar();
 });

@@ -130,12 +130,12 @@
 
                             <p class="question-title">Q3. 현재 보유하신 총 채무(빚)의 규모는 어느 정도입니까?</p>
                             <div class="option-group-col" data-question="q3_total_debt">
+                                <button type="button" class="option-btn" data-value="0">1,000만원 미만</button> 
                                 <button type="button" class="option-btn" data-value="15000000">1,000만원 ~ 3,000만원</button>
                                 <button type="button" class="option-btn" data-value="40000000">3,000만원 ~ 5,000만원</button>
                                 <button type="button" class="option-btn" data-value="75000000">5,000만원 ~ 1억원</button>
                                 <button type="button" class="option-btn" data-value="150000000">1억원 ~ 2억원</button>
                                 <button type="button" class="option-btn" data-value="300000000">2억원 이상</button>
-                                <button type="button" class="option-btn" data-value="0">1,000만원 미만</button> 
                             </div>
 
                             <p class="question-title">Q4. 현재 보유하신 재산이 빚보다 많습니까?</p>
@@ -256,6 +256,9 @@
             </section>
         </main>
     </div>
-    <script src="main.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js" type="module"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js" type="module"></script>
+    <script src="firebase-config.js" type="module"></script>
+    <script src="main.js" type="module"></script>
 </body>
 </html>

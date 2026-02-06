@@ -1,56 +1,43 @@
-# Blueprint: Google Sheets Integration
+
+# Blueprint: Firebase Firestore Integration for Debt Relief Calculator
 
 ## Overview
 
-This document outlines the plan to integrate the web application with Google Sheets. The goal is to capture user input from the "AI 변제금 계산기" (AI Repayment Calculator) and save it into a Google Sheet for analysis.
+This document outlines the architecture and plan for a web-based debt relief eligibility calculator. The primary goal is to provide users in Busan, Ulsan, and Gyeongnam with a preliminary diagnosis for personal rehabilitation, capture their data securely, and handle consultation requests using **Firebase Firestore** as the backend.
 
-## Implemented Features (Current State)
+## Implemented Features & Code Cleanup
 
-*   **Static Website:** A single-page application with HTML, CSS, and JavaScript.
-*   **UI Components:**
-    *   Hero section with a call-to-action.
-    *   Information sections about personal rehabilitation.
-    *   A multi-step "AI 변제금 계산기" (AI Repayment Calculator).
-    *   Q&A section.
-    *   Footer with privacy policy link.
-*   **Styling:** Modern design with responsive elements.
-*   **Interactivity:**
-    *   Progress bar for the calculator.
-    *   Step-by-step navigation through the calculator questions.
-    *   Accordion-style Q&A.
+This iteration focuses on cleaning up the codebase, improving user experience, and implementing a robust backend with Firebase.
 
-## Plan for Current Request: Google Sheets Integration
+*   **UI/UX Improvements:**
+    *   Reordered the buttons in the "Total Debt" question (`q3_total_debt`) in `index.html` to be in a logical, ascending order, improving user intuition.
 
-The user wants to receive data from the application into a Google Sheet.
+*   **Code Refactoring & Structuring:**
+    *   **`firebase-config.js` Created & Modularized:** A dedicated, modular file for Firebase configuration has been created. It now initializes the Firebase app and exports the Firestore `db` instance, making it reusable and easy to manage.
+    *   **`main.js` Complete Refactor:**
+        *   **Switched to ES Modules:** Now uses `import` to get the `db` object from `firebase-config.js`, creating a clear dependency graph.
+        *   **Logic Separation:** The code is now structured with clear separation of concerns:
+            *   **UI Event Handling:** Manages all user interactions (button clicks, form navigation).
+            *   **Calculation Logic:** A dedicated `displayResults` function calculates the estimated payment, write-off amount, etc., based on user input.
+            *   **Data Submission Logic:** An `async` function now handles submitting the final data to Firestore using `addDoc` and `collection` for reliability.
+        *   **Replaced Google Sheets with Firestore:** The previous, less reliable `fetch` call to a Google Apps Script has been completely replaced by direct, secure communication with the Firestore database.
 
-### Step 1: Create a Google Apps Script Web App (Backend)
+*   **Backend:**
+    *   **Firebase Firestore:** Chosen as the backend database to securely store user diagnostic data and consultation requests in a collection named `consultations`.
 
-*   A Google Apps Script will be created to act as a simple web API.
-*   This script will have a `doPost` function that:
-    1.  Receives data (from the calculator form) via an HTTP POST request.
-    2.  Opens a specific Google Sheet.
-    3.  Appends the received data as a new row in the sheet.
-*   The code for this script will be saved in `google-apps-script.js` for the user's reference.
+## Current Plan: Finalization & Deployment
 
-### Step 2: Update the Frontend JavaScript
+### Step 1: Update `index.html` to use ES Modules
 
-*   The `main.js` file will be modified to handle the form submission.
-*   An event listener will be attached to the final "submit" button of the calculator.
-*   When the button is clicked, a `submitDataToSheet` function will be called.
-*   This function will:
-    1.  Gather the values from all the input fields in the calculator.
-    2.  Use the `fetch` API to send this data as a POST request to the deployed Google Apps Script URL.
-    3.  Show a confirmation or thank you message to the user upon successful submission.
+*   Ensure the `<script>` tags in `index.html` have the `type="module"` attribute. This is crucial for the `import`/`export` syntax in `main.js` and `firebase-config.js` to work correctly.
+*   Add script tags for the Firebase SDKs (`firebase-app` and `firebase-firestore`).
 
-### Step 3: Provide User Instructions
+### Step 2: Commit All Changes to Git
 
-*   Since the Google Sheet and Apps Script must be created and deployed within the user's own Google account, I will provide clear, step-by-step instructions on how to:
-    1.  Create a new Google Sheet and get its ID.
-    2.  Create a new Google Apps Script project.
-    3.  Paste the provided script code into the project.
-    4.  Update the script with their own Google Sheet ID.
-    5.  Deploy the script as a web app.
-    6.  Copy the generated web app URL.
-    7.  Paste the URL into the `main.js` file where indicated.
+*   All the recent changes (HTML button order, new `firebase-config.js`, refactored `main.js`, and this updated `blueprint.md`) will be committed to the Git repository with a clear message, e.g., "refactor: Clean up code and integrate Firebase".
 
-This approach creates a robust, serverless backend to connect the existing frontend application to Google Sheets.
+### Step 3: Push to GitHub
+
+*   The new commit will be pushed to the remote GitHub repository. This will trigger any configured CI/CD pipeline (like Vercel or Netlify deployments) to build and deploy the latest version of the application, making the changes live.
+
+This structured approach ensures the application is now more robust, maintainable, and scalable for future development.
