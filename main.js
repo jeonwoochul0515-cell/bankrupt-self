@@ -132,17 +132,19 @@ document.addEventListener('DOMContentLoaded', () => {
         submitFinalDataBtn.disabled = true;
         submitFinalDataBtn.textContent = '전송 중...';
 
+        // 1. 모든 폼 데이터 수집 (수정됨)
         const formData = {
             name: document.getElementById('final-name').value,
             phone: document.getElementById('final-phone').value,
             region: form.querySelector('[data-question="q1_region"] .selected')?.dataset.value || '',
-            debtType: [...form.querySelectorAll('[data-question="q2_debt_type"] .selected')].map(el => el.dataset.value).join(', '),
+            incomeType: form.querySelector('[data-question="q2_income_type"] .selected')?.dataset.value || '',
             totalDebt: form.querySelector('[data-question="q3_total_debt"] .selected')?.dataset.value || '',
             assetRatio: form.querySelector('[data-question="q4_asset_ratio"] .selected')?.dataset.value || '',
             investment: form.querySelector('[data-question="q5_investment"] .selected')?.dataset.value || '',
-            incomeSource: form.querySelector('[data-question="q6_income_source"] .selected')?.dataset.value || '',
+            reductionReasons: [...form.querySelectorAll('[data-question="q6_reduction_reasons"] .selected')].map(el => el.textContent.trim()).join(', '),
+            dependents: form.querySelector('[data-question="q7_dependents"] .selected')?.dataset.value || '',
+            extraCosts: [...form.querySelectorAll('[data-question="q8_extra_costs"] .selected')].map(el => el.textContent.trim()).join(', '),
             monthlyIncome: document.getElementById('monthly-income').value,
-            dependents: form.querySelector('[data-question="q7_dependents"] .selected')?.dataset.value || ''
         };
 
         fetch(APPS_SCRIPT_URL, {
@@ -152,7 +154,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 'Content-Type': 'application/json'
             }
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                // For CORS or other network errors, response.ok will be false
+                throw new Error(`Network response was not ok: ${response.statusText}`);
+            }
+            return response.json();
+        })
         .then(data => {
             if (data.result === 'success') {
                 alert('상담 신청이 성공적으로 접수되었습니다. 감사합니다.');
@@ -162,7 +170,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('final-phone').value = '';
                 privacyAgree.checked = false;
             } else {
-                throw new Error(data.error || '알 수 없는 오류가 발생했습니다.');
+                throw new Error(data.error || '알 수 없는 서버 오류가 발생했습니다.');
             }
         })
         .catch(error => {
@@ -180,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const name = document.getElementById('final-name').value;
         const phone = document.getElementById('final-phone').value;
 
-        if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL === 'YOUR_APPS_SCRIPT_URL') {
+        if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('YOUR_APPS_SCRIPT_URL')) {
             alert('오류: 스크립트 URL이 설정되지 않았습니다. 개발자에게 문의하세요.');
             return;
         }
