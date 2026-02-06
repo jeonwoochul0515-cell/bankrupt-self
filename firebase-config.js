@@ -6,14 +6,14 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
 
-// TODO: 이 곳에 당신의 Firebase 웹 앱 설정 정보를 붙여넣으세요.
+// 사용자가 제공한 Firebase 웹 앱 설정 정보입니다.
 const firebaseConfig = {
-  apiKey: "여기에_API_키를_입력하세요",
-  authDomain: "프로젝트ID.firebaseapp.com",
-  projectId: "프로젝트ID",
-  storageBucket: "프로젝트ID.appspot.com",
-  messagingSenderId: "발신자ID",
-  appId: "앱ID"
+  apiKey: "AIzaSyDj4pO2SJDiV3AC06mfYHYRa4Y8zws9mkg",
+  authDomain: "my-bankruptcy-app.firebaseapp.com",
+  projectId: "my-bankruptcy-app",
+  storageBucket: "my-bankruptcy-app.appspot.com",
+  messagingSenderId: "676844445609",
+  appId: "1:676844445609:web:e62aad4943937f327d6eb8"
 };
 
 // Firebase 앱을 초기화합니다.
