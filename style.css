@@ -83,7 +83,7 @@ h2 {
 }
 
 /* Pull the first card up into the hero section */
-.main-content > #diagnosis-section {
+.main-content > #reviews-section {
      margin-top: -50px;
 }
 
@@ -264,7 +264,7 @@ h2 {
     #diagnosis-section, #reviews-section, #qa-section {
         padding: 20px;
     }
-    .main-content > #diagnosis-section {
+    .main-content > #reviews-section {
         margin-top: -30px;
     }
     .question-box h3 { font-size: 1.5rem; }
