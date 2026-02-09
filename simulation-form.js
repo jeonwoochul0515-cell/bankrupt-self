@@ -55,6 +55,7 @@ class SimulationForm extends HTMLElement {
             .result-actions { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
             .action-btn { padding: 1rem; border-radius: 8px; font-size: 1.1rem; font-weight: 600; text-align: center; text-decoration: none; cursor: pointer; transition: all 0.3s; }
             #submit-consultation-btn { background-color: #E8A95A; color: white; border: none; }
+            #recommend-btn { background-color: #28a745; color: white; border: none; }
             #delete-data-btn { background-color: #e63946; color: white; border: none; }
             /* Modal Styles */
             .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; }
@@ -314,6 +315,7 @@ class SimulationForm extends HTMLElement {
                 </div>
                 <div class="result-actions">
                     <button id="submit-consultation-btn" class="action-btn">상담 신청하기</button>
+                    <a href="http://lawchungsong.vercel.app" target="_blank" id="recommend-btn" class="action-btn">부산회생법원 인근 변호사사무실 추천</a>
                     <button id="delete-data-btn" class="action-btn">모든 내 정보 삭제하기</button>
                 </div>
             </div>
