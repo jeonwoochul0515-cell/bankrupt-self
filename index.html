@@ -4,274 +4,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>부산경남 특화 개인회생 자가진단</title>
+    <title>청송law 개인회생 자가진단</title>
     
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#1A3A6D">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="회생진단">
-    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-LZFSX216W1"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+    
+    <!-- Scripts for Web Components and main logic -->
+    <script src="simulation-form.js" type="module" defer></script>
+    <script src="main.js" type="module" defer></script>
 
-      gtag('config', 'G-LZFSX216W1');
-    </script>
 </head>
 <body>
-    <!-- New Hero Section -->
-    <div class="hero-section">
-        <h1>부산경남 특화 개인회생 자가진단</h1>
-        <p>2026년 부산회생법원 실무지침 기준</p>
-    </div>
 
-    <!-- Main Content Area -->
-    <div class="container main-content">
-        <main>
-            <!-- Order Changed: Reviews and Q&A are now first -->
-            <section id="reviews-section">
-                <h2>실제 고객 후기</h2>
-                <div class="review-carousel">
-                    <div class="review-card">
-                        <div class="review-stars">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                        </div>
-                        <p class="review-text">"과도한 빚 때문에 매일 압박감에 시달렸는데, 상담받고 개인회생을 통해 새 삶을 얻었습니다. 정말 감사합니다."</p>
-                        <p class="reviewer">- 김OO님 (부산, 40대)</p>
-                    </div>
-                    <div class="review-card">
-                        <div class="review-stars">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                        </div>
-                        <p class="review-text">"자영업 실패로 모든 걸 포기하고 싶었지만, 이곳에서 희망을 봤습니다. 체계적인 절차 덕분에 빠르게 빚을 정리할 수 있었습니다."</p>
-                        <p class="reviewer">- 박OO님 (울산, 50대)</p>
-                    </div>
-                    <div class="review-card">
-                        <div class="review-stars">
-                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
-                        </div>
-                        <p class="review-text">"젊은 나이에 큰 빚을 져서 막막했는데, 청년 특별 혜택 덕분에 더 빨리 빚을 갚을 수 있게 되었어요. 정말 큰 힘이 되었습니다."</p>
-                        <p class="reviewer">- 이OO님 (경남, 20대)</p>
-                    </div>
-                </div>
-            </section>
+    <header class="main-header">
+        <div class="logo">
+            <i class="fas fa-balance-scale"></i>
+            <span>청송law</span>
+        </div>
+        <nav class="main-nav">
+            <a href="#features">주요 기능</a>
+            <a href="#simulation">진단 시작</a>
+            <a href="#reviews">고객 후기</a>
+        </nav>
+        <button class="menu-toggle"><i class="fas fa-bars"></i></button>
+    </header>
 
-            <section id="qa-section">
-                <h2>자주 묻는 질문 (Q&A)</h2>
-                <div class="qa-item">
-                    <div class="qa-question">
-                        <p>Q. 2026년부터 생계비가 오른다는데, 개인회생에 어떤 영향이 있나요?</p>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="qa-answer">
-                        <p>A. 네, 좋은 소식입니다! 2026년부터 1인 가구 최저생계비가 약 154만 원으로 인상됩니다. 개인회생에서는 월 소득에서 이 생계비를 제외한 나머지 금액을 변제금으로 내게 되므로, 생계비가 오르면 월 변제금이 줄어드는 효과가 있습니다. 즉, 매달 갚아야 하는 돈이 줄어들어 부담이 덜해집니다. 제 계산기는 이 최신 기준을 이미 반영하여 결과를 보여드리고 있습니다.</p>
-                    </div>
-                </div>
-                <div class="qa-item">
-                    <div class="qa-question">
-                        <p>Q. 개인회생, 아무나 신청할 수 있나요? (신청 자격)</p>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="qa-answer">
-                        <p>A. 아니요, 몇 가지 조건이 있어요. 우선, 빚이 재산보다 많아야 하고, 꾸준한 수입이 있어야 해요. 그리고 빚의 규모가 무담보 채무는 10억 원, 담보 채무는 15억 원을 넘지 않아야 합니다. 제 AI 진단기로 기본 자격을 바로 확인해 보세요!</p>
-                    </div>
-                </div>
-                <div class="qa-item">
-                    <div class="qa-question">
-                        <p>Q. 변호사 없이 혼자 진행해도 괜찮을까요?</p>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="qa-answer">
-                        <p>A. 법적으로는 가능하지만, 현실적으로는 매우 어려워요. 준비할 서류도 많고, 법원의 질문에 논리적으로 답변해야 하거든요. 특히 부산회생법원은 최신 실무준칙을 잘 아는 전문가와 함께해야 변제금을 최대한 줄이고 기간을 단축할 수 있습니다.</p>
-                    </div>
-                </div>
-                <div class="qa-item">
-                    <div class="qa-question">
-                        <p>Q. 상담만 받아도 돈을 내야 하나요?</p>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="qa-answer">
-                        <p>A. 전혀요! 저희와 함께하는 법률 사무소에서는 첫 상담을 무료로 해드리고 있어요. 내 상황이 개인회생에 적합한지, 앞으로 어떻게 진행될지 부담 없이 물어보세요.</p>
-                    </div>
-                </div>
-                <div class="qa-item">
-                    <div class="qa-question">
-                        <p>Q. 요즘 주식/코인으로 빚진 사람도 개인회생이 되나요?</p>
-                        <i class="fas fa-chevron-down"></i>
-                    </div>
-                    <div class="qa-answer">
-                        <p>A. 네, 가능합니다! 예전에는 어려웠지만, 최근에는 투자 실패로 인한 빚도 개인회생으로 구제받는 경우가 많아졌어요. 부산회생법원은 투자 경위나 자금 사용처를 잘 소명하면 긍정적으로 검토해 주는 편입니다. 솔직하게 상황을 설명하는 것이 중요해요.</p>
-                    </div>
-                </div>
-            </section>
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h1 class="hero-title">1분 만에 예상 탕감액 확인하기</h1>
+                <p class="hero-subtitle">2026년 최신 생계비 기준 반영, 부산회생법원 특화 분석까지!</p>
+                <a href="#simulation" class="cta-button">무료로 내 탕감액 확인하기 <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </section>
 
-            <!-- Diagnosis section is now last -->
-            <section id="diagnosis-section">
-                <h2>AI 변제금 계산기 (2026년 기준)</h2>
-                <div id="progress-bar-container">
-                    <div id="progress-bar"></div>
-                </div>
+        <section id="features" class="feature-section">
+            <h2 class="section-title">청송law 자가진단, 무엇이 다른가요?</h2>
+            <div class="features-grid"></div>
+        </section>
 
-                <form id="diagnosis-form">
-                    <!-- Step 1: Basic Qualification -->
-                    <div class="form-step active" data-step="1">
-                        <div class="question-box">
-                            <h3>[1단계] 관할 및 기본 자격 확인</h3>
-                            
-                            <p class="question-title">Q1. 현재 거주하시거나 근무하시는 지역은 어디입니까?</p>
-                            <div class="option-group-col" data-question="q1_region">
-                                <button type="button" class="option-btn" data-value="busan">부산광역시</button>
-                                <button type="button" class="option-btn" data-value="ulsan">울산광역시</button>
-                                <button type="button" class="option-btn" data-value="gyeongnam">경상남도</button>
-                                <button type="button" class="option-btn" data-value="other">그 외 지역</button>
-                            </div>
+        <section id="simulation" class="simulation-section">
+            <h2 class="section-title">지금 바로, 회생 가능성을 진단해보세요</h2>
+            <simulation-form></simulation-form>
+        </section>
+        
+        <section id="reviews" class="review-section">
+            <h2 class="section-title">실제 고객들의 생생한 후기</h2>
+            <div class="review-carousel-wrapper">
+                <div class="review-carousel"></div>
+                 <button class="carousel-btn prev"><i class="fas fa-chevron-left"></i></button>
+                <button class="carousel-btn next"><i class="fas fa-chevron-right"></i></button>
+            </div>
+        </section>
+    </main>
 
-                            <p class="question-title">Q2. 현재 귀하의 소득 활동 형태는 무엇입니까?</p>
-                            <div class="option-group-col" data-question="q2_income_type">
-                                <button type="button" class="option-btn" data-value="employee_insured">직장인 (4대보험 가입)</button>
-                                <button type="button" class="option-btn" data-value="employee_uninsured">직장인 (4대보험 미가입 등)</button>
-                                <button type="button" class="option-btn" data-value="business_freelancer">개인사업자 / 프리랜서</button>
-                                <button type="button" class="option-btn" data-value="no_income">현재 소득 없음</button>
-                            </div>
+    <footer class="main-footer-container">
+        <p>&copy; 2024 청송law. 모든 권리 보유.</p>
+    </footer>
 
-                            <p class="question-title">Q3. 현재 보유하신 총 채무(빚)의 규모는 어느 정도입니까?</p>
-                            <div class="option-group-col" data-question="q3_total_debt">
-                                <button type="button" class="option-btn" data-value="0">1,000만원 미만</button> 
-                                <button type="button" class="option-btn" data-value="15000000">1,000만원 ~ 3,000만원</button>
-                                <button type="button" class="option-btn" data-value="40000000">3,000만원 ~ 5,000만원</button>
-                                <button type="button" class="option-btn" data-value="75000000">5,000만원 ~ 1억원</button>
-                                <button type="button" class="option-btn" data-value="150000000">1억원 ~ 2억원</button>
-                                <button type="button" class="option-btn" data-value="300000000">2억원 이상</button>
-                            </div>
+    <!-- Templates for Web Components -->
+    <template id="feature-card-template">
+        <div class="feature-card">
+            <i class="fas feature-icon"></i>
+            <h3 class="feature-title"></h3>
+            <p class="feature-description"></p>
+        </div>
+    </template>
 
-                            <p class="question-title">Q4. 현재 보유하신 재산이 빚보다 많습니까?</p>
-                            <div class="option-group-col" data-question="q4_asset_ratio">
-                                <button type="button" class="option-btn" data-value="debt_higher">아니오, 빚이 더 많습니다.</button>
-                                <button type="button" class="option-btn" data-value="asset_higher">예, 재산이 더 많습니다.</button>
-                            </div>
-                        </div>
-                    </div>
+    <template id="review-card-template">
+        <div class="review-card">
+            <div class="review-stars"></div>
+            <p class="review-text"></p>
+            <p class="reviewer"></p>
+        </div>
+    </template>
 
-                    <!-- Step 2: In-depth Diagnosis -->
-                    <div class="form-step" data-step="2">
-                        <div class="question-box">
-                            <h3>[2단계] 부산회생법원 특화 정밀 진단</h3>
-
-                            <p class="question-title">Q5. 채무 발생의 주된 원인 중 '주식'이나 '코인' 투자가 포함되어 있습니까?</p>
-                            <div class="option-group-col" data-question="q5_investment">
-                                <button type="button" class="option-btn" data-value="yes">예 (주식/코인 손실 비중이 큼)</button>
-                                <button type="button" class="option-btn" data-value="no">아니오</button>
-                            </div>
-
-                            <p class="question-title">Q6. 귀하는 다음 중 해당되는 사항이 있습니까? (중복 선택 가능)</p>
-                            <div class="option-group-col checkbox-group" data-question="q6_reduction_reasons">
-                                <button type="button" class="option-btn checkbox" data-value="under_30">만 34세 이하 청년 (2026년 기준)</button>
-                                <button type="button" class="option-btn checkbox" data-value="over_65">만 65세 이상 고령자</button>
-                                <button type="button" class="option-btn checkbox" data-value="multiple_children">미성년 자녀 2명 이상 양육</button>
-                                <button type="button" class="option-btn checkbox" data-value="disabled">중증 장애인</button>
-                                <button type="button" class="option-btn checkbox" data-value="single_parent">한부모 가정</button>
-                                <button type="button" class="option-btn checkbox" data-value="rental_fraud">전세사기 피해자</button>
-                            </div>
-                             <button type="button" class="next-btn">다음</button>
-                        </div>
-                    </div>
-                    
-                    <!-- Step 3: Data Input -->
-                    <div class="form-step" data-step="3">
-                        <div class="question-box">
-                            <h3>[3단계] 변제금 산출을 위한 데이터 입력</h3>
-
-                            <p class="question-title">Q7. 부양해야 할 가족 수는 본인을 포함해 몇 명입니까?</p>
-                            <div class="option-group-col" data-question="q7_dependents">
-                                <button type="button" class="option-btn" data-value="1">1인 가구 (본인 혼자)</button>
-                                <button type="button" class="option-btn" data-value="2">2인 가구</button>
-                                <button type="button" class="option-btn" data-value="3">3인 가구</button>
-                                <button type="button" class="option-btn" data-value="4">4인 가구 이상</button>
-                            </div>
-
-                            <p class="question-title">Q8. 추가로 지출되는 비용 중 인정받고 싶은 항목이 있습니까? (중복 선택)</p>
-                            <div class="option-group-col checkbox-group" data-question="q8_extra_costs">
-                               <button type="button" class="option-btn checkbox" data-value="rent">주거비 (월세 등)</button>
-                               <button type="button" class="option-btn checkbox" data-value="medical">의료비</button>
-                               <button type="button" class="option-btn checkbox" data-value="education">교육비</button>
-                            </div>
-
-                            <p class="question-title">Q9. 월 평균 소득(세후 실수령액)을 입력해주세요.</p>
-                            <div class="input-group" data-question="q9_income">
-                                <input type="number" id="monthly-income" placeholder="숫자만 입력 (예: 3000000)">
-                                <span>원</span>
-                            </div>
-                            <button type="button" id="calculate-btn" class="submit-btn">결과 확인하기</button>
-                        </div>
-                    </div>
-
-                    <!-- Step 4 & 5: Results & CTA -->
-                    <div class="form-step" data-step="4">
-                        <div class="question-box">
-                            <h3 id="result-title"></h3>
-                            <div id="result-wrapper">
-                                <div class="result-item">
-                                    <h4>신청 자격</h4>
-                                    <p id="result-eligibility">✅ 적합</p>
-                                </div>
-                                <div class="result-item">
-                                    <h4>예상 월 변제금</h4>
-                                    <p id="result-payment"></p>
-                                    <small id="result-payment-detail"></small>
-                                </div>
-                                <div class="result-item">
-                                    <h4>예상 변제 기간</h4>
-                                    <p id="result-period">36개월</p>
-                                    <small id="result-period-detail">(기본)</small>
-                                </div>
-                                <div class="result-item">
-                                    <h4>예상 총 탕감액</h4>
-                                    <p id="result-write-off"></p>
-                                    <small id="result-write-off-detail">(원금 기준)</small>
-                                </div>
-                                <div class="result-item special">
-                                    <h4>부산회생법원 특화 분석</h4>
-                                    <p id="result-special"></p>
-                                </div>
-                            </div>
-                            
-                            <div id="final-cta">
-                                <p class="final-intro">AI 진단은 참고용이며, 정확한 확정을 위해 법률 전문가의 검토가 필요합니다.</p>
-                                <button type="button" id="request-consult-btn" class="submit-btn">내 결과 저장하고 무료 정밀 상담 신청하기</button>
-                                <div id="consult-form" style="display: none;">
-                                     <div class="input-group">
-                                        <input type="text" id="final-name" placeholder="이름">
-                                    </div>
-                                    <div class="input-group">
-                                        <input type="tel" id="final-phone" placeholder="연락처 ('-' 없이 입력)">
-                                    </div>
-                                    <div class="input-group-checkbox">
-                                        <input type="checkbox" id="privacy-agree">
-                                        <label for="privacy-agree">개인정보 수집 및 이용 동의</label>
-                                    </div>
-                                    <button type="button" id="submit-final-data" class="submit-btn" disabled>신청 완료</button>
-                                </div>
-                                <a href="http://lawchungsong.vercel.app" target="_blank" style="text-decoration: none;">
-                                    <button type="button" id="recommend-lawyer-btn">부산회생법원 인근 변호사 추천받기</button>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-
-                </form>
-            </section>
-        </main>
-    </div>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js" type="module"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js" type="module"></script>
-    <script src="firebase-config.js" type="module"></script>
-    <script src="main.js" type="module"></script>
 </body>
 </html>

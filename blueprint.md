@@ -1,43 +1,31 @@
 
-# Blueprint: Firebase Firestore Integration for Debt Relief Calculator
+# **개인회생 자가진단 플랫폼: 청송law**
 
-## Overview
+## **1. 프로젝트 개요**
 
-This document outlines the architecture and plan for a web-based debt relief eligibility calculator. The primary goal is to provide users in Busan, Ulsan, and Gyeongnam with a preliminary diagnosis for personal rehabilitation, capture their data securely, and handle consultation requests using **Firebase Firestore** as the backend.
+본 프로젝트는 법률사무소 청송law의 디지털 전환을 위한 핵심 전략으로, 개인회생 및 파산 가능성을 비대면으로 진단하는 웹 기반 플랫폼을 구축하는 것을 목표로 한다. 사용자는 복잡한 법률 지식 없이도 자신의 재무 상태를 입력하여 2026년 최신 법적 기준에 따른 예상 변제금과 탕감률을 실시간으로 확인할 수 있다. 특히 부산회생법원의 실무 준칙을 반영한 지역 특화 로직을 통해 타 서비스와 차별화된 정밀 분석을 제공한다.
 
-## Implemented Features & Code Cleanup
+## **2. 현재까지 구현된 기능 (v0.1)**
 
-This iteration focuses on cleaning up the codebase, improving user experience, and implementing a robust backend with Firebase.
+*   **기본 HTML/CSS 구조**: `index.html`, `style.css`에 기본적인 웹 페이지 구조와 스타일이 적용되어 있음.
+*   **다단계 진단 폼**: 자가진단을 위한 여러 단계의 질문 폼이 구현되어 있음.
+*   **Q&A 및 고객 후기**: 기본적인 정보 제공을 위한 콘텐츠 섹션이 포함됨.
 
-*   **UI/UX Improvements:**
-    *   Reordered the buttons in the "Total Debt" question (`q3_total_debt`) in `index.html` to be in a logical, ascending order, improving user intuition.
+## **3. 이번 업데이트 계획 (v0.2): 메인 화면 디자인 개편**
 
-*   **Code Refactoring & Structuring:**
-    *   **`firebase-config.js` Created & Modularized:** A dedicated, modular file for Firebase configuration has been created. It now initializes the Firebase app and exports the Firestore `db` instance, making it reusable and easy to manage.
-    *   **`main.js` Complete Refactor:**
-        *   **Switched to ES Modules:** Now uses `import` to get the `db` object from `firebase-config.js`, creating a clear dependency graph.
-        *   **Logic Separation:** The code is now structured with clear separation of concerns:
-            *   **UI Event Handling:** Manages all user interactions (button clicks, form navigation).
-            *   **Calculation Logic:** A dedicated `displayResults` function calculates the estimated payment, write-off amount, etc., based on user input.
-            *   **Data Submission Logic:** An `async` function now handles submitting the final data to Firestore using `addDoc` and `collection` for reliability.
-        *   **Replaced Google Sheets with Firestore:** The previous, less reliable `fetch` call to a Google Apps Script has been completely replaced by direct, secure communication with the Firestore database.
+현재의 단순한 화면 구성을 탈피하여, 사용자의 신뢰를 얻고 즉각적인 행동을 유도할 수 있는 동적이고 세련된 디자인으로 전면 개편한다.
 
-*   **Backend:**
-    *   **Firebase Firestore:** Chosen as the backend database to securely store user diagnostic data and consultation requests in a collection named `consultations`.
+### **상세 작업 내역:**
 
-## Current Plan: Finalization & Deployment
+1.  **새로운 `blueprint.md` 파일 생성**: 프로젝트의 목적, 현황, 향후 계획을 정의하여 개발의 방향성을 명확히 한다. (완료)
+2.  **`index.html` 구조 개편**:
+    *   **히어로 섹션 강화**: "1분만에 예상 탕감액 확인하기"와 같이 사용자의 행동을 직접적으로 유도하는 강력한 헤드라인과 콜투액션(CTA) 버튼을 전면에 배치한다.
+    *   **콘텐츠 재배치**: 사용자의 시선 흐름에 맞춰 핵심 기능(자가진단)을 먼저 제시하고, 신뢰도를 보강하는 부가 정보(성공사례, Q&A)를 후순위로 배치한다.
+    *   **Web Components 도입 준비**: 향후 재사용 가능한 UI 요소(예: 카드, 버튼)를 만들기 위한 기반을 다진다. `<template>` 태그를 활용하여 커스텀 요소의 구조를 정의한다.
+3.  **`style.css` 디자인 혁신**:
+    *   **프리미엄 디자인 적용**: 깊이감 있는 그림자, 부드러운 전환 효과, 그라데이션 색상 등을 활용하여 고급스러운 느낌을 연출한다.
+    *   **모바일 반응성 강화**: 모든 디바이스에서 최적의 사용자 경험을 제공하도록 미디어 쿼리를 세밀하게 조정한다.
+    *   **인터랙티브 요소 디자인**: 사용자의 클릭을 유도하는 버튼과 시각적으로 명확한 입력 필드를 디자인한다.
 
-### Step 1: Update `index.html` to use ES Modules
-
-*   Ensure the `<script>` tags in `index.html` have the `type="module"` attribute. This is crucial for the `import`/`export` syntax in `main.js` and `firebase-config.js` to work correctly.
-*   Add script tags for the Firebase SDKs (`firebase-app` and `firebase-firestore`).
-
-### Step 2: Commit All Changes to Git
-
-*   All the recent changes (HTML button order, new `firebase-config.js`, refactored `main.js`, and this updated `blueprint.md`) will be committed to the Git repository with a clear message, e.g., "refactor: Clean up code and integrate Firebase".
-
-### Step 3: Push to GitHub
-
-*   The new commit will be pushed to the remote GitHub repository. This will trigger any configured CI/CD pipeline (like Vercel or Netlify deployments) to build and deploy the latest version of the application, making the changes live.
-
-This structured approach ensures the application is now more robust, maintainable, and scalable for future development.
+---
+*이 문서는 프로젝트가 진행됨에 따라 지속적으로 업데이트될 예정입니다.*
