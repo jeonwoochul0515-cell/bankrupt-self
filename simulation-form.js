@@ -202,13 +202,19 @@ class SimulationForm extends HTMLElement {
         this.shadowRoot.querySelectorAll('.form-step').forEach(step => step.classList.remove('active'));
         const currentStepEl = this.shadowRoot.querySelector(`.form-step[data-step="${this.currentStep}"]`);
         if (currentStepEl) currentStepEl.classList.add('active');
-        
-        const progress = this.currentStep >= this.totalSteps -1 ? 100 : (this.currentStep / (this.totalSteps - 2)) * 100;
+
+        // 프로그레스 바 로직 수정: 결과 화면(currentStep: 6)에 도달해야 100%가 되도록 변경
+        const progress = (this.currentStep / (this.totalSteps - 1)) * 100;
         this.shadowRoot.querySelector('#progress-bar').style.width = `${progress}%`;
 
-        this.shadowRoot.querySelector('#prev-btn').style.display = (this.currentStep === 0 || this.currentStep === this.totalSteps-1) ? 'none' : 'inline-block';
+        // 이전 버튼 표시 로직
+        this.shadowRoot.querySelector('#prev-btn').style.display = (this.currentStep === 0 || this.currentStep === this.totalSteps - 1) ? 'none' : 'inline-block';
+        
+        // 다음/결과보기 버튼 텍스트 로직
         this.shadowRoot.querySelector('#next-btn').textContent = this.currentStep === this.totalSteps - 2 ? '결과 보기' : '다음';
-        this.shadowRoot.querySelector('#next-btn').style.display = this.currentStep >= this.totalSteps - 2 ? 'none' : 'inline-block';
+        
+        // 다음/결과보기 버튼 표시 로직 수정: 결과 화면(currentStep: 6)에서만 숨김 처리
+        this.shadowRoot.querySelector('#next-btn').style.display = this.currentStep === this.totalSteps - 1 ? 'none' : 'inline-block';
     }
     
     collectInputData(){
