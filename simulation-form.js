@@ -112,7 +112,6 @@ class SimulationForm extends HTMLElement {
                     <div class="form-step" data-step="4">
                          <p class="question-title">Q7. 본인을 포함한 부양가족은 몇 명인가요?</p>
                         <div class="option-group" data-question="dependents">
-                            <button type="button" class="option-btn" data-value="0">0명 (1인 가구)</button>
                             <button type="button" class="option-btn" data-value="1">1명</button>
                             <button type="button" class="option-btn" data-value="2">2명</button>
                             <button type="button" class="option-btn" data-value="3">3명</button>
