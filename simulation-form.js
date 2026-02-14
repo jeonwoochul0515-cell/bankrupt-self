@@ -1,5 +1,5 @@
 
-import { db } from './firebase-init.js';
+import { db } from './firebase-config.js';
 import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // 2026년 기준 중위소득 60% (법원 인정 생계비)
@@ -393,28 +393,27 @@ class SimulationForm extends HTMLElement {
             return;
         }
 
-        const simulationAnswers = {};
-        const simulationResults = {};
-
-        for (const key in this.formData) {
-            if (key.startsWith('result_')) {
-                simulationResults[this.questionMap[key] || key] = this.formData[key];
-            } else {
-                simulationAnswers[this.questionMap[key] || key] = this.formData[key];
-            }
-        }
-
-        const consultationData = {
-            requesterInfo: {
-                name: name,
-                phone: phone,
-            },
-            simulationAnswers: simulationAnswers,
-            simulationResults: simulationResults,
-            createdAt: serverTimestamp()
-        };
-
         try {
+            const simulationAnswers = {};
+            const simulationResults = {};
+
+            for (const key in this.formData) {
+                if (key.startsWith('result_')) {
+                    simulationResults[questionMap[key] || key] = this.formData[key];
+                } else {
+                    simulationAnswers[questionMap[key] || key] = this.formData[key];
+                }
+            }
+
+            const consultationData = {
+                requesterInfo: {
+                    name: name,
+                    phone: phone,
+                },
+                simulationAnswers: simulationAnswers,
+                simulationResults: simulationResults,
+                createdAt: serverTimestamp()
+            };
             const docRef = await addDoc(collection(db, "consultations"), consultationData);
             console.log("Document written with ID: ", docRef.id);
             alert(`${name}님, 상담 신청이 완료되었습니다. 곧 연락드리겠습니다.`);

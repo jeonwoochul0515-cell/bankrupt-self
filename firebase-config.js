@@ -3,8 +3,8 @@
 // Firebase 콘솔에서 당신의 웹 앱 설정을 찾을 수 있습니다.
 
 // Firebase SDK에서 필요한 함수들을 가져옵니다.
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 // 사용자가 제공한 Firebase 웹 앱 설정 정보입니다.
 const firebaseConfig = {
