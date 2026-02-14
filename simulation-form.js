@@ -331,7 +331,7 @@ class SimulationForm extends HTMLElement {
         
         this.shadowRoot.querySelector('#privacy-policy-link').addEventListener('click', () => this.loadPrivacyPolicy());
         this.shadowRoot.querySelector('#delete-data-btn').addEventListener('click', () => this.deleteData());
-        this.shadowRoot.querySelector('#submit-consultation-btn').addEventListener('click', () => this.submitConsultation());
+        this.shadowRoot.querySelector('#submit-consultation-btn').addEventListener('click', (event) => this.submitConsultation(event));
         
         const modal = this.shadowRoot.querySelector('#privacy-modal');
         this.shadowRoot.querySelector('#close-modal-btn').addEventListener('click', () => modal.style.display = 'none');
@@ -362,7 +362,8 @@ class SimulationForm extends HTMLElement {
         this.connectedCallback();
     }
     
-    async submitConsultation() {
+    async submitConsultation(event) {
+        event.preventDefault(); // Prevent default form submission
         const questionMap = {
             jurisdiction: "Q1. 거주지",
             min_debt: "Q2. 총 채무 1천만원 이상 여부",
