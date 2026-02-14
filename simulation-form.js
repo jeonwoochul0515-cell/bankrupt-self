@@ -96,10 +96,10 @@ class SimulationForm extends HTMLElement {
 
                     <!-- Step 2: 채무 및 재산 -->
                     <div class="form-step" data-step="2">
-                        <p class="question-title">Q4. 총 채무액은 얼마인가요? (단위: 백만원)</p>
-                        <div class="input-group"><input type="number" data-question="total_debt" placeholder="100"><span>백만원</span></div>
-                        <p class="question-title">Q5. 총 재산가치는 얼마인가요? (단위: 백만원)</p>
-                        <div class="input-group"><input type="number" data-question="total_assets" placeholder="50"><span>백만원</span></div>
+                        <p class="question-title">Q4. 총 채무액은 얼마인가요? (단위: 만원)</p>
+                        <div class="input-group"><input type="number" data-question="total_debt" placeholder="10000"><span>만원</span></div>
+                        <p class="question-title">Q5. 총 재산가치는 얼마인가요? (단위: 만원)</p>
+                        <div class="input-group"><input type="number" data-question="total_assets" placeholder="5000"><span>만원</span></div>
                     </div>
 
                     <!-- Step 3: 소득 -->
@@ -259,8 +259,8 @@ class SimulationForm extends HTMLElement {
         const dependents = parseInt(this.formData.dependents) || 0;
         const livelihoodCost = LIVELIHOOD_COST_2026[dependents] || LIVELIHOOD_COST_2026[1];
         const monthlyIncome = parseFloat(this.formData.monthly_income) || 0;
-        const liquidationValue = parseFloat(this.formData.total_assets) * 1_000_000 || 0;
-        const totalDebt = parseFloat(this.formData.total_debt) * 1_000_000 || 0;
+        const liquidationValue = parseFloat(this.formData.total_assets) * 10_000 || 0; // Convert 만원 to 원 for calculation
+        const totalDebt = parseFloat(this.formData.total_debt) * 10_000 || 0; // Convert 만원 to 원 for calculation
 
         let availableIncome = monthlyIncome - livelihoodCost;
         if (availableIncome <= 0) {
