@@ -16,6 +16,7 @@ const CONSTANTS = {
     },
     HOUSING_LIMIT: {
         "SEOUL": 589000,
+        "SUWON": 430000,
         "METRO_OVER": 430000,
         "BUSAN": 229000,
         "METRO": 229000,
@@ -33,7 +34,7 @@ class SimulationForm extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
         this.currentStep = 0;
-        this.totalSteps = 10; // 0~8: 질문, 9: 결과
+        this.totalSteps = 9; // 0~7: 질문, 8: 결과
         this.formData = JSON.parse(localStorage.getItem('formData')) || {};
         this.render();
     }

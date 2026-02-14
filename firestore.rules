@@ -5,7 +5,7 @@ service cloud.firestore {
       allow create: if true;
     }
     match /{document=**} {
-      allow read, write: if request.time < timestamp.date(2024, 8, 2);
+      allow read, write: if request.time < timestamp.date(2027, 2, 14);
     }
   }
 }
