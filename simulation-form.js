@@ -1,4 +1,7 @@
 
+import { db } from './firebase-init.js';
+import { collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
 // 2026년 기준 중위소득 60% (법원 인정 생계비)
 const LIVELIHOOD_COST_2026 = {
     0: 1538543, // 1인 가구
@@ -204,17 +207,11 @@ class SimulationForm extends HTMLElement {
         const currentStepEl = this.shadowRoot.querySelector(`.form-step[data-step="${this.currentStep}"]`);
         if (currentStepEl) currentStepEl.classList.add('active');
 
-        // 프로그레스 바 로직 수정: 결과 화면(currentStep: 6)에 도달해야 100%가 되도록 변경
         const progress = (this.currentStep / (this.totalSteps - 1)) * 100;
         this.shadowRoot.querySelector('#progress-bar').style.width = `${progress}%`;
 
-        // 이전 버튼 표시 로직
         this.shadowRoot.querySelector('#prev-btn').style.display = (this.currentStep === 0 || this.currentStep === this.totalSteps - 1) ? 'none' : 'inline-block';
-        
-        // 다음/결과보기 버튼 텍스트 로직
         this.shadowRoot.querySelector('#next-btn').textContent = this.currentStep === this.totalSteps - 2 ? '결과 보기' : '다음';
-        
-        // 다음/결과보기 버튼 표시 로직 수정: 결과 화면(currentStep: 6)에서만 숨김 처리
         this.shadowRoot.querySelector('#next-btn').style.display = this.currentStep === this.totalSteps - 1 ? 'none' : 'inline-block';
     }
     
@@ -282,13 +279,18 @@ class SimulationForm extends HTMLElement {
 
         const totalWriteOff = totalDebt - totalRepayment;
         const writeOffRate = totalDebt > 0 ? (totalWriteOff / totalDebt) * 100 : 0;
+        
+        this.formData.result_monthly_repayment = Math.round(availableIncome);
+        this.formData.result_repayment_period = repaymentPeriod;
+        this.formData.result_total_write_off = Math.round(totalWriteOff);
+        this.formData.result_write_off_rate = writeOffRate.toFixed(1);
 
         const resultsHTML = `
             <h3 style="text-align:center; margin-bottom: 2rem;">AI 진단 결과 요약</h3>
             <div class="result-grid">
-                <div class="result-item"><h4>예상 월 변제금</h4><p>${Math.round(availableIncome).toLocaleString()}원</p></div>
-                <div class="result-item"><h4>예상 변제 기간</h4><p>${repaymentPeriod}개월</p></div>
-                <div class="result-item full-width"><h4>예상 총 탕감액 (원금 기준)</h4><p id="result-write-off">약 ${Math.round(totalWriteOff).toLocaleString()}원 (${writeOffRate.toFixed(1)}%)</p></div>
+                <div class="result-item"><h4>예상 월 변제금</h4><p>${this.formData.result_monthly_repayment.toLocaleString()}원</p></div>
+                <div class="result-item"><h4>예상 변제 기간</h4><p>${this.formData.result_repayment_period}개월</p></div>
+                <div class="result-item full-width"><h4>예상 총 탕감액 (원금 기준)</h4><p id="result-write-off">약 ${this.formData.result_total_write_off.toLocaleString()}원 (${this.formData.result_write_off_rate}%)</p></div>
                 <div class="result-item full-width"><h4>부산회생법원 특화 분석</h4><p>${this.formData.investment_loss === 'yes' ? '주식/코인 투자 손실이 있을 경우, 부산법원에서는 투자 경위와 자금 사용처에 대한 소명을 중요하게 봅니다. 전문적인 서류 준비가 변제금 상향을 막는 핵심이 될 수 있습니다.' : '최근 채무 사용 내역이 건전하여, 부산법원에서 긍정적인 결과를 기대할 수 있습니다. 전문가와 함께 최적의 변제 계획을 세워보세요.'}</p></div>
             </div>
         `;
@@ -301,6 +303,8 @@ class SimulationForm extends HTMLElement {
         if (isHtml) {
              finalHtml = content;
         } else {
+            this.formData.result_title = title;
+            this.formData.result_content = content;
             finalHtml = `<h3 style="text-align:center;">${title}</h3><p style="text-align:center; font-size: 1.1rem; padding: 1rem;">${content}</p>`;
         }
         
@@ -322,12 +326,10 @@ class SimulationForm extends HTMLElement {
         `;
         resultStep.innerHTML = finalHtml;
         
-        // Add event listeners for new elements
         this.shadowRoot.querySelector('#privacy-policy-link').addEventListener('click', () => this.loadPrivacyPolicy());
         this.shadowRoot.querySelector('#delete-data-btn').addEventListener('click', () => this.deleteData());
         this.shadowRoot.querySelector('#submit-consultation-btn').addEventListener('click', () => this.submitConsultation());
         
-        // Modal listeners
         const modal = this.shadowRoot.querySelector('#privacy-modal');
         this.shadowRoot.querySelector('#close-modal-btn').addEventListener('click', () => modal.style.display = 'none');
         modal.addEventListener('click', (e) => { if(e.target === modal) { modal.style.display = 'none'; } });
@@ -353,12 +355,27 @@ class SimulationForm extends HTMLElement {
         this.formData = {};
         alert('모든 정보가 삭제되었습니다.');
         this.currentStep = 0;
-        // Re-render from scratch
         this.render(); 
         this.connectedCallback();
     }
     
-    submitConsultation() {
+    async submitConsultation() {
+        const questionMap = {
+            jurisdiction: "Q1. 거주지",
+            min_debt: "Q2. 총 채무 1천만원 이상 여부",
+            income_source: "Q3. 소득 형태",
+            total_debt: "Q4. 총 채무액",
+            total_assets: "Q5. 총 재산가치",
+            monthly_income: "Q6. 월 평균 소득",
+            dependents: "Q7. 부양가족 수",
+            investment_loss: "Q8. 주식/코인 투자 손실 여부",
+            result_monthly_repayment: "예상 월 변제금",
+            result_repayment_period: "예상 변제 기간",
+            result_total_write_off: "예상 총 탕감액",
+            result_write_off_rate: "예상 탕감률",
+            result_title: "진단 결과 요약",
+            result_content: "진단 결과 상세 내용"
+        };
         const name = this.shadowRoot.querySelector('#user_name').value;
         const phone = this.shadowRoot.querySelector('#user_phone').value;
         const agree = this.shadowRoot.querySelector('#privacy-agree').checked;
@@ -372,12 +389,36 @@ class SimulationForm extends HTMLElement {
             return;
         }
 
-        this.formData.user_name = name;
-        this.formData.user_phone = phone;
-        this.saveToLocalStorage();
+        const simulationAnswers = {};
+        const simulationResults = {};
 
-        // Here you would typically send the data to a server
-        alert(`${name}님, 상담 신청이 완료되었습니다. 곧 연락드리겠습니다.`);
+        for (const key in this.formData) {
+            if (key.startsWith('result_')) {
+                simulationResults[this.questionMap[key] || key] = this.formData[key];
+            } else {
+                simulationAnswers[this.questionMap[key] || key] = this.formData[key];
+            }
+        }
+
+        const consultationData = {
+            requesterInfo: {
+                name: name,
+                phone: phone,
+            },
+            simulationAnswers: simulationAnswers,
+            simulationResults: simulationResults,
+            createdAt: serverTimestamp()
+        };
+
+        try {
+            const docRef = await addDoc(collection(db, "consultations"), consultationData);
+            console.log("Document written with ID: ", docRef.id);
+            alert(`${name}님, 상담 신청이 완료되었습니다. 곧 연락드리겠습니다.`);
+            // Optionally, clear form or redirect
+        } catch (e) {
+            console.error("Error adding document: ", e);
+            alert('상담 신청 중 오류가 발생했습니다. 다시 시도해주세요.');
+        }
     }
 }
 

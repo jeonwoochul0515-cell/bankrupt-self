@@ -472,3 +472,249 @@
 [debug] [2026-02-09T02:18:38.356Z] > authorizing via signed-in user (jeonwoochul0515@gmail.com)
 [debug] [2026-02-09T02:18:38.357Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
 [debug] [2026-02-09T02:18:38.357Z] > authorizing via signed-in user (jeonwoochul0515@gmail.com)
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-09T03:31:41.059Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-09T03:31:47.807Z] Running auto auth
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-09T03:31:47.855Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-09T03:31:47.855Z] > authorizing via signed-in user (jeonwoochul0515@gmail.com)
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-09T03:31:57.537Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-09T03:31:57.537Z] > authorizing via signed-in user (jeonwoochul0515@gmail.com)
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-09T03:31:57.543Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-09T03:31:57.550Z] > authorizing via signed-in user (jeonwoochul0515@gmail.com)
+[debug] [2026-02-09T03:31:57.555Z] No OAuth tokens found
+[debug] [2026-02-09T03:31:57.556Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/bankrupt-self-app/services/cloudresourcemanager.googleapis.com [none]
+[debug] [2026-02-09T03:31:57.556Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/bankrupt-self-app/services/cloudresourcemanager.googleapis.com  x-goog-user-project=bankrupt-self-app
+[debug] [2026-02-09T03:31:58.581Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/bankrupt-self-app/services/cloudresourcemanager.googleapis.com 400
+[debug] [2026-02-09T03:31:58.581Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/bankrupt-self-app/services/cloudresourcemanager.googleapis.com [omitted]
+[debug] [2026-02-09T03:31:58.587Z] Unable to check that https://cloudresourcemanager.googleapis.com is enabled on bankrupt-self-app. Calls to it will fail if it is not enabled
+[debug] [2026-02-09T03:31:58.587Z] No OAuth tokens found
+[debug] [2026-02-09T03:31:58.587Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/bankrupt-self-app [none]
+[debug] [2026-02-09T03:31:59.484Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/bankrupt-self-app 403
+[debug] [2026-02-09T03:31:59.485Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/bankrupt-self-app {"error":{"code":403,"message":"The caller does not have permission","status":"PERMISSION_DENIED"}}
+[debug] [2026-02-09T03:31:59.501Z] No OAuth tokens found
+[debug] [2026-02-09T03:31:59.504Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects [none]
+[debug] [2026-02-09T03:31:59.504Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects {"projectId":"bankrupt-self-app","name":"bankrupt-self-app"}
+[debug] [2026-02-09T03:31:59.938Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects 200
+[debug] [2026-02-09T03:31:59.941Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects {"name":"operations/create_project.global.8274283826832042765"}
+[debug] [2026-02-09T03:31:59.949Z] No OAuth tokens found
+[debug] [2026-02-09T03:31:59.949Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.8274283826832042765 [none]
+[debug] [2026-02-09T03:32:00.738Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.8274283826832042765 200
+[debug] [2026-02-09T03:32:00.744Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.8274283826832042765 {"name":"operations/create_project.global.8274283826832042765"}
+[debug] [2026-02-09T03:32:01.245Z] [Project Creation Poller] Retrying task index 0
+[debug] [2026-02-09T03:32:01.246Z] No OAuth tokens found
+[debug] [2026-02-09T03:32:01.246Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.8274283826832042765 [none]
+[debug] [2026-02-09T03:32:01.453Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.8274283826832042765 200
+[debug] [2026-02-09T03:32:01.455Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/operations/create_project.global.8274283826832042765 {"name":"operations/create_project.global.8274283826832042765","metadata":{"@type":"type.googleapis.com/google.cloudresourcemanager.v1.ProjectCreationStatus","gettable":true,"ready":true},"done":true,"response":{"@type":"type.googleapis.com/google.cloudresourcemanager.v1.Project","projectNumber":"457789714015","projectId":"bankrupt-self-app","lifecycleState":"ACTIVE","name":"bankrupt-self-app","createTime":"2026-02-09T03:32:00.969155Z"}}
+[debug] [2026-02-09T03:32:01.465Z] No OAuth tokens found
+[debug] [2026-02-09T03:32:01.466Z] >>> [apiv2][query] POST https://firebase.googleapis.com/v1beta1/projects/bankrupt-self-app:addFirebase [none]
+[debug] [2026-02-09T03:32:05.057Z] <<< [apiv2][status] POST https://firebase.googleapis.com/v1beta1/projects/bankrupt-self-app:addFirebase 200
+[debug] [2026-02-09T03:32:05.057Z] <<< [apiv2][body] POST https://firebase.googleapis.com/v1beta1/projects/bankrupt-self-app:addFirebase {"name":"operations/workflows/M2EwMjhiMjgtMGViMS00Njc5LTk1MDAtYTIyMTZhZDRhNmYw"}
+[debug] [2026-02-09T03:32:05.057Z] No OAuth tokens found
+[debug] [2026-02-09T03:32:05.058Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/operations/workflows/M2EwMjhiMjgtMGViMS00Njc5LTk1MDAtYTIyMTZhZDRhNmYw [none]
+[debug] [2026-02-09T03:32:08.392Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/operations/workflows/M2EwMjhiMjgtMGViMS00Njc5LTk1MDAtYTIyMTZhZDRhNmYw 200
+[debug] [2026-02-09T03:32:08.393Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/operations/workflows/M2EwMjhiMjgtMGViMS00Njc5LTk1MDAtYTIyMTZhZDRhNmYw {"name":"operations/workflows/M2EwMjhiMjgtMGViMS00Njc5LTk1MDAtYTIyMTZhZDRhNmYw"}
+[debug] [2026-02-09T03:32:08.893Z] [Add Firebase Poller] Retrying task index 0
+[debug] [2026-02-09T03:32:08.894Z] No OAuth tokens found
+[debug] [2026-02-09T03:32:08.894Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/operations/workflows/M2EwMjhiMjgtMGViMS00Njc5LTk1MDAtYTIyMTZhZDRhNmYw [none]
+[debug] [2026-02-09T03:32:09.598Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/operations/workflows/M2EwMjhiMjgtMGViMS00Njc5LTk1MDAtYTIyMTZhZDRhNmYw 200
+[debug] [2026-02-09T03:32:09.598Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/operations/workflows/M2EwMjhiMjgtMGViMS00Njc5LTk1MDAtYTIyMTZhZDRhNmYw {"name":"operations/workflows/M2EwMjhiMjgtMGViMS00Njc5LTk1MDAtYTIyMTZhZDRhNmYw"}
+[debug] [2026-02-09T03:32:10.599Z] [Add Firebase Poller] Retrying task index 0
+[debug] [2026-02-09T03:32:10.608Z] No OAuth tokens found
+[debug] [2026-02-09T03:32:10.608Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/operations/workflows/M2EwMjhiMjgtMGViMS00Njc5LTk1MDAtYTIyMTZhZDRhNmYw [none]
+[debug] [2026-02-09T03:32:11.307Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/operations/workflows/M2EwMjhiMjgtMGViMS00Njc5LTk1MDAtYTIyMTZhZDRhNmYw 200
+[debug] [2026-02-09T03:32:11.308Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/operations/workflows/M2EwMjhiMjgtMGViMS00Njc5LTk1MDAtYTIyMTZhZDRhNmYw {"name":"operations/workflows/M2EwMjhiMjgtMGViMS00Njc5LTk1MDAtYTIyMTZhZDRhNmYw"}
+[debug] [2026-02-09T03:32:13.310Z] [Add Firebase Poller] Retrying task index 0
+[debug] [2026-02-09T03:32:13.311Z] No OAuth tokens found
+[debug] [2026-02-09T03:32:13.311Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/operations/workflows/M2EwMjhiMjgtMGViMS00Njc5LTk1MDAtYTIyMTZhZDRhNmYw [none]
+[debug] [2026-02-09T03:32:14.009Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/operations/workflows/M2EwMjhiMjgtMGViMS00Njc5LTk1MDAtYTIyMTZhZDRhNmYw 200
+[debug] [2026-02-09T03:32:14.013Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/operations/workflows/M2EwMjhiMjgtMGViMS00Njc5LTk1MDAtYTIyMTZhZDRhNmYw {"name":"operations/workflows/M2EwMjhiMjgtMGViMS00Njc5LTk1MDAtYTIyMTZhZDRhNmYw","done":true,"response":{"@type":"type.googleapis.com/google.firebase.service.v1beta1.FirebaseProject","projectId":"bankrupt-self-app","projectNumber":"457789714015","displayName":"bankrupt-self-app","name":"projects/bankrupt-self-app","resources":{"hostingSite":"bankrupt-self-app"}}}
+[info] 
+[info] 🎉🎉🎉 Your Firebase project is ready! 🎉🎉🎉
+[info] 
+[info] Project information:
+[info]    - Project ID: bankrupt-self-app
+[info]    - Project Name: bankrupt-self-app
+[info] 
+[info] Firebase console is available at
+[info] https://console.firebase.google.com/project/bankrupt-self-app/overview
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-09T03:33:07.474Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-09T03:33:07.474Z] > authorizing via signed-in user (jeonwoochul0515@gmail.com)
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-09T03:33:07.479Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-09T03:33:07.479Z] > authorizing via signed-in user (jeonwoochul0515@gmail.com)
+[debug] [2026-02-09T03:33:07.481Z] No OAuth tokens found
+[debug] [2026-02-09T03:33:07.481Z] >>> [apiv2][query] GET https://serviceusage.googleapis.com/v1/projects/bankrupt-self-app/services/cloudresourcemanager.googleapis.com [none]
+[debug] [2026-02-09T03:33:07.481Z] >>> [apiv2][(partial)header] GET https://serviceusage.googleapis.com/v1/projects/bankrupt-self-app/services/cloudresourcemanager.googleapis.com  x-goog-user-project=bankrupt-self-app
+[debug] [2026-02-09T03:33:09.107Z] <<< [apiv2][status] GET https://serviceusage.googleapis.com/v1/projects/bankrupt-self-app/services/cloudresourcemanager.googleapis.com 200
+[debug] [2026-02-09T03:33:09.107Z] <<< [apiv2][body] GET https://serviceusage.googleapis.com/v1/projects/bankrupt-self-app/services/cloudresourcemanager.googleapis.com [omitted]
+[debug] [2026-02-09T03:33:09.118Z] No OAuth tokens found
+[debug] [2026-02-09T03:33:09.118Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/bankrupt-self-app [none]
+[debug] [2026-02-09T03:33:10.344Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/bankrupt-self-app 200
+[debug] [2026-02-09T03:33:10.344Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/bankrupt-self-app {"projectNumber":"457789714015","projectId":"bankrupt-self-app","lifecycleState":"ACTIVE","name":"bankrupt-self-app","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2026-02-09T03:32:00.969155Z"}
+[info] Updating Studio Workspace active project to match Firebase CLI 'bankrupt-self-app'
+[error] Failed to update Firebase Project for Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[info] Now using project bankrupt-self-app
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-09T03:33:21.137Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-09T03:33:21.137Z] > authorizing via signed-in user (jeonwoochul0515@gmail.com)
+[debug] [2026-02-09T03:33:21.137Z] No OAuth tokens found
+[debug] [2026-02-09T03:33:21.137Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/bankrupt-self-app/billingInfo [none]
+[debug] [2026-02-09T03:33:22.222Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/bankrupt-self-app/billingInfo 200
+[debug] [2026-02-09T03:33:22.226Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/bankrupt-self-app/billingInfo {"name":"projects/bankrupt-self-app/billingInfo","projectId":"bankrupt-self-app","billingAccountName":"","billingEnabled":false}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-09T03:33:22.232Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-09T03:33:22.232Z] > authorizing via signed-in user (jeonwoochul0515@gmail.com)
+[debug] [2026-02-09T03:33:22.234Z] No OAuth tokens found
+[debug] [2026-02-09T03:33:22.234Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/bankrupt-self-app/billingInfo [none]
+[debug] [2026-02-09T03:33:23.250Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/bankrupt-self-app/billingInfo 200
+[debug] [2026-02-09T03:33:23.250Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/bankrupt-self-app/billingInfo {"name":"projects/bankrupt-self-app/billingInfo","projectId":"bankrupt-self-app","billingAccountName":"","billingEnabled":false}
+[info] 
+=== Firestore Setup Actuation
+[info] ✔  Wrote firestore.rules 
+[info] ✔  Wrote firestore.indexes.json 
+[info] ✔  Wrote configuration info to firebase.json 
+[info] ✔  Wrote project information to .firebaserc 
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-09T03:33:33.085Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-09T03:33:33.085Z] > authorizing via signed-in user (jeonwoochul0515@gmail.com)
+[debug] [2026-02-09T03:33:33.089Z] No OAuth tokens found
+[debug] [2026-02-09T03:33:33.089Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/bankrupt-self-app/billingInfo [none]
+[debug] [2026-02-09T03:33:33.337Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/bankrupt-self-app/billingInfo 200
+[debug] [2026-02-09T03:33:33.337Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/bankrupt-self-app/billingInfo {"name":"projects/bankrupt-self-app/billingInfo","projectId":"bankrupt-self-app","billingAccountName":"","billingEnabled":false}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-09T03:33:33.340Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-09T03:33:33.340Z] > authorizing via signed-in user (jeonwoochul0515@gmail.com)
+[debug] [2026-02-09T03:33:33.340Z] No OAuth tokens found
+[debug] [2026-02-09T03:33:33.340Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/bankrupt-self-app/billingInfo [none]
+[debug] [2026-02-09T03:33:33.551Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/bankrupt-self-app/billingInfo 200
+[debug] [2026-02-09T03:33:33.551Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/bankrupt-self-app/billingInfo {"name":"projects/bankrupt-self-app/billingInfo","projectId":"bankrupt-self-app","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-09T03:33:33.552Z] No OAuth tokens found
+[debug] [2026-02-09T03:33:33.553Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/bankrupt-self-app/webApps pageSize=100
+[debug] [2026-02-09T03:33:33.942Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/bankrupt-self-app/webApps 200
+[debug] [2026-02-09T03:33:33.942Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/bankrupt-self-app/webApps {}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-09T03:33:42.703Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-09T03:33:42.703Z] > authorizing via signed-in user (jeonwoochul0515@gmail.com)
+[debug] [2026-02-09T03:33:42.703Z] No OAuth tokens found
+[debug] [2026-02-09T03:33:42.706Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/bankrupt-self-app/billingInfo [none]
+[debug] [2026-02-09T03:33:42.940Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/bankrupt-self-app/billingInfo 200
+[debug] [2026-02-09T03:33:42.940Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/bankrupt-self-app/billingInfo {"name":"projects/bankrupt-self-app/billingInfo","projectId":"bankrupt-self-app","billingAccountName":"","billingEnabled":false}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-09T03:33:42.949Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-09T03:33:42.949Z] > authorizing via signed-in user (jeonwoochul0515@gmail.com)
+[debug] [2026-02-09T03:33:42.949Z] No OAuth tokens found
+[debug] [2026-02-09T03:33:42.949Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/bankrupt-self-app/billingInfo [none]
+[debug] [2026-02-09T03:33:43.168Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/bankrupt-self-app/billingInfo 200
+[debug] [2026-02-09T03:33:43.168Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/bankrupt-self-app/billingInfo {"name":"projects/bankrupt-self-app/billingInfo","projectId":"bankrupt-self-app","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-09T03:33:43.175Z] No OAuth tokens found
+[debug] [2026-02-09T03:33:43.176Z] >>> [apiv2][query] POST https://firebase.googleapis.com/v1beta1/projects/bankrupt-self-app/webApps [none]
+[debug] [2026-02-09T03:33:43.176Z] >>> [apiv2][body] POST https://firebase.googleapis.com/v1beta1/projects/bankrupt-self-app/webApps {"displayName":"my-bankruptcy-app"}
+[debug] [2026-02-09T03:33:44.895Z] <<< [apiv2][status] POST https://firebase.googleapis.com/v1beta1/projects/bankrupt-self-app/webApps 200
+[debug] [2026-02-09T03:33:44.899Z] <<< [apiv2][body] POST https://firebase.googleapis.com/v1beta1/projects/bankrupt-self-app/webApps {"name":"operations/workflows/OGFkYTMwY2MtMmUwMi00YjQzLThmZGEtOTc0M2ViZWZmZTU2"}
+[debug] [2026-02-09T03:33:44.899Z] No OAuth tokens found
+[debug] [2026-02-09T03:33:44.903Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/operations/workflows/OGFkYTMwY2MtMmUwMi00YjQzLThmZGEtOTc0M2ViZWZmZTU2 [none]
+[debug] [2026-02-09T03:33:45.244Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/operations/workflows/OGFkYTMwY2MtMmUwMi00YjQzLThmZGEtOTc0M2ViZWZmZTU2 200
+[debug] [2026-02-09T03:33:45.245Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/operations/workflows/OGFkYTMwY2MtMmUwMi00YjQzLThmZGEtOTc0M2ViZWZmZTU2 {"name":"operations/workflows/OGFkYTMwY2MtMmUwMi00YjQzLThmZGEtOTc0M2ViZWZmZTU2"}
+[debug] [2026-02-09T03:33:45.746Z] [Create Web app Poller] Retrying task index 0
+[debug] [2026-02-09T03:33:45.749Z] No OAuth tokens found
+[debug] [2026-02-09T03:33:45.749Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/operations/workflows/OGFkYTMwY2MtMmUwMi00YjQzLThmZGEtOTc0M2ViZWZmZTU2 [none]
+[debug] [2026-02-09T03:33:46.112Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/operations/workflows/OGFkYTMwY2MtMmUwMi00YjQzLThmZGEtOTc0M2ViZWZmZTU2 200
+[debug] [2026-02-09T03:33:46.113Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/operations/workflows/OGFkYTMwY2MtMmUwMi00YjQzLThmZGEtOTc0M2ViZWZmZTU2 {"name":"operations/workflows/OGFkYTMwY2MtMmUwMi00YjQzLThmZGEtOTc0M2ViZWZmZTU2"}
+[debug] [2026-02-09T03:33:47.115Z] [Create Web app Poller] Retrying task index 0
+[debug] [2026-02-09T03:33:47.115Z] No OAuth tokens found
+[debug] [2026-02-09T03:33:47.116Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/operations/workflows/OGFkYTMwY2MtMmUwMi00YjQzLThmZGEtOTc0M2ViZWZmZTU2 [none]
+[debug] [2026-02-09T03:33:47.459Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/operations/workflows/OGFkYTMwY2MtMmUwMi00YjQzLThmZGEtOTc0M2ViZWZmZTU2 200
+[debug] [2026-02-09T03:33:47.459Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/operations/workflows/OGFkYTMwY2MtMmUwMi00YjQzLThmZGEtOTc0M2ViZWZmZTU2 {"name":"operations/workflows/OGFkYTMwY2MtMmUwMi00YjQzLThmZGEtOTc0M2ViZWZmZTU2"}
+[debug] [2026-02-09T03:33:49.459Z] [Create Web app Poller] Retrying task index 0
+[debug] [2026-02-09T03:33:49.463Z] No OAuth tokens found
+[debug] [2026-02-09T03:33:49.463Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/operations/workflows/OGFkYTMwY2MtMmUwMi00YjQzLThmZGEtOTc0M2ViZWZmZTU2 [none]
+[debug] [2026-02-09T03:33:49.984Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/operations/workflows/OGFkYTMwY2MtMmUwMi00YjQzLThmZGEtOTc0M2ViZWZmZTU2 200
+[debug] [2026-02-09T03:33:49.987Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/operations/workflows/OGFkYTMwY2MtMmUwMi00YjQzLThmZGEtOTc0M2ViZWZmZTU2 {"name":"operations/workflows/OGFkYTMwY2MtMmUwMi00YjQzLThmZGEtOTc0M2ViZWZmZTU2","done":true,"response":{"@type":"type.googleapis.com/google.firebase.service.v1beta1.WebApp","name":"projects/bankrupt-self-app/webApps/1:457789714015:web:053355c9f65e67a025b5ea","appId":"1:457789714015:web:053355c9f65e67a025b5ea","displayName":"my-bankruptcy-app","projectId":"bankrupt-self-app","webId":"MDE5NWI0YmQtMDEzMi00MTA5LTkxY2ItNTliMDJlMzIzN2Mx","apiKeyId":"906e336d-b0d5-42e6-832c-1c0bbd6aa75f","state":"ACTIVE","expireTime":"1970-01-01T00:00:00Z","etag":"1_84a0f5c0-a559-4903-a7d3-9436ec4a82f7"}}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-09T03:34:02.841Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-09T03:34:02.841Z] > authorizing via signed-in user (jeonwoochul0515@gmail.com)
+[debug] [2026-02-09T03:34:02.841Z] No OAuth tokens found
+[debug] [2026-02-09T03:34:02.841Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/bankrupt-self-app/billingInfo [none]
+[debug] [2026-02-09T03:34:03.084Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/bankrupt-self-app/billingInfo 200
+[debug] [2026-02-09T03:34:03.086Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/bankrupt-self-app/billingInfo {"name":"projects/bankrupt-self-app/billingInfo","projectId":"bankrupt-self-app","billingAccountName":"","billingEnabled":false}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-09T03:34:03.091Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-09T03:34:03.092Z] > authorizing via signed-in user (jeonwoochul0515@gmail.com)
+[debug] [2026-02-09T03:34:03.092Z] No OAuth tokens found
+[debug] [2026-02-09T03:34:03.092Z] >>> [apiv2][query] GET https://cloudbilling.googleapis.com/v1/projects/bankrupt-self-app/billingInfo [none]
+[debug] [2026-02-09T03:34:04.096Z] <<< [apiv2][status] GET https://cloudbilling.googleapis.com/v1/projects/bankrupt-self-app/billingInfo 200
+[debug] [2026-02-09T03:34:04.099Z] <<< [apiv2][body] GET https://cloudbilling.googleapis.com/v1/projects/bankrupt-self-app/billingInfo {"name":"projects/bankrupt-self-app/billingInfo","projectId":"bankrupt-self-app","billingAccountName":"","billingEnabled":false}
+[debug] [2026-02-09T03:34:04.103Z] No OAuth tokens found
+[debug] [2026-02-09T03:34:04.103Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/bankrupt-self-app/webApps pageSize=100
+[debug] [2026-02-09T03:34:04.487Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/bankrupt-self-app/webApps 200
+[debug] [2026-02-09T03:34:04.489Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/bankrupt-self-app/webApps {"apps":[{"name":"projects/bankrupt-self-app/webApps/1:457789714015:web:053355c9f65e67a025b5ea","appId":"1:457789714015:web:053355c9f65e67a025b5ea","displayName":"my-bankruptcy-app","projectId":"bankrupt-self-app","webId":"MDE5NWI0YmQtMDEzMi00MTA5LTkxY2ItNTliMDJlMzIzN2Mx","apiKeyId":"906e336d-b0d5-42e6-832c-1c0bbd6aa75f","state":"ACTIVE","expireTime":"1970-01-01T00:00:00Z","etag":"1_84a0f5c0-a559-4903-a7d3-9436ec4a82f7"}]}
+[debug] [2026-02-09T03:34:04.489Z] No OAuth tokens found
+[debug] [2026-02-09T03:34:04.490Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:457789714015:web:053355c9f65e67a025b5ea/config [none]
+[debug] [2026-02-09T03:34:05.033Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:457789714015:web:053355c9f65e67a025b5ea/config 200
+[debug] [2026-02-09T03:34:05.033Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/-/webApps/1:457789714015:web:053355c9f65e67a025b5ea/config {"projectId":"bankrupt-self-app","appId":"1:457789714015:web:053355c9f65e67a025b5ea","storageBucket":"bankrupt-self-app.firebasestorage.app","apiKey":"AIzaSyCdhvfwMoJWyMPpM7K9rbGZL34fH3qb8fY","authDomain":"bankrupt-self-app.firebaseapp.com","messagingSenderId":"457789714015","projectNumber":"457789714015","version":"2"}
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-09T05:04:58.492Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-09T05:04:58.515Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-09T05:05:54.107Z] No OAuth tokens found
+[debug] [2026-02-09T05:05:54.108Z] No OAuth tokens found
+[debug] [2026-02-09T05:05:54.108Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-09T05:05:54.109Z] No OAuth tokens found
+[debug] [2026-02-09T05:05:54.110Z] No OAuth tokens found
+[debug] [2026-02-09T05:05:54.110Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-12T02:57:21.880Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-12T02:57:21.882Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-12T02:57:24.285Z] No OAuth tokens found
+[debug] [2026-02-12T02:57:24.285Z] No OAuth tokens found
+[debug] [2026-02-12T02:57:24.286Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-12T02:57:24.288Z] No OAuth tokens found
+[debug] [2026-02-12T02:57:24.288Z] No OAuth tokens found
+[debug] [2026-02-12T02:57:24.289Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-14T07:37:38.035Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-14T07:37:38.040Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-14T07:37:44.779Z] No OAuth tokens found
+[debug] [2026-02-14T07:37:44.782Z] No OAuth tokens found
+[debug] [2026-02-14T07:37:44.783Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-14T07:37:44.786Z] No OAuth tokens found
+[debug] [2026-02-14T07:37:44.787Z] No OAuth tokens found
+[debug] [2026-02-14T07:37:44.788Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[error] Failed to fetch Firebase Project from Studio Workspace because WORKSPACE_SLUG environment variable is empty
+[debug] [2026-02-14T07:42:07.295Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-14T07:42:07.297Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-14T07:42:30.961Z] No OAuth tokens found
+[debug] [2026-02-14T07:42:30.962Z] No OAuth tokens found
+[debug] [2026-02-14T07:42:30.963Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
+[debug] [2026-02-14T07:42:30.964Z] No OAuth tokens found
+[debug] [2026-02-14T07:42:30.964Z] No OAuth tokens found
+[debug] [2026-02-14T07:42:30.964Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform","https://www.googleapis.com/auth/userinfo.email"]
