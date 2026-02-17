@@ -40,6 +40,10 @@
     <style>
         html { scroll-behavior: smooth; }
         .shadow-soft { box-shadow: 0 4px 20px -2px rgba(19, 127, 236, 0.08); }
+        .success-carousel { overflow: hidden; height: 48px; }
+        .success-carousel .carousel-track { animation: scrollUp 60s linear infinite; }
+        .success-carousel:hover .carousel-track { animation-play-state: paused; }
+        @keyframes scrollUp { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
     </style>
 
     <script src="simulation-form.js" type="module" defer></script>
@@ -72,7 +76,6 @@
                     <a class="text-sm font-sans font-medium text-gray-600 hover:text-primary transition-colors no-underline" href="#contact">문의</a>
                 </nav>
                 <div class="flex items-center gap-4">
-                    <a class="hidden md:block text-sm font-bold text-navy-900 hover:text-primary font-sans no-underline" href="tel:010-0000-0000">전화 상담</a>
                     <a href="#simulation" class="bg-primary hover:bg-primary-dark transition-colors text-white text-sm font-bold py-2.5 px-6 rounded-lg shadow-lg shadow-primary/20 flex items-center gap-2 font-sans no-underline">
                         <span>무료 진단 시작</span>
                         <span class="material-symbols-outlined text-sm">arrow_forward</span>
@@ -116,10 +119,6 @@
                                 무료 자가진단 시작
                                 <span class="material-symbols-outlined">check_circle</span>
                             </a>
-                            <a href="tel:010-0000-0000" class="flex items-center justify-center gap-2 bg-white border border-gray-200 hover:bg-gray-50 text-navy-900 text-base font-bold py-4 px-8 rounded-lg transition-colors no-underline">
-                                <span class="material-symbols-outlined">call</span>
-                                무료 전화 상담
-                            </a>
                         </div>
                         <div class="mt-8 flex items-center gap-4 text-sm text-gray-500 font-sans">
                             <div class="flex items-center gap-1 text-yellow-500">
@@ -136,16 +135,13 @@
                         <div class="absolute inset-0 bg-primary/5 rounded-2xl transform rotate-3"></div>
                         <div class="absolute inset-0 bg-navy-900/5 rounded-2xl transform -rotate-2"></div>
                         <div class="relative h-full w-full overflow-hidden rounded-2xl shadow-2xl bg-gray-100">
-                            <img alt="법률 상담 이미지" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDvI1Ox4GExNAJeOWZ2duNmOICO701eR7SjbJUFbjzr13YtMoj6iIqsijUbIzRAFEpjX9qZxmxPdYU_xqMfzn_vN1xmsVIcMCe5VgFNEN2Cn5lWftTVnWbB70Q7b8o5ssrhCf8aPKwOQLb2P5zlJI9_5rmV77QXWnEnA_vTybHADjzJAQ7VQspVx7OXmpJWSG09hYtsnmYcbGUYme1_DUFyj4w-UqDfxoTlDYTdkAD8zjKME_pZGhfkJCqPUFRuMZaxc2iqIl1ci6c0">
-                            <div class="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur rounded-xl p-4 shadow-lg border border-gray-100 font-sans">
-                                <div class="flex items-center gap-4">
-                                    <div class="bg-green-100 p-2 rounded-full text-green-600">
-                                        <span class="material-symbols-outlined">verified_user</span>
-                                    </div>
-                                    <div>
-                                        <p class="text-xs text-gray-500 font-semibold uppercase">최근 성공 사례</p>
-                                        <p class="text-sm font-bold text-navy-900">채무 75% 탕감 - 김OO님 (부산)</p>
-                                    </div>
+                            <img alt="새로운 시작" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80">
+                            <div class="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur rounded-xl shadow-lg border border-gray-100 font-sans">
+                                <div class="px-4 pt-3 pb-1">
+                                    <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-wider">최근 성공 사례</p>
+                                </div>
+                                <div class="success-carousel">
+                                    <div id="success-track" class="carousel-track"></div>
                                 </div>
                             </div>
                         </div>
@@ -192,7 +188,7 @@
                         </div>
                         <h3 class="text-xl font-serif font-bold text-navy-900 mb-3">실제 변제금 예측</h3>
                         <p class="text-gray-600 mb-6 leading-relaxed font-sans">
-                            각 지역 회생법원의 실무준칙을 정확히 반영하여 실제 변제금을 산출합니다. 2026년 최신 생계비 기준이 적용된 정밀 시뮬레이션입니다.
+                            각 지역 회생법원의 실무준칙을 정확히 반영하여 실제 변제금을 산출합니다. 특히 <strong>부산회생법원(부산·울산·경남 관할)</strong>에 특화되어 있으며, 2026년 최신 생계비 기준이 적용된 정밀 시뮬레이션입니다.
                         </p>
                         <a class="inline-flex items-center text-primary font-bold hover:gap-2 transition-all font-sans no-underline" href="#simulation">
                             지금 진단하기 <span class="material-symbols-outlined text-sm ml-1">arrow_forward</span>
@@ -283,7 +279,7 @@
                     <div class="lg:w-1/2 w-full">
                         <div class="bg-white rounded-2xl p-2 shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500">
                             <div class="rounded-xl overflow-hidden aspect-video bg-gray-200">
-                                <img class="w-full h-full object-cover" alt="상담 이미지" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjvAkaacsaNtq9ghqLuMjYbTeR7lUiFwFZxqMNs_foZ3RwRczuphEH4yxRlIatK1pZlcYvBtPyuUv_0p25S-m0DHtVPztmvUV-9vv_EAQVFvY1pw_7wv7Ee0FThpdICx1gAs-RJsLxFkFqWd1MhDvFdUL-8JcD8nr1oC-BRllEuTq_tEHCFHulUZhwlnPUv2n-4wGdETghrQdU-4PF3NVhsWsC325jmzub7GGJhvbT0IX2dzNWhX0WDGu_TPI7Ft594VH_5NrYnu6e">
+                                <img class="w-full h-full object-cover" alt="신뢰할 수 있는 법률 서비스" src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1200&q=80">
                             </div>
                         </div>
                     </div>
@@ -316,12 +312,9 @@
                     <p class="text-primary-light text-lg md:text-xl max-w-2xl mx-auto mb-10 font-sans">
                         1분 자가진단으로 지역법원 기준 실제 변제금을 예측하고, 제휴 법률사무소 <strong>수임료 20만원 할인</strong>과 <strong>분할 납부</strong> 혜택까지 받으세요.
                     </p>
-                    <div class="flex flex-col sm:flex-row items-center justify-center gap-4 font-sans">
-                        <a href="#simulation" class="w-full sm:w-auto bg-white text-primary text-lg font-bold py-4 px-10 rounded-xl hover:bg-gray-50 transition-colors shadow-lg no-underline text-center">
+                    <div class="flex items-center justify-center font-sans">
+                        <a href="#simulation" class="bg-white text-primary text-lg font-bold py-4 px-10 rounded-xl hover:bg-gray-50 transition-colors shadow-lg no-underline text-center">
                             무료 자가진단 시작
-                        </a>
-                        <a href="tel:010-0000-0000" class="w-full sm:w-auto bg-transparent border-2 border-white/30 text-white text-lg font-bold py-4 px-10 rounded-xl hover:bg-white/10 transition-colors no-underline text-center">
-                            전화 상담 신청
                         </a>
                     </div>
                     <p class="mt-6 text-sm text-primary-light/70 flex items-center justify-center gap-2 font-sans">
@@ -367,7 +360,6 @@
                     <h3 class="font-bold text-navy-900 mb-4">문의</h3>
                     <ul class="space-y-3 list-none p-0">
                         <li class="text-gray-500">부산광역시</li>
-                        <li><a class="text-gray-500 hover:text-primary transition-colors no-underline" href="tel:010-0000-0000">전화 상담</a></li>
                     </ul>
                 </div>
             </div>

@@ -1,6 +1,43 @@
 
 document.addEventListener('DOMContentLoaded', () => {
 
+    // --- Success Carousel ---
+    const successCases = [
+        { debt: '1억 2천', monthly: '35만원', name: '김OO', region: '부산 해운대' },
+        { debt: '8,500만원', monthly: '28만원', name: '박OO', region: '울산 남구' },
+        { debt: '2억 1천', monthly: '45만원', name: '이OO', region: '경남 창원' },
+        { debt: '5,700만원', monthly: '18만원', name: '정OO', region: '부산 사하구' },
+        { debt: '1억 5천', monthly: '38만원', name: '최OO', region: '부산 동래구' },
+        { debt: '9,200만원', monthly: '30만원', name: '강OO', region: '경남 김해' },
+        { debt: '3억', monthly: '52만원', name: '윤OO', region: '부산 부산진구' },
+        { debt: '6,800만원', monthly: '22만원', name: '한OO', region: '울산 중구' },
+        { debt: '1억 8천', monthly: '42만원', name: '조OO', region: '경남 양산' },
+        { debt: '4,300만원', monthly: '15만원', name: '서OO', region: '부산 금정구' },
+        { debt: '2억 5천', monthly: '48만원', name: '임OO', region: '부산 연제구' },
+        { debt: '7,600만원', monthly: '25만원', name: '신OO', region: '경남 거제' },
+        { debt: '1억', monthly: '32만원', name: '오OO', region: '부산 수영구' },
+        { debt: '1억 3천', monthly: '36만원', name: '배OO', region: '울산 울주군' },
+        { debt: '6,100만원', monthly: '20만원', name: '권OO', region: '부산 사상구' },
+        { debt: '2억 3천', monthly: '47만원', name: '유OO', region: '경남 진주' },
+        { debt: '5,400만원', monthly: '17만원', name: '노OO', region: '부산 남구' },
+        { debt: '1억 7천', monthly: '40만원', name: '문OO', region: '경남 통영' },
+        { debt: '8,900만원', monthly: '29만원', name: '양OO', region: '부산 북구' },
+        { debt: '3억 2천', monthly: '55만원', name: '홍OO', region: '울산 동구' },
+    ];
+
+    const track = document.getElementById('success-track');
+    if (track) {
+        const buildItems = () => successCases.map(c =>
+            `<div class="h-[48px] flex items-center gap-3 px-4">
+                <div class="bg-green-100 p-1.5 rounded-full text-green-600 shrink-0">
+                    <span class="material-symbols-outlined text-base">verified_user</span>
+                </div>
+                <p class="text-sm font-bold text-navy-900 whitespace-nowrap">채무 ${c.debt} → 월 ${c.monthly} 변제 - ${c.name}님 (${c.region})</p>
+            </div>`
+        ).join('');
+        track.innerHTML = buildItems() + buildItems();
+    }
+
     // --- Review Data & Generation ---
     const reviews = [
         {
