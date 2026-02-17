@@ -68,6 +68,7 @@ function formatMoney(manwon) {
 // ========== 상태 ==========
 
 let allConsultations = [];
+let allAnalytics = [];
 let selectedIds = new Set();
 
 // Firebase 모듈 로드 완료 → 인라인 스크립트에서 호출 가능하도록 등록
@@ -81,18 +82,23 @@ async function loadData() {
     document.getElementById('empty-state').hidden = true;
 
     try {
-        const q = query(collection(db, 'consultations'), orderBy('createdAt', 'desc'));
-        const snapshot = await getDocs(q);
-        allConsultations = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        const [consultSnap, analyticsSnap] = await Promise.all([
+            getDocs(query(collection(db, 'consultations'), orderBy('createdAt', 'desc'))),
+            getDocs(query(collection(db, 'analytics'), orderBy('createdAt', 'desc')))
+        ]);
+        allConsultations = consultSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        allAnalytics = analyticsSnap.docs.map(d => ({ id: d.id, ...d.data() }));
     } catch (err) {
         console.error('데이터 로드 실패:', err);
         showError('데이터를 불러오는데 실패했습니다: ' + err.message);
         allConsultations = [];
+        allAnalytics = [];
     }
 
     spinner && (spinner.hidden = true);
     populateCourtFilter();
     updateStats();
+    updateAnalyticsStats();
     renderList();
     document.getElementById('select-all-bar').hidden = allConsultations.length === 0;
 }
@@ -118,6 +124,24 @@ function updateStats() {
     });
     const topCourt = Object.entries(courts).sort((a, b) => b[1] - a[1])[0];
     document.getElementById('stat-top-court').textContent = topCourt ? topCourt[0] : '-';
+}
+
+// ========== 방문자 통계 ==========
+
+function updateAnalyticsStats() {
+    const pageviews = allAnalytics.filter(a => a.type === 'pageview');
+    const lawyerClicks = allAnalytics.filter(a => a.type === 'lawyer_click');
+    const todayViews = pageviews.filter(a => isToday(a.createdAt));
+
+    document.getElementById('stat-views').textContent = pageviews.length;
+    document.getElementById('stat-views-today').textContent = todayViews.length;
+    document.getElementById('stat-lawyer-clicks').textContent = lawyerClicks.length;
+
+    // 전환율 = 상담 신청 / 방문자
+    const rate = pageviews.length > 0
+        ? ((allConsultations.length / pageviews.length) * 100).toFixed(1) + '%'
+        : '-';
+    document.getElementById('stat-conversion').textContent = rate;
 }
 
 // ========== 관할 법원 필터 ==========

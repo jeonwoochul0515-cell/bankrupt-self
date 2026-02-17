@@ -509,8 +509,7 @@ class SimulationForm extends HTMLElement {
         this.shadowRoot.querySelector('#delete-data-btn').addEventListener('click', () => this.deleteData());
         this.shadowRoot.querySelector('#submit-consultation-btn').addEventListener('click', (event) => this.submitConsultation(event));
         this.shadowRoot.querySelector('#recommend-btn').addEventListener('click', () => {
-            window.dataLayer = window.dataLayer || [];
-            window.dataLayer.push({ event: 'lawyer_recommend_click' });
+            if (window.__trackEvent) window.__trackEvent('lawyer_click');
         });
 
         const modal = this.shadowRoot.querySelector('#privacy-modal');
@@ -610,8 +609,7 @@ class SimulationForm extends HTMLElement {
             };
             const docRef = await addDoc(collection(db, "consultations"), consultationData);
             console.log("Document written with ID: ", docRef.id);
-            window.dataLayer = window.dataLayer || [];
-            window.dataLayer.push({ event: 'consultation_submit', user_name: name });
+            if (window.__trackEvent) window.__trackEvent('consultation_submit');
             alert(`${name}님, 상담 신청이 완료되었습니다. 곧 연락드리겠습니다.`);
         } catch (e) {
             console.error("Error adding document: ", e);
