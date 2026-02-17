@@ -44,6 +44,8 @@
         .success-carousel .carousel-track { animation: scrollUp 25s linear infinite; }
         .success-carousel:hover .carousel-track { animation-play-state: paused; }
         @keyframes scrollUp { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
+        .faq-icon.open { transform: rotate(180deg); }
+        .faq-content { transition: max-height 0.3s ease, padding 0.3s ease; }
     </style>
 
     <script src="simulation-form.js" type="module" defer></script>
@@ -73,7 +75,7 @@
                     <a class="text-sm font-sans font-medium text-gray-600 hover:text-primary transition-colors no-underline" href="#services">주요 서비스</a>
                     <a class="text-sm font-sans font-medium text-gray-600 hover:text-primary transition-colors no-underline" href="#simulation">진단 시작</a>
                     <a class="text-sm font-sans font-medium text-gray-600 hover:text-primary transition-colors no-underline" href="#reviews">성공 사례</a>
-                    <a class="text-sm font-sans font-medium text-gray-600 hover:text-primary transition-colors no-underline" href="#contact">문의</a>
+                    <a class="text-sm font-sans font-medium text-gray-600 hover:text-primary transition-colors no-underline" href="#faq">FAQ</a>
                 </nav>
                 <div class="flex items-center gap-4">
                     <a href="#simulation" class="bg-primary hover:bg-primary-dark transition-colors text-white text-sm font-bold py-2.5 px-6 rounded-lg shadow-lg shadow-primary/20 flex items-center gap-2 font-sans no-underline">
@@ -91,7 +93,7 @@
                     <a class="text-sm font-medium text-gray-600 hover:text-primary py-2 no-underline" href="#services">주요 서비스</a>
                     <a class="text-sm font-medium text-gray-600 hover:text-primary py-2 no-underline" href="#simulation">진단 시작</a>
                     <a class="text-sm font-medium text-gray-600 hover:text-primary py-2 no-underline" href="#reviews">성공 사례</a>
-                    <a class="text-sm font-medium text-gray-600 hover:text-primary py-2 no-underline" href="#contact">문의</a>
+                    <a class="text-sm font-medium text-gray-600 hover:text-primary py-2 no-underline" href="#faq">FAQ</a>
                 </nav>
             </div>
         </div>
@@ -299,6 +301,127 @@
                 <div id="review-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     <!-- Populated by main.js -->
                 </div>
+            </div>
+        </section>
+
+        <!-- ========== FAQ ========== -->
+        <section id="faq" class="py-24 bg-background-light">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl font-serif font-bold text-navy-900 mb-4">자주 묻는 질문</h2>
+                    <p class="text-gray-600 text-lg font-sans">2026년 최신 기준 · 부산회생법원 실무준칙 반영</p>
+                </div>
+                <div class="space-y-3" id="faq-list">
+                    <div class="faq-item bg-white rounded-xl border border-gray-100 shadow-soft overflow-hidden">
+                        <button class="faq-toggle w-full flex items-center justify-between p-6 text-left" aria-expanded="false">
+                            <span class="text-base font-bold text-navy-900 pr-4 font-sans">개인회생 신청 자격은 어떻게 되나요?</span>
+                            <span class="material-symbols-outlined text-primary shrink-0 faq-icon transition-transform duration-300">expand_more</span>
+                        </button>
+                        <div class="faq-content hidden px-6 pb-6">
+                            <p class="text-gray-600 leading-relaxed font-sans text-sm">무담보 채무 <strong>10억원 이하</strong>, 담보부 채무 <strong>15억원 이하</strong>이면서 장래에 계속적·반복적으로 소득을 얻을 가능성이 있는 분이라면 신청 가능합니다. 급여소득자, 자영업자, 프리랜서, 일용직 등 소득 형태는 무관하며, 현재 채무를 변제할 수 없는 상태(지급불능)이거나 그러한 우려가 있어야 합니다.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item bg-white rounded-xl border border-gray-100 shadow-soft overflow-hidden">
+                        <button class="faq-toggle w-full flex items-center justify-between p-6 text-left" aria-expanded="false">
+                            <span class="text-base font-bold text-navy-900 pr-4 font-sans">변제기간은 얼마나 걸리나요?</span>
+                            <span class="material-symbols-outlined text-primary shrink-0 faq-icon transition-transform duration-300">expand_more</span>
+                        </button>
+                        <div class="faq-content hidden px-6 pb-6">
+                            <p class="text-gray-600 leading-relaxed font-sans text-sm">원칙적으로 <strong>3년(36개월)</strong>이며, 청산가치 보장 등의 사유가 있으면 최대 <strong>5년(60개월)</strong>까지 연장됩니다. 2025년 개정으로 미성년 자녀 2명 이상 양육 가구는 <strong>최단 24개월</strong>까지 단축이 가능하며, 65세 이상 고령자·중증장애인·30세 미만 청년·한부모가족·전세사기 피해자도 단축 대상입니다. 단, 도박·주식·가상화폐 등 사행성 채무는 단축이 불가합니다.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item bg-white rounded-xl border border-gray-100 shadow-soft overflow-hidden">
+                        <button class="faq-toggle w-full flex items-center justify-between p-6 text-left" aria-expanded="false">
+                            <span class="text-base font-bold text-navy-900 pr-4 font-sans">월 변제금은 어떻게 산정되나요?</span>
+                            <span class="material-symbols-outlined text-primary shrink-0 faq-icon transition-transform duration-300">expand_more</span>
+                        </button>
+                        <div class="faq-content hidden px-6 pb-6">
+                            <p class="text-gray-600 leading-relaxed font-sans text-sm"><strong>월 변제금 = 월 평균 소득 − 생계비(기본생계비 + 추가생계비)</strong>로 산정됩니다. 2026년 기본생계비(기준 중위소득 60%)는 1인 가구 약 153만원, 4인 가구 약 389만원입니다. 여기에 주거비·교육비·의료비 등 추가생계비가 인정되며, 부산 지역은 광역시 기준 주거비가 적용됩니다. 같은 채무액이라도 가구 구성과 지역에 따라 변제금이 크게 달라집니다.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item bg-white rounded-xl border border-gray-100 shadow-soft overflow-hidden">
+                        <button class="faq-toggle w-full flex items-center justify-between p-6 text-left" aria-expanded="false">
+                            <span class="text-base font-bold text-navy-900 pr-4 font-sans">도박·투자 실패로 진 빚도 가능한가요?</span>
+                            <span class="material-symbols-outlined text-primary shrink-0 faq-icon transition-transform duration-300">expand_more</span>
+                        </button>
+                        <div class="faq-content hidden px-6 pb-6">
+                            <p class="text-gray-600 leading-relaxed font-sans text-sm"><strong>가능합니다.</strong> 개인회생은 개인파산과 달리 채무의 원인을 크게 따지지 않습니다. 도박, 코인, 주식, 과소비 등으로 인한 채무도 신청할 수 있습니다. 다만 사행성 채무 비율이 높으면 변제기간이 3년이 아닌 <strong>최대 5년</strong>으로 연장될 수 있고, 변제기간 단축 혜택을 받을 수 없습니다.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item bg-white rounded-xl border border-gray-100 shadow-soft overflow-hidden">
+                        <button class="faq-toggle w-full flex items-center justify-between p-6 text-left" aria-expanded="false">
+                            <span class="text-base font-bold text-navy-900 pr-4 font-sans">자동차나 부동산이 있어도 신청 가능한가요?</span>
+                            <span class="material-symbols-outlined text-primary shrink-0 faq-icon transition-transform duration-300">expand_more</span>
+                        </button>
+                        <div class="faq-content hidden px-6 pb-6">
+                            <p class="text-gray-600 leading-relaxed font-sans text-sm"><strong>가능합니다.</strong> 자동차는 시가가 낮거나 생계를 위해 필요한 경우(배달, 대리운전 등) 보유가 인정됩니다. 부동산도 보유 가능하지만, 재산 가치가 청산가치에 반영되어 변제금이 높아질 수 있습니다. 2026년부터 보험 해약환급금 보호 한도도 150만원에서 <strong>250만원</strong>으로 인상되었습니다.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item bg-white rounded-xl border border-gray-100 shadow-soft overflow-hidden">
+                        <button class="faq-toggle w-full flex items-center justify-between p-6 text-left" aria-expanded="false">
+                            <span class="text-base font-bold text-navy-900 pr-4 font-sans">가족이나 배우자에게 불이익이 있나요?</span>
+                            <span class="material-symbols-outlined text-primary shrink-0 faq-icon transition-transform duration-300">expand_more</span>
+                        </button>
+                        <div class="faq-content hidden px-6 pb-6">
+                            <p class="text-gray-600 leading-relaxed font-sans text-sm"><strong>없습니다.</strong> 개인회생은 본인의 법적 절차이므로 가족에게 책임이 전가되지 않습니다. 2026년부터는 배우자 재산이 청산가치 산정에서도 <strong>제외</strong>되어 부담이 더 줄었습니다. 단, 배우자가 공동명의 대출이나 보증을 서준 경우에는 해당 채무에 대해 추심 대상이 될 수 있습니다.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item bg-white rounded-xl border border-gray-100 shadow-soft overflow-hidden">
+                        <button class="faq-toggle w-full flex items-center justify-between p-6 text-left" aria-expanded="false">
+                            <span class="text-base font-bold text-navy-900 pr-4 font-sans">신청하면 압류가 풀리나요?</span>
+                            <span class="material-symbols-outlined text-primary shrink-0 faq-icon transition-transform duration-300">expand_more</span>
+                        </button>
+                        <div class="faq-content hidden px-6 pb-6">
+                            <p class="text-gray-600 leading-relaxed font-sans text-sm">개시결정 후 법원이 중지명령·금지명령을 내리면 압류를 중지할 수 있습니다. 변제계획 인가 결정이 나면 채권자목록에 포함된 채권의 압류는 실효됩니다. 2026년 2월부터 급여 압류금지 최저금액이 185만원에서 <strong>250만원</strong>으로 인상되었고, <strong>생계비 전용계좌</strong>(월 250만원까지 압류 보호)도 신설되었습니다.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item bg-white rounded-xl border border-gray-100 shadow-soft overflow-hidden">
+                        <button class="faq-toggle w-full flex items-center justify-between p-6 text-left" aria-expanded="false">
+                            <span class="text-base font-bold text-navy-900 pr-4 font-sans">면책 후 신용회복은 얼마나 걸리나요?</span>
+                            <span class="material-symbols-outlined text-primary shrink-0 faq-icon transition-transform duration-300">expand_more</span>
+                        </button>
+                        <div class="faq-content hidden px-6 pb-6">
+                            <p class="text-gray-600 leading-relaxed font-sans text-sm">면책 결정 후 <strong>1~3개월 내</strong> 연체 기록이 삭제됩니다. 초기에는 신용등급이 낮아 1금융권 이용이 어렵지만, 체크카드 사용·소액적금 등 꾸준한 금융거래를 통해 점차 회복됩니다. 보통 면책 후 <strong>2~3년이면 신용카드 발급</strong>이 가능하고, 약 <strong>5년 후</strong>에는 정상적인 금융생활 복귀가 가능합니다.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item bg-white rounded-xl border border-gray-100 shadow-soft overflow-hidden">
+                        <button class="faq-toggle w-full flex items-center justify-between p-6 text-left" aria-expanded="false">
+                            <span class="text-base font-bold text-navy-900 pr-4 font-sans">신청 절차와 소요 기간은?</span>
+                            <span class="material-symbols-outlined text-primary shrink-0 faq-icon transition-transform duration-300">expand_more</span>
+                        </button>
+                        <div class="faq-content hidden px-6 pb-6">
+                            <p class="text-gray-600 leading-relaxed font-sans text-sm">신청서·변제계획안 제출 → 보정명령 → <strong>개시결정(신청 후 약 1개월)</strong> → 채권자집회 → 변제계획 인가 → 3~5년 변제 이행 → 면책 순으로 진행됩니다. 신청부터 인가결정까지 약 <strong>6개월</strong>이 소요됩니다. 부산회생법원은 도산 전문법원으로 절차가 비교적 신속하게 진행됩니다.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item bg-white rounded-xl border border-gray-100 shadow-soft overflow-hidden">
+                        <button class="faq-toggle w-full flex items-center justify-between p-6 text-left" aria-expanded="false">
+                            <span class="text-base font-bold text-navy-900 pr-4 font-sans">변제금을 내지 못하면 어떻게 되나요?</span>
+                            <span class="material-symbols-outlined text-primary shrink-0 faq-icon transition-transform duration-300">expand_more</span>
+                        </button>
+                        <div class="faq-content hidden px-6 pb-6">
+                            <p class="text-gray-600 leading-relaxed font-sans text-sm">특별한 사유 없이 <strong>3개월 이상 미납</strong>하면 회생절차가 폐지될 수 있습니다. 다만 소득 감소, 질병, 실직 등 불가피한 사유가 있으면 법원에 <strong>변제계획 변경 신청</strong>을 통해 변제금 조정이 가능합니다. 채무자가 책임질 수 없는 사유로 변제를 완료하지 못한 경우에도, 일정 요건 충족 시 면책을 받을 수 있습니다.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item bg-white rounded-xl border border-gray-100 shadow-soft overflow-hidden">
+                        <button class="faq-toggle w-full flex items-center justify-between p-6 text-left" aria-expanded="false">
+                            <span class="text-base font-bold text-navy-900 pr-4 font-sans">2026년에 달라진 점이 있나요?</span>
+                            <span class="material-symbols-outlined text-primary shrink-0 faq-icon transition-transform duration-300">expand_more</span>
+                        </button>
+                        <div class="faq-content hidden px-6 pb-6">
+                            <p class="text-gray-600 leading-relaxed font-sans text-sm">2026년에는 기준 중위소득이 역대 최대폭인 <strong>6.51% 인상</strong>되어 기본생계비가 크게 올랐습니다. 이에 따라 월 변제금이 줄어들어 개인회생이 더 유리해졌습니다. 또한 급여 압류금지 최저금액이 <strong>250만원</strong>으로 인상되었고, 생계비 전용계좌가 신설되었으며, 보험 해약환급금 보호 한도도 <strong>250만원</strong>으로 올랐습니다. 대전·대구·광주에도 회생법원이 신설(2026년 3월)되어 전국적으로 도산 전문법원 체제가 확대됩니다.</p>
+                        </div>
+                    </div>
+                    <div class="faq-item bg-white rounded-xl border border-gray-100 shadow-soft overflow-hidden">
+                        <button class="faq-toggle w-full flex items-center justify-between p-6 text-left" aria-expanded="false">
+                            <span class="text-base font-bold text-navy-900 pr-4 font-sans">프리랜서·일용직도 신청 가능한가요?</span>
+                            <span class="material-symbols-outlined text-primary shrink-0 faq-icon transition-transform duration-300">expand_more</span>
+                        </button>
+                        <div class="faq-content hidden px-6 pb-6">
+                            <p class="text-gray-600 leading-relaxed font-sans text-sm"><strong>가능합니다.</strong> 4대 보험 미가입자도 소득확인서, 사업자등록증, 급여명세서, 계좌 입금내역 등으로 실제 소득을 입증하면 됩니다. 개인회생은 "장래에 계속적·반복적으로 소득을 얻을 가능성"만 있으면 되므로, 소득 형태는 중요하지 않습니다.</p>
+                        </div>
+                    </div>
+                </div>
+                <p class="text-center text-xs text-gray-400 mt-8 font-sans">※ 위 내용은 2026년 2월 기준 부산회생법원 실무준칙 및 관련 법령을 바탕으로 작성되었습니다. 개인 상황에 따라 달라질 수 있으므로 정확한 판단은 자가진단 후 전문가 상담을 권장합니다.</p>
             </div>
         </section>
 
