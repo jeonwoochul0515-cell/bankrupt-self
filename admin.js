@@ -1,7 +1,23 @@
 import { db } from './firebase-config.js';
 import { collection, getDocs, orderBy, query, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+// 모듈 로딩 성공 플래그
+window.__adminModuleLoaded = true;
+
 const ADMIN_PASSWORD = '0517141515';
+
+function showError(message) {
+    let banner = document.getElementById('error-banner');
+    if (!banner) {
+        banner = document.createElement('div');
+        banner.id = 'error-banner';
+        banner.style.cssText = 'margin:1rem 2rem;padding:1rem 1.5rem;background:#f8d7da;border:1px solid #f5c6cb;border-radius:8px;color:#721c24;font-size:0.9rem;';
+        const content = document.getElementById('admin-content');
+        content.insertBefore(banner, content.querySelector('.stats-section'));
+    }
+    banner.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + message;
+    banner.hidden = false;
+}
 
 function maskPhone(phone) {
     if (!phone) return '-';
@@ -100,6 +116,7 @@ async function loadData() {
         allConsultations = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
     } catch (err) {
         console.error('데이터 로드 실패:', err);
+        showError('데이터를 불러오는데 실패했습니다: ' + err.message);
         allConsultations = [];
     }
 

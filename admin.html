@@ -152,5 +152,20 @@
     </div>
 
     <script type="module" src="admin.js"></script>
+    <script>
+        // 모듈 로딩 실패 감지 - module이 실패하면 이벤트 리스너가 없으므로 폴백 처리
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (!window.__adminModuleLoaded) {
+                    const overlay = document.getElementById('login-overlay');
+                    const box = overlay.querySelector('.login-box');
+                    const err = document.createElement('div');
+                    err.style.cssText = 'margin-top:1rem;padding:1rem;background:#fff3cd;border:1px solid #ffc107;border-radius:8px;font-size:0.85rem;color:#856404;text-align:left;';
+                    err.innerHTML = '<b>스크립트 로딩 오류</b><br>관리자 페이지 스크립트를 불러올 수 없습니다.<br>브라우저 콘솔(F12)에서 오류를 확인해주세요.<br>페이지를 새로고침하거나 네트워크 상태를 확인해주세요.';
+                    box.appendChild(err);
+                }
+            }, 3000);
+        });
+    </script>
 </body>
 </html>
