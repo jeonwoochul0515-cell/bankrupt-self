@@ -1,11 +1,6 @@
 import { db } from './firebase-config.js';
 import { collection, getDocs, orderBy, query, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// 모듈 로딩 성공 플래그
-window.__adminModuleLoaded = true;
-
-const ADMIN_PASSWORD = '0517141515';
-
 function showError(message) {
     let banner = document.getElementById('error-banner');
     if (!banner) {
@@ -75,33 +70,8 @@ function formatMoney(manwon) {
 let allConsultations = [];
 let selectedIds = new Set();
 
-// ========== 인증 ==========
-
-function checkAuth() {
-    return sessionStorage.getItem('admin_auth') === 'true';
-}
-
-function showApp() {
-    document.getElementById('login-overlay').hidden = true;
-    document.getElementById('admin-content').hidden = false;
-}
-
-document.getElementById('login-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const pw = document.getElementById('login-password').value;
-    if (pw === ADMIN_PASSWORD) {
-        sessionStorage.setItem('admin_auth', 'true');
-        showApp();
-        loadData();
-    } else {
-        document.getElementById('login-error').hidden = false;
-    }
-});
-
-document.getElementById('logout-btn').addEventListener('click', () => {
-    sessionStorage.removeItem('admin_auth');
-    location.reload();
-});
+// Firebase 모듈 로드 완료 → 인라인 스크립트에서 호출 가능하도록 등록
+window.__loadAdminData = loadData;
 
 // ========== 데이터 로드 ==========
 
@@ -510,7 +480,12 @@ document.addEventListener('keydown', (e) => {
 
 // ========== 초기화 ==========
 
-if (checkAuth()) {
-    showApp();
+// 이미 로그인 상태이면 바로 데이터 로드
+if (sessionStorage.getItem('admin_auth') === 'true') {
+    loadData();
+}
+
+// 로그인 버튼이 모듈 로딩 전에 눌렸으면 데이터 로드
+if (window.__pendingLogin) {
     loadData();
 }
