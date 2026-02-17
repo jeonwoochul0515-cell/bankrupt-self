@@ -1,18 +1,7 @@
 import { db } from './firebase-config.js';
 import { collection, getDocs, orderBy, query, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// SHA-256 해시 (비밀번호: admin1234)
-const PASSWORD_HASH = '0b4dfe8635672f7029a4a9e2f4bc60cbbdaf785b3a18350b2a300aa9cb4383a7';
-
-// ========== 유틸리티 ==========
-
-async function sha256(text) {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(text);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
+const ADMIN_PASSWORD = '0517141515';
 
 function maskPhone(phone) {
     if (!phone) return '-';
@@ -81,11 +70,10 @@ function showApp() {
     document.getElementById('admin-content').hidden = false;
 }
 
-document.getElementById('login-form').addEventListener('submit', async (e) => {
+document.getElementById('login-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const pw = document.getElementById('login-password').value;
-    const hash = await sha256(pw);
-    if (hash === PASSWORD_HASH) {
+    if (pw === ADMIN_PASSWORD) {
         sessionStorage.setItem('admin_auth', 'true');
         showApp();
         loadData();
