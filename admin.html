@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>관리자 페이지 - 개인회생 자가진단</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+    <!-- 로그인 오버레이 -->
+    <div id="login-overlay" class="login-overlay">
+        <div class="login-box">
+            <div class="login-logo">
+                <i class="fas fa-balance-scale"></i>
+                <span>관리자 페이지</span>
+            </div>
+            <form id="login-form">
+                <div class="input-group">
+                    <i class="fas fa-lock"></i>
+                    <input type="password" id="login-password" placeholder="비밀번호를 입력하세요" autocomplete="off" required>
+                </div>
+                <p id="login-error" class="login-error" hidden>비밀번호가 올바르지 않습니다.</p>
+                <button type="submit" class="login-btn">로그인</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- 메인 콘텐츠 -->
+    <div id="admin-content" class="admin-content" hidden>
+
+        <!-- 헤더 -->
+        <header class="admin-header">
+            <div class="header-left">
+                <i class="fas fa-balance-scale"></i>
+                <span class="header-title">관리자 대시보드</span>
+            </div>
+            <div class="header-right">
+                <a href="/" class="header-link"><i class="fas fa-home"></i> 메인</a>
+                <button id="logout-btn" class="header-link logout-btn"><i class="fas fa-sign-out-alt"></i> 로그아웃</button>
+            </div>
+        </header>
+
+        <!-- 통계 카드 -->
+        <section class="stats-section">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-clipboard-list"></i></div>
+                <div class="stat-info">
+                    <span class="stat-value" id="stat-total">-</span>
+                    <span class="stat-label">전체 상담</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
+                <div class="stat-info">
+                    <span class="stat-value" id="stat-today">-</span>
+                    <span class="stat-label">오늘 상담</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-won-sign"></i></div>
+                <div class="stat-info">
+                    <span class="stat-value" id="stat-avg-debt">-</span>
+                    <span class="stat-label">평균 채무액</span>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-landmark"></i></div>
+                <div class="stat-info">
+                    <span class="stat-value" id="stat-top-court">-</span>
+                    <span class="stat-label">최다 관할 법원</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 툴바 -->
+        <section class="toolbar">
+            <div class="toolbar-left">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-input" placeholder="이름 또는 연락처 검색">
+                </div>
+                <select id="filter-court" class="toolbar-select">
+                    <option value="">전체 관할 법원</option>
+                </select>
+                <input type="date" id="filter-date-start" class="toolbar-date" title="시작일">
+                <input type="date" id="filter-date-end" class="toolbar-date" title="종료일">
+                <select id="sort-select" class="toolbar-select">
+                    <option value="newest">최신순</option>
+                    <option value="oldest">오래된순</option>
+                    <option value="debt-high">채무 높은순</option>
+                    <option value="debt-low">채무 낮은순</option>
+                </select>
+            </div>
+            <div class="toolbar-right">
+                <button id="csv-export-btn" class="btn btn-accent"><i class="fas fa-file-csv"></i> CSV 내보내기</button>
+                <button id="bulk-delete-btn" class="btn btn-danger" hidden><i class="fas fa-trash-alt"></i> 선택 삭제 (<span id="selected-count">0</span>)</button>
+            </div>
+        </section>
+
+        <!-- 전체 선택 -->
+        <div class="select-all-bar" id="select-all-bar" hidden>
+            <label class="checkbox-label">
+                <input type="checkbox" id="select-all-checkbox">
+                <span>전체 선택</span>
+            </label>
+        </div>
+
+        <!-- 상담 목록 -->
+        <section id="consultation-list" class="consultation-list">
+            <div class="loading-spinner" id="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+                <span>데이터를 불러오는 중...</span>
+            </div>
+        </section>
+
+        <!-- 빈 상태 -->
+        <div id="empty-state" class="empty-state" hidden>
+            <i class="fas fa-inbox"></i>
+            <p>상담 데이터가 없습니다.</p>
+        </div>
+
+    </div>
+
+    <!-- 상세보기 모달 -->
+    <div id="detail-modal" class="modal-overlay" hidden>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-user-circle"></i> 상담 상세 정보</h2>
+                <button class="modal-close" id="modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="modal-body">
+            </div>
+        </div>
+    </div>
+
+    <!-- 삭제 확인 모달 -->
+    <div id="confirm-modal" class="modal-overlay" hidden>
+        <div class="modal-content confirm-modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-exclamation-triangle"></i> 삭제 확인</h2>
+            </div>
+            <div class="modal-body">
+                <p id="confirm-message">정말 삭제하시겠습니까?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="confirm-cancel">취소</button>
+                <button class="btn btn-danger" id="confirm-ok">삭제</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="admin.js"></script>
+</body>
+</html>
