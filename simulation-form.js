@@ -76,9 +76,12 @@ class SimulationForm extends HTMLElement {
             .privacy-policy-link { text-decoration: underline; cursor: pointer; color: #1A3A6D; }
             .result-actions { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
             .action-btn { padding: 1rem; border-radius: 8px; font-size: 1.1rem; font-weight: 600; text-align: center; text-decoration: none; cursor: pointer; transition: all 0.3s; }
-            #submit-consultation-btn { background-color: #E8A95A; color: white; border: none; }
-            #recommend-btn { background-color: #28a745; color: white; border: none; }
-            #delete-data-btn { background-color: #e63946; color: white; border: none; }
+            #submit-consultation-btn { background-color: #137fec; color: white; border: none; box-shadow: 0 4px 15px rgba(19, 127, 236, 0.3); }
+            #submit-consultation-btn:hover { background-color: #0e5eb0; }
+            #recommend-btn { background-color: #0a1f33; color: white; border: none; box-shadow: 0 4px 15px rgba(10, 31, 51, 0.2); }
+            #recommend-btn:hover { background-color: #112a45; }
+            #delete-data-btn { background-color: #f6f7f8; color: #6c757d; border: 1px solid #dee2e6; }
+            #delete-data-btn:hover { background-color: #e9ecef; }
             /* Modal Styles */
             .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; }
             .modal-content { background: white; padding: 2rem; border-radius: 12px; max-width: 600px; max-height: 80vh; overflow-y: auto; position: relative; }
