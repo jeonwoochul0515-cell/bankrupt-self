@@ -15,12 +15,14 @@
     <meta name="keywords" content="개인회생, 자가진단, 변제금 계산, 부산회생법원, 개인회생 신청, 채무 탕감, 2026 생계비, 부산 개인회생, 울산 개인회생, 경남 개인회생">
     <meta name="robots" content="index, follow">
     <link rel="canonical" href="https://bankrupt-self.vercel.app/">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#137fec">
 
     <!-- Open Graph (카카오톡, 페이스북 등) -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="개인회생 자가진단 - 1분 만에 내 실제 변제금 확인">
     <meta property="og:description" content="2026년 최신 생계비 기준 반영. 부산회생법원 실무준칙 기반 정밀 시뮬레이션. 자가진단 완료 시 수임료 20만원 할인 + 분할 납부 혜택.">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&h=630&q=80">
+    <meta property="og:image" content="https://bankrupt-self.vercel.app/og-image.png">
     <meta property="og:url" content="https://bankrupt-self.vercel.app/">
     <meta property="og:locale" content="ko_KR">
     <meta property="og:site_name" content="개인회생 자가진단">
@@ -29,7 +31,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="개인회생 자가진단 - 1분 만에 내 실제 변제금 확인">
     <meta name="twitter:description" content="2026년 최신 생계비 기준 반영. 부산회생법원 실무준칙 기반 정밀 시뮬레이션. 수임료 20만원 할인 혜택.">
-    <meta name="twitter:image" content="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&h=630&q=80">
+    <meta name="twitter:image" content="https://bankrupt-self.vercel.app/og-image.png">
 
     <!-- 네이버 웹마스터 인증 (서치어드바이저에서 인증코드 받은 후 아래 content 값 교체) -->
     <meta name="naver-site-verification" content="NAVER_VERIFICATION_CODE">
@@ -37,39 +39,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#137fec",
-                        "primary-dark": "#0e5eb0",
-                        "primary-light": "#e0effd",
-                        "background-light": "#f6f7f8",
-                        "navy-900": "#0a1f33",
-                        "navy-800": "#112a45",
-                    },
-                    fontFamily: {
-                        "serif": ["'Nanum Myeongjo'", "serif"],
-                        "sans": ["'Noto Sans KR'", "sans-serif"]
-                    },
-                },
-            },
-        }
-    </script>
-    <style>
-        html { scroll-behavior: smooth; }
-        .shadow-soft { box-shadow: 0 4px 20px -2px rgba(19, 127, 236, 0.08); }
-        .success-carousel { overflow: hidden; height: 48px; }
-        .success-carousel .carousel-track { animation: scrollUp 25s linear infinite; }
-        .success-carousel:hover .carousel-track { animation-play-state: paused; }
-        @keyframes scrollUp { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
-        .faq-icon.open { transform: rotate(180deg); }
-        .faq-content { transition: max-height 0.3s ease, padding 0.3s ease; }
-    </style>
+    <link rel="stylesheet" href="tailwind-built.css">
 
     <script type="application/ld+json">
     {

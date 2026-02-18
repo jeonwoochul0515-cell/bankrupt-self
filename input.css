@@ -1,0 +1,27 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/forms";
+
+@source "./index.html";
+@source "./admin.html";
+@source "./main.js";
+
+@theme {
+    --color-primary: #137fec;
+    --color-primary-dark: #0e5eb0;
+    --color-primary-light: #e0effd;
+    --color-background-light: #f6f7f8;
+    --color-navy-900: #0a1f33;
+    --color-navy-800: #112a45;
+    --font-serif: 'Nanum Myeongjo', serif;
+    --font-sans: 'Noto Sans KR', sans-serif;
+}
+
+/* Custom utilities */
+html { scroll-behavior: smooth; }
+.shadow-soft { box-shadow: 0 4px 20px -2px rgba(19, 127, 236, 0.08); }
+.success-carousel { overflow: hidden; height: 48px; }
+.success-carousel .carousel-track { animation: scrollUp 25s linear infinite; }
+.success-carousel:hover .carousel-track { animation-play-state: paused; }
+@keyframes scrollUp { 0% { transform: translateY(0); } 100% { transform: translateY(-50%); } }
+.faq-icon.open { transform: rotate(180deg); }
+.faq-content { transition: max-height 0.3s ease, padding 0.3s ease; }

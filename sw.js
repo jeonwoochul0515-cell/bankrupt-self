@@ -1,14 +1,12 @@
 
-const CACHE_NAME = 'bankrupt-self-cache-v1';
+const CACHE_NAME = 'bankrupt-self-cache-v2';
 const urlsToCache = [
   '/',
   '/index.html',
-  '/style.css',
+  '/tailwind-built.css',
   '/main.js',
   '/manifest.json',
-  '/privacy.html',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css' 
-  // Add icon paths here later e.g., '/icons/icon-192x192.png'
+  '/privacy.html'
 ];
 
 // Install a service worker

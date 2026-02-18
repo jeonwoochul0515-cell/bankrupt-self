@@ -1,0 +1,19 @@
+{
+  "name": "bankrupt-self",
+  "version": "1.0.0",
+  "description": "A simple HTML/JS/CSS starter template# bankrupt-self",
+  "main": "main.js",
+  "scripts": {
+    "build:css": "tailwindcss -i input.css -o tailwind-built.css --minify",
+    "dev:css": "tailwindcss -i input.css -o tailwind-built.css --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.18",
+    "@tailwindcss/forms": "^0.5.11",
+    "tailwindcss": "^4.1.18"
+  }
+}

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>OG Image Generator</title>
+    <style>
+        body { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 40px; background: #f0f0f0; font-family: sans-serif; }
+        canvas { border: 1px solid #ccc; max-width: 100%; }
+        button { padding: 12px 32px; font-size: 16px; font-weight: bold; background: #137fec; color: white; border: none; border-radius: 8px; cursor: pointer; }
+        button:hover { background: #0e5eb0; }
+        p { color: #666; }
+    </style>
+</head>
+<body>
+    <h1>OG Image Generator (1200x630)</h1>
+    <canvas id="canvas" width="1200" height="630"></canvas>
+    <button onclick="download()">PNG 다운로드</button>
+    <p>다운로드 후 og-image.png로 저장하세요</p>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Background gradient
+        const bg = ctx.createLinearGradient(0, 0, 1200, 630);
+        bg.addColorStop(0, '#0a1f33');
+        bg.addColorStop(1, '#112a45');
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, 1200, 630);
+
+        // Decorative circle (top right)
+        ctx.beginPath();
+        ctx.arc(1050, 100, 200, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(19, 127, 236, 0.15)';
+        ctx.fill();
+
+        // Decorative circle (bottom left)
+        ctx.beginPath();
+        ctx.arc(150, 530, 150, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(19, 127, 236, 0.1)';
+        ctx.fill();
+
+        // Badge
+        const badgeText = '2026년 최신 생계비 기준 반영';
+        ctx.font = 'bold 20px sans-serif';
+        const badgeWidth = ctx.measureText(badgeText).width + 40;
+        ctx.fillStyle = 'rgba(19, 127, 236, 0.2)';
+        roundRect(ctx, 80, 160, badgeWidth, 40, 20);
+        ctx.fill();
+        ctx.fillStyle = '#60a5fa';
+        ctx.fillText(badgeText, 100, 186);
+
+        // Main title
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 64px sans-serif';
+        ctx.fillText('내 실제 변제금,', 80, 280);
+        ctx.font = 'bold 64px sans-serif';
+        ctx.fillText('1분이면 알 수 있습니다.', 80, 355);
+
+        // Accent underline
+        ctx.fillStyle = '#137fec';
+        ctx.fillRect(80, 370, 300, 5);
+
+        // Subtitle
+        ctx.fillStyle = '#94a3b8';
+        ctx.font = '28px sans-serif';
+        ctx.fillText('각 지역 회생법원 실무준칙 반영 · 정밀 시뮬레이션', 80, 430);
+
+        // Benefits
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 24px sans-serif';
+        ctx.fillText('✓ 수임료 20만원 할인', 80, 500);
+        ctx.fillText('✓ 수임료 분할 납부', 450, 500);
+
+        // Brand
+        ctx.fillStyle = '#137fec';
+        ctx.font = 'bold 36px sans-serif';
+        ctx.fillText('⚖', 80, 570);
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 28px sans-serif';
+        ctx.fillText('자가진단  |  개인회생 전문', 125, 570);
+
+        // URL
+        ctx.fillStyle = '#64748b';
+        ctx.font = '20px sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText('bankrupt-self.vercel.app', 1120, 570);
+        ctx.textAlign = 'left';
+
+        function roundRect(ctx, x, y, w, h, r) {
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + w - r, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+            ctx.lineTo(x + w, y + h - r);
+            ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+            ctx.lineTo(x + r, y + h);
+            ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+            ctx.lineTo(x, y + r);
+            ctx.quadraticCurveTo(x, y, x + r, y);
+            ctx.closePath();
+        }
+
+        function download() {
+            const link = document.createElement('a');
+            link.download = 'og-image.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+    </script>
+</body>
+</html>
