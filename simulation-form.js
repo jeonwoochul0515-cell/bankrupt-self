@@ -80,6 +80,9 @@ class SimulationForm extends HTMLElement {
             #submit-consultation-btn:hover { background-color: #0e5eb0; }
             #recommend-btn { background-color: #0a1f33; color: white; border: none; box-shadow: 0 4px 15px rgba(10, 31, 51, 0.2); }
             #recommend-btn:hover { background-color: #112a45; }
+            #kakao-btn { background-color: #FEE500; color: #3C1E1E; border: none; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
+            #kakao-btn:hover { background-color: #F5DC00; }
+            #kakao-btn svg { flex-shrink: 0; }
             #delete-data-btn { background-color: #f6f7f8; color: #6c757d; border: 1px solid #dee2e6; }
             #delete-data-btn:hover { background-color: #e9ecef; }
             /* Modal Styles */
@@ -500,7 +503,11 @@ class SimulationForm extends HTMLElement {
                     <label><input type="checkbox" id="privacy-agree"> <span class="privacy-policy-link" id="privacy-policy-link">개인정보처리방침</span>에 동의합니다.</label>
                 </div>
                 <div class="result-actions">
-                    <button id="submit-consultation-btn" class="action-btn">상담 신청하기</button>
+                    <a href="https://pf.kakao.com/_zkzIX/chat" target="_blank" rel="noopener" id="kakao-btn" class="action-btn">
+                        <svg width="22" height="22" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg"><path d="M128 36C70.6 36 24 72.2 24 116.8c0 29 19.5 54.4 48.8 68.8-1.5 5.6-5.5 20.3-6.3 23.4-.9 3.9 1.4 3.8 3 2.6 1.2-.9 19.4-13.2 27.3-18.6 10.2 1.5 20.7 2.3 31.3 2.3 57.4 0 104-36.2 104-80.8S185.4 36 128 36z" fill="#3C1E1E"/></svg>
+                        카카오톡으로 무료 상담하기
+                    </a>
+                    <button id="submit-consultation-btn" class="action-btn">전화 상담 신청하기</button>
                     <a href="http://lawchungsong.vercel.app" target="_blank" id="recommend-btn" class="action-btn">부산회생법원 인근 변호사사무실 추천</a>
                     <button id="delete-data-btn" class="action-btn">모든 내 정보 삭제하기</button>
                 </div>
