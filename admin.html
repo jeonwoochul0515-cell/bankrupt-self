@@ -29,14 +29,10 @@
             </div>
             <form id="login-form">
                 <div class="input-group">
-                    <i class="fas fa-envelope"></i>
-                    <input type="email" id="login-email" placeholder="이메일을 입력하세요" autocomplete="email" required>
-                </div>
-                <div class="input-group">
                     <i class="fas fa-lock"></i>
-                    <input type="password" id="login-password" placeholder="비밀번호를 입력하세요" autocomplete="current-password" required>
+                    <input type="password" id="login-password" placeholder="비밀번호를 입력하세요" autocomplete="off" required>
                 </div>
-                <p id="login-error" class="login-error" hidden>이메일 또는 비밀번호가 올바르지 않습니다.</p>
+                <p id="login-error" class="login-error" hidden>비밀번호가 올바르지 않습니다.</p>
                 <button type="submit" class="login-btn">로그인</button>
             </form>
         </div>
@@ -199,26 +195,40 @@
     </div>
 
     <script>
+        const ADMIN_PASSWORD = '0517141515';
+
+        function checkAuth() {
+            return sessionStorage.getItem('admin_auth') === 'true';
+        }
+
         function showApp() {
             document.getElementById('login-overlay').hidden = true;
             document.getElementById('admin-content').hidden = false;
         }
 
+        // 이미 인증된 경우
+        if (checkAuth()) {
+            document.addEventListener('DOMContentLoaded', showApp);
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('login-form').addEventListener('submit', (e) => {
                 e.preventDefault();
-                const email = document.getElementById('login-email').value;
                 const pw = document.getElementById('login-password').value;
-                // Firebase Auth 로그인은 admin.js 모듈에서 처리
-                if (window.__adminLogin) {
-                    window.__adminLogin(email, pw);
+                if (pw === ADMIN_PASSWORD) {
+                    sessionStorage.setItem('admin_auth', 'true');
+                    showApp();
+                    document.getElementById('login-error').hidden = true;
+                    // admin.js 데이터 로드 트리거
+                    if (window.__loadData) window.__loadData();
                 } else {
-                    window.__pendingLogin = { email, pw };
+                    document.getElementById('login-error').hidden = false;
                 }
             });
 
             document.getElementById('logout-btn').addEventListener('click', () => {
-                if (window.__adminLogout) window.__adminLogout();
+                sessionStorage.removeItem('admin_auth');
+                location.reload();
             });
         });
     </script>

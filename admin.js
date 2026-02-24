@@ -1,6 +1,5 @@
-import { db, auth } from './firebase-config.js';
+import { db } from './firebase-config.js';
 import { collection, getDocs, orderBy, query, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 function showError(message) {
     let banner = document.getElementById('error-banner');
@@ -72,34 +71,13 @@ let allConsultations = [];
 let allAnalytics = [];
 let selectedIds = new Set();
 
-// ========== Firebase Auth ==========
+// ========== 비밀번호 인증 ==========
 
-window.__adminLogin = async function(email, password) {
-    try {
-        await signInWithEmailAndPassword(auth, email, password);
-    } catch (err) {
-        console.error('로그인 실패:', err);
-        document.getElementById('login-error').hidden = false;
-    }
-};
+window.__loadData = loadData;
 
-window.__adminLogout = async function() {
-    await signOut(auth);
-    location.reload();
-};
-
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        showApp();
-        loadData();
-    }
-});
-
-// 페이지 로드 전에 로그인 시도가 있었으면 처리
-if (window.__pendingLogin) {
-    const { email, pw } = window.__pendingLogin;
-    window.__adminLogin(email, pw);
-    window.__pendingLogin = null;
+// 이미 인증된 상태라면 바로 데이터 로드
+if (sessionStorage.getItem('admin_auth') === 'true') {
+    loadData();
 }
 
 // ========== 데이터 로드 ==========
