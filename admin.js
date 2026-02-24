@@ -1,5 +1,6 @@
-import { db } from './firebase-config.js';
+import { db, auth } from './firebase-config.js';
 import { collection, getDocs, orderBy, query, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 function showError(message) {
     let banner = document.getElementById('error-banner');
@@ -71,8 +72,35 @@ let allConsultations = [];
 let allAnalytics = [];
 let selectedIds = new Set();
 
-// Firebase 모듈 로드 완료 → 인라인 스크립트에서 호출 가능하도록 등록
-window.__loadAdminData = loadData;
+// ========== Firebase Auth ==========
+
+window.__adminLogin = async function(email, password) {
+    try {
+        await signInWithEmailAndPassword(auth, email, password);
+    } catch (err) {
+        console.error('로그인 실패:', err);
+        document.getElementById('login-error').hidden = false;
+    }
+};
+
+window.__adminLogout = async function() {
+    await signOut(auth);
+    location.reload();
+};
+
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        showApp();
+        loadData();
+    }
+});
+
+// 페이지 로드 전에 로그인 시도가 있었으면 처리
+if (window.__pendingLogin) {
+    const { email, pw } = window.__pendingLogin;
+    window.__adminLogin(email, pw);
+    window.__pendingLogin = null;
+}
 
 // ========== 데이터 로드 ==========
 
@@ -503,13 +531,4 @@ document.addEventListener('keydown', (e) => {
 });
 
 // ========== 초기화 ==========
-
-// 이미 로그인 상태이면 바로 데이터 로드
-if (sessionStorage.getItem('admin_auth') === 'true') {
-    loadData();
-}
-
-// 로그인 버튼이 모듈 로딩 전에 눌렸으면 데이터 로드
-if (window.__pendingLogin) {
-    loadData();
-}
+// Firebase Auth의 onAuthStateChanged가 인증 상태를 자동으로 관리합니다.

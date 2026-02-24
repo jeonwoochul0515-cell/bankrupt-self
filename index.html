@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <!-- Google Tag Manager -->
-    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    <!-- Google Tag Manager (쿠키 동의 후 로드) -->
+    <script>
+    function loadGTM(){if(window.__gtmLoaded)return;window.__gtmLoaded=true;
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-TZRMFF55');</script>
+    })(window,document,'script','dataLayer','GTM-TZRMFF55');}
+    if(localStorage.getItem('cookie_consent')==='accepted'){loadGTM();}
+    </script>
     <!-- End Google Tag Manager -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,7 +26,7 @@
     <meta property="og:type" content="website">
     <meta property="og:title" content="개인회생 자가진단 - 1분 만에 내 실제 변제금 확인">
     <meta property="og:description" content="2026년 최신 생계비 기준 반영. 부산회생법원 실무준칙 기반 정밀 시뮬레이션. 자가진단 완료 시 수임료 20만원 할인 + 분할 납부 혜택.">
-    <meta property="og:image" content="https://bankrupt-self.vercel.app/og-image.png">
+    <meta property="og:image" content="https://bankrupt-self.vercel.app/api/og">
     <meta property="og:url" content="https://bankrupt-self.vercel.app/">
     <meta property="og:locale" content="ko_KR">
     <meta property="og:site_name" content="개인회생 자가진단">
@@ -31,7 +35,7 @@
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="개인회생 자가진단 - 1분 만에 내 실제 변제금 확인">
     <meta name="twitter:description" content="2026년 최신 생계비 기준 반영. 부산회생법원 실무준칙 기반 정밀 시뮬레이션. 수임료 20만원 할인 혜택.">
-    <meta name="twitter:image" content="https://bankrupt-self.vercel.app/og-image.png">
+    <meta name="twitter:image" content="https://bankrupt-self.vercel.app/api/og">
 
     <!-- 네이버 웹마스터 인증 (서치어드바이저에서 인증코드 받은 후 아래 content 값 교체) -->
     <meta name="naver-site-verification" content="NAVER_VERIFICATION_CODE">
@@ -145,13 +149,13 @@
         ]
     }
     </script>
-    <script src="simulation-form.js" type="module" defer>
+    <script src="simulation-form.js" type="module" defer></script>
     <script src="main.js" type="module" defer></script>
     <script src="tracker.js" type="module" defer></script>
 </head>
 <body class="bg-background-light font-sans text-navy-900 overflow-x-hidden antialiased">
-    <!-- Google Tag Manager (noscript) -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TZRMFF55"
+    <!-- Google Tag Manager (noscript) - 쿠키 동의 후에만 활성화 -->
+    <noscript><iframe id="gtm-noscript" src="" data-src="https://www.googletagmanager.com/ns.html?id=GTM-TZRMFF55"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
 
@@ -316,6 +320,84 @@
                         <a class="inline-flex items-center text-primary font-bold hover:gap-2 transition-all font-sans no-underline" href="#simulation">
                             자가진단 시작 <span class="material-symbols-outlined text-sm ml-1">arrow_forward</span>
                         </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== Bankruptcy Trend (사회적 증거 - 객관적 데이터) ========== -->
+        <section class="py-16 bg-white border-t border-gray-100">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="max-w-4xl mx-auto">
+                    <div class="text-center mb-10">
+                        <h2 class="text-2xl lg:text-3xl font-serif font-bold text-navy-900 mb-4">개인회생 신청, 전국적으로 빠르게 증가하고 있습니다</h2>
+                        <p class="text-gray-600 text-lg font-sans">더 이상 혼자만의 문제가 아닙니다. 많은 분들이 법적 보호를 통해 새 출발을 준비하고 있습니다.</p>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-6 mb-6">
+                        <div class="bg-background-light rounded-xl p-6 text-center border border-gray-100">
+                            <p class="text-sm text-gray-500 font-sans mb-2">전국 개인회생 신청</p>
+                            <p class="text-3xl font-serif font-bold text-primary">연 10만건+</p>
+                            <p class="text-xs text-gray-400 font-sans mt-1">매년 역대 최고 기록 경신</p>
+                        </div>
+                        <div class="bg-background-light rounded-xl p-6 text-center border border-gray-100">
+                            <p class="text-sm text-gray-500 font-sans mb-2">전년 대비 증가율</p>
+                            <p class="text-3xl font-serif font-bold text-primary">30%+</p>
+                            <p class="text-xs text-gray-400 font-sans mt-1">빠른 상승 추세 지속</p>
+                        </div>
+                        <div class="bg-background-light rounded-xl p-6 text-center border border-gray-100">
+                            <p class="text-sm text-gray-500 font-sans mb-2">2026년 생계비 인상</p>
+                            <p class="text-3xl font-serif font-bold text-primary">6.51%</p>
+                            <p class="text-xs text-gray-400 font-sans mt-1">역대 최대폭 인상 - 변제금 감소</p>
+                        </div>
+                    </div>
+                    <p class="text-center text-xs text-gray-400 font-sans">출처: 법원행정처 사법연감 / 대법원 통계</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========== Empathy (기본 귀인 오류 해소 - 공감 메시지) ========== -->
+        <section class="py-16 bg-background-light">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="text-center mb-10">
+                    <h2 class="text-2xl lg:text-3xl font-serif font-bold text-navy-900 mb-4">빚은 당신의 잘못이 아닙니다</h2>
+                    <p class="text-gray-600 text-lg font-sans">누구에게나 일어날 수 있는 일입니다. 중요한 것은 지금부터의 선택입니다.</p>
+                </div>
+                <div class="grid sm:grid-cols-2 gap-4">
+                    <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-soft">
+                        <div class="flex items-start gap-3">
+                            <span class="material-symbols-outlined text-primary mt-0.5">trending_down</span>
+                            <div>
+                                <h4 class="font-bold text-navy-900 mb-1 font-sans">투자 실패</h4>
+                                <p class="text-sm text-gray-600 font-sans">시장의 변동성은 누구도 예측할 수 없습니다. 예상치 못한 하락은 실력의 문제가 아닙니다.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-soft">
+                        <div class="flex items-start gap-3">
+                            <span class="material-symbols-outlined text-primary mt-0.5">store</span>
+                            <div>
+                                <h4 class="font-bold text-navy-900 mb-1 font-sans">사업 실패</h4>
+                                <p class="text-sm text-gray-600 font-sans">도전 자체는 실패가 아닙니다. 경기 변동과 예상치 못한 상황은 누구에게나 찾아옵니다.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-soft">
+                        <div class="flex items-start gap-3">
+                            <span class="material-symbols-outlined text-primary mt-0.5">medical_services</span>
+                            <div>
+                                <h4 class="font-bold text-navy-900 mb-1 font-sans">의료비 / 생활비</h4>
+                                <p class="text-sm text-gray-600 font-sans">갑작스러운 질병이나 생활고는 누구도 대비할 수 없는 일입니다.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl border border-gray-100 shadow-soft">
+                        <div class="flex items-start gap-3">
+                            <span class="material-symbols-outlined text-primary mt-0.5">handshake</span>
+                            <div>
+                                <h4 class="font-bold text-navy-900 mb-1 font-sans">보증 / 연대채무</h4>
+                                <p class="text-sm text-gray-600 font-sans">누군가를 돕고 싶었던 선한 마음이 어려운 상황을 만들기도 합니다.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -595,15 +677,39 @@
         </div>
     </footer>
 
-    <!-- Floating KakaoTalk Button -->
-    <a id="kakao-float" href="https://pf.kakao.com/_zkzIX/chat" target="_blank" rel="noopener"
-       class="fixed bottom-20 right-4 md:bottom-8 md:right-8 z-40 flex items-center justify-center size-14 rounded-full shadow-lg transition-all hover:scale-110 hover:shadow-xl no-underline"
-       style="background-color: #FEE500;"
-       aria-label="카카오톡 상담">
-        <svg width="28" height="28" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg">
-            <path d="M128 36C70.6 36 24 72.2 24 116.8c0 29 19.5 54.4 48.8 68.8-1.5 5.6-5.5 20.3-6.3 23.4-.9 3.9 1.4 3.8 3 2.6 1.2-.9 19.4-13.2 27.3-18.6 10.2 1.5 20.7 2.3 31.3 2.3 57.4 0 104-36.2 104-80.8S185.4 36 128 36z" fill="#3C1E1E"/>
-        </svg>
-    </a>
+    <!-- Cookie Consent Banner -->
+    <div id="cookie-banner" class="fixed bottom-0 left-0 right-0 z-[60] transition-transform duration-300" style="display:none;">
+        <div class="max-w-4xl mx-auto px-4 pb-4">
+            <div class="bg-navy-900 text-white rounded-xl shadow-2xl p-5 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                <div class="flex-1 font-sans">
+                    <p class="text-sm leading-relaxed">
+                        본 사이트는 서비스 개선 및 통계 분석을 위해 쿠키를 사용합니다.
+                        <a href="privacy.html" class="text-primary-light underline">개인정보처리방침</a>에서 자세한 내용을 확인하실 수 있습니다.
+                    </p>
+                </div>
+                <div class="flex gap-3 shrink-0 font-sans">
+                    <button id="cookie-decline" class="px-4 py-2 text-sm font-medium text-gray-300 bg-white/10 rounded-lg hover:bg-white/20 transition-colors">거부</button>
+                    <button id="cookie-accept" class="px-6 py-2 text-sm font-bold text-navy-900 bg-white rounded-lg hover:bg-gray-100 transition-colors">동의</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    (function(){
+        if(!localStorage.getItem('cookie_consent')){
+            document.getElementById('cookie-banner').style.display='block';
+        }
+        document.getElementById('cookie-accept').addEventListener('click',function(){
+            localStorage.setItem('cookie_consent','accepted');
+            document.getElementById('cookie-banner').style.display='none';
+            loadGTM();
+        });
+        document.getElementById('cookie-decline').addEventListener('click',function(){
+            localStorage.setItem('cookie_consent','declined');
+            document.getElementById('cookie-banner').style.display='none';
+        });
+    })();
+    </script>
 
     <!-- Mobile Floating CTA -->
     <div id="floating-cta" class="fixed bottom-0 left-0 right-0 z-50 md:hidden translate-y-full transition-transform duration-300 pointer-events-none">

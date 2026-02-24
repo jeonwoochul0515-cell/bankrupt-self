@@ -13,7 +13,7 @@ if (!sessionStorage.getItem('tracked')) {
     }).catch(() => {});
 }
 
-// 변호사 추천 클릭 추적 (Shadow DOM 내부이므로 전역 이벤트 위임)
+// 이벤트 추적 (Shadow DOM 내부이므로 전역 이벤트 위임)
 window.__trackEvent = function(eventType) {
     addDoc(collection(db, 'analytics'), {
         type: eventType,

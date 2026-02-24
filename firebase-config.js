@@ -5,6 +5,7 @@
 // Firebase SDK에서 필요한 함수들을 가져옵니다.
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 // 사용자가 제공한 Firebase 웹 앱 설정 정보입니다.
 const firebaseConfig = {
@@ -21,3 +22,6 @@ const app = initializeApp(firebaseConfig);
 
 // Firestore 데이터베이스 객체를 가져와서 다른 파일에서 사용할 수 있도록 내보냅니다(export).
 export const db = getFirestore(app);
+
+// Firebase 인증 객체를 내보냅니다.
+export const auth = getAuth(app);

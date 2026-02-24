@@ -1,11 +1,17 @@
-rules-version = '2';
+rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+
+    // 상담 신청: 누구나 생성 가능, 읽기/수정/삭제는 인증된 관리자만
     match /consultations/{docId} {
-      allow create: if true;
+      allow create: if request.resource.data.keys().hasAll(['requesterInfo', 'createdAt']);
+      allow read, update, delete: if request.auth != null;
     }
-    match /{document=**} {
-      allow read, write: if request.time < timestamp.date(2027, 2, 14);
+
+    // 분석 데이터: 누구나 생성 가능, 읽기는 인증된 관리자만
+    match /analytics/{docId} {
+      allow create: if true;
+      allow read, delete: if request.auth != null;
     }
   }
 }

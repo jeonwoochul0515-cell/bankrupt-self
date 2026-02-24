@@ -29,12 +29,25 @@ const CONSTANTS = {
 
 const SPECIALIZED_COURTS = ["BUSAN", "SEOUL", "SUWON"];
 
+const STEP_MESSAGES = [
+    { counter: "", message: "" },
+    { counter: "1 / 8 단계", message: "새로운 시작을 위한 첫 걸음을 내딛으셨습니다." },
+    { counter: "2 / 8 단계", message: "잘 하고 계십니다!" },
+    { counter: "3 / 8 단계", message: "절반 가까이 왔습니다. 조금만 더 힘내세요." },
+    { counter: "4 / 8 단계", message: "절반을 넘었습니다! 순조롭게 진행 중입니다." },
+    { counter: "5 / 8 단계", message: "핵심 정보를 입력하고 있습니다." },
+    { counter: "6 / 8 단계", message: "거의 다 왔습니다!" },
+    { counter: "7 / 8 단계", message: "마무리 단계입니다. 포기하지 마세요!" },
+    { counter: "8 / 8 단계", message: "마지막 질문입니다! 곧 결과를 확인할 수 있습니다." },
+    { counter: "", message: "" }
+];
+
 class SimulationForm extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
         this.currentStep = 0;
-        this.totalSteps = 9; // 0~7: 질문, 8: 결과
+        this.totalSteps = 10; // 0: 개인정보, 1~8: 질문, 9: 결과
         this.formData = JSON.parse(localStorage.getItem('formData')) || {};
         this.render();
     }
@@ -43,8 +56,8 @@ class SimulationForm extends HTMLElement {
         const style = `
             :host { display: block; width: 100%; max-width: 800px; margin: 0 auto; font-family: 'Pretendard', sans-serif; }
             .simulation-form-wrapper { background-color: #fff; border-radius: 16px; padding: 2.5rem; box-shadow: 0 10px 40px rgba(0,0,0,0.08); position: relative; }
-            #progress-bar-container { width: 100%; background-color: #e9ecef; border-radius: 10px; margin-bottom: 2rem; height: 12px; overflow: hidden; }
-            #progress-bar { width: 0; height: 100%; background: linear-gradient(90deg, #1A3A6D, #2b509a); transition: width 0.4s ease-in-out; }
+            #progress-bar-container { width: 100%; background-color: #e9ecef; border-radius: 10px; margin-bottom: 0.75rem; height: 14px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
+            #progress-bar { width: 0; height: 100%; background: linear-gradient(90deg, #1A3A6D, #137fec); transition: width 0.4s ease-in-out; border-radius: 10px; }
             .form-step { display: none; animation: fadeIn 0.5s; }
             .form-step.active { display: block; }
             @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -78,25 +91,58 @@ class SimulationForm extends HTMLElement {
             .action-btn { padding: 1rem; border-radius: 8px; font-size: 1.1rem; font-weight: 600; text-align: center; text-decoration: none; cursor: pointer; transition: all 0.3s; }
             #submit-consultation-btn { background-color: #137fec; color: white; border: none; box-shadow: 0 4px 15px rgba(19, 127, 236, 0.3); }
             #submit-consultation-btn:hover { background-color: #0e5eb0; }
-            #recommend-btn { background-color: #0a1f33; color: white; border: none; box-shadow: 0 4px 15px rgba(10, 31, 51, 0.2); }
-            #recommend-btn:hover { background-color: #112a45; }
-            #kakao-btn { background-color: #FEE500; color: #3C1E1E; border: none; display: flex; align-items: center; justify-content: center; gap: 0.5rem; }
-            #kakao-btn:hover { background-color: #F5DC00; }
-            #kakao-btn svg { flex-shrink: 0; }
             #delete-data-btn { background-color: #f6f7f8; color: #6c757d; border: 1px solid #dee2e6; }
             #delete-data-btn:hover { background-color: #e9ecef; }
             /* Modal Styles */
             .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 1000; }
             .modal-content { background: white; padding: 2rem; border-radius: 12px; max-width: 600px; max-height: 80vh; overflow-y: auto; position: relative; }
             .close-btn { position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; cursor: pointer; border: none; background: none; color: #868e96; }
+            /* Step Info */
+            .step-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding: 0 0.25rem; }
+            .step-counter { font-size: 0.85rem; font-weight: 600; color: #1A3A6D; }
+            .step-message { font-size: 0.85rem; color: #137fec; font-weight: 500; }
+            /* Immunity Section */
+            .immunity-section { margin-top: 2rem; padding: 1.5rem; background: #f0f7ff; border-radius: 12px; border: 1px solid #d0e3ff; }
+            .immunity-section h4 { margin: 0 0 1rem; font-size: 1.1rem; color: #1A3A6D; text-align: center; font-weight: 700; }
+            .immunity-item { margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #e0edff; }
+            .immunity-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+            .immunity-q { font-weight: 600; color: #495057; font-size: 0.9rem; margin: 0 0 0.25rem; }
+            .immunity-a { color: #137fec; font-size: 0.85rem; margin: 0; line-height: 1.5; }
+            /* Commitment Section */
+            .commitment-section { margin-top: 1.5rem; padding: 1.5rem; background: linear-gradient(135deg, #f0f4ff, #e8f1ff); border-radius: 12px; border: 1px solid #c5d9f8; text-align: center; }
+            .commitment-section h4 { margin: 0 0 0.75rem; font-size: 1.1rem; color: #1A3A6D; font-weight: 700; }
+            .commitment-section p { font-size: 0.9rem; color: #495057; margin: 0.5rem 0; line-height: 1.6; }
+            .commitment-section .highlight-text { font-weight: 700; color: #1A3A6D; font-size: 1rem; }
+            /* Pygmalion welcome */
+            .welcome-message { font-size: 0.85rem; color: #137fec; font-weight: 500; text-align: center; margin-bottom: 1.5rem; }
+            /* Consultation auto-complete */
+            .consultation-complete { margin-top: 2rem; padding: 2rem; text-align: center; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; }
+            .consultation-complete h4 { margin: 0 0 0.5rem; font-size: 1.2rem; color: #166534; font-weight: 700; }
+            .consultation-complete p { margin: 0; font-size: 0.95rem; color: #15803d; }
+            .complete-check { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: #22c55e; color: white; font-size: 24px; font-weight: bold; margin-bottom: 0.75rem; }
         `;
 
         const template = `
             <div class="simulation-form-wrapper">
                 <div id="progress-bar-container"><div id="progress-bar"></div></div>
+                <div id="step-info" class="step-info" style="display:none;"><span id="step-counter" class="step-counter"></span><span id="step-message" class="step-message"></span></div>
                 <form id="simulation-steps">
-                    <!-- Step 0: 거주지 + 기본 자격 -->
+                    <!-- Step 0: 개인정보 활용 동의 + 이름/연락처 -->
                     <div class="form-step active" data-step="0">
+                        <h3 style="text-align:center; margin-bottom: 0.5rem;">자가진단 시작하기</h3>
+                        <p class="question-desc" style="text-align:center; margin-bottom: 0.5rem;">진단을 시작하기 전에 아래 정보를 입력해주세요.</p>
+                        <p class="welcome-message">이 진단이 새로운 시작의 첫 걸음이 될 수 있습니다.</p>
+                        <div class="privacy-policy" style="margin-bottom: 1.5rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
+                            <label><input type="checkbox" id="privacy-agree"> <span class="privacy-policy-link" id="privacy-policy-link">개인정보처리방침</span>에 동의합니다.</label>
+                        </div>
+                        <p class="question-title">이름</p>
+                        <div class="input-group"><input type="text" id="user_name" placeholder="이름을 입력해주세요"></div>
+                        <p class="question-title">연락처</p>
+                        <div class="input-group"><input type="text" id="user_phone" placeholder="연락처 ('-' 없이)"></div>
+                    </div>
+
+                    <!-- Step 1: 거주지 + 기본 자격 -->
+                    <div class="form-step" data-step="1">
                         <p class="question-title">Q1. 거주지가 어디인가요?</p>
                         <div class="option-group" data-question="location">
                             <button type="button" class="option-btn" data-value="BUSAN">부산 / 울산 / 경남</button>
@@ -113,8 +159,8 @@ class SimulationForm extends HTMLElement {
                         </div>
                     </div>
 
-                    <!-- Step 1: 나이 + 소득 형태 -->
-                    <div class="form-step" data-step="1">
+                    <!-- Step 2: 나이 + 소득 형태 -->
+                    <div class="form-step" data-step="2">
                         <p class="question-title">Q3. 만 나이를 입력해주세요.</p>
                         <p class="question-desc">만 30세 미만 또는 만 65세 이상은 변제 기간 단축(24개월) 특례가 적용될 수 있습니다.</p>
                         <div class="input-group"><input type="number" data-question="age" placeholder="35"><span>세</span></div>
@@ -126,8 +172,8 @@ class SimulationForm extends HTMLElement {
                         </div>
                     </div>
 
-                    <!-- Step 2: 채무/본인 재산 -->
-                    <div class="form-step" data-step="2">
+                    <!-- Step 3: 채무/본인 재산 -->
+                    <div class="form-step" data-step="3">
                         <p class="question-title">Q5. 총 채무액은 얼마인가요?</p>
                         <div class="input-group"><input type="number" data-question="total_debt" placeholder="10000"><span>만원</span></div>
                         <p class="question-title">Q6. 본인 명의 총 재산가치는 얼마인가요?</p>
@@ -135,8 +181,8 @@ class SimulationForm extends HTMLElement {
                         <div class="input-group"><input type="number" data-question="my_assets" placeholder="5000"><span>만원</span></div>
                     </div>
 
-                    <!-- Step 3: 배우자 재산 + 손실금 -->
-                    <div class="form-step" data-step="3">
+                    <!-- Step 4: 배우자 재산 + 손실금 -->
+                    <div class="form-step" data-step="4">
                         <p class="question-title">Q7. 배우자 명의 재산이 있나요?</p>
                         <p class="question-desc">전문법원(부산/서울/수원)은 배우자 재산 미반영, 일반법원은 50% 반영됩니다.</p>
                         <div class="input-group"><input type="number" data-question="spouse_assets" placeholder="0"><span>만원</span></div>
@@ -148,14 +194,14 @@ class SimulationForm extends HTMLElement {
                         <div class="input-group"><input type="number" data-question="gambling_loss" placeholder="0"><span>만원</span></div>
                     </div>
 
-                    <!-- Step 4: 월 소득 -->
-                    <div class="form-step" data-step="4">
+                    <!-- Step 5: 월 소득 -->
+                    <div class="form-step" data-step="5">
                         <p class="question-title">Q10. 월 평균 소득(세후)은 얼마인가요?</p>
                         <div class="input-group"><input type="number" data-question="monthly_income" placeholder="3000000"><span>원</span></div>
                     </div>
 
-                    <!-- Step 5: 부양가족 상세 -->
-                    <div class="form-step" data-step="5">
+                    <!-- Step 6: 부양가족 상세 -->
+                    <div class="form-step" data-step="6">
                         <p class="question-title">Q11. 부양가족 구성을 알려주세요.</p>
                         <p class="question-desc">본인은 자동으로 포함됩니다. 해당 없으면 0을 입력해주세요.</p>
                         <p class="question-title" style="font-size:1.1rem;">배우자 (부양 대상)</p>
@@ -171,8 +217,8 @@ class SimulationForm extends HTMLElement {
                         <div class="input-group"><input type="number" data-question="elderly_parents" placeholder="0" value="0"><span>명</span></div>
                     </div>
 
-                    <!-- Step 6: 추가 비용 -->
-                    <div class="form-step" data-step="6">
+                    <!-- Step 7: 추가 비용 -->
+                    <div class="form-step" data-step="7">
                         <p class="question-title">Q12. 추가 지출 비용을 알려주세요.</p>
                         <p class="question-desc">해당 없으면 0을 입력해주세요. 지역별 한도 내에서 생계비에 추가 인정됩니다.</p>
                         <p class="question-title" style="font-size:1.1rem;">월세 + 주택담보대출 이자</p>
@@ -183,8 +229,8 @@ class SimulationForm extends HTMLElement {
                         <div class="input-group"><input type="number" data-question="education_expense" placeholder="0"><span>원/월</span></div>
                     </div>
 
-                    <!-- Step 7: 특수 사항 -->
-                    <div class="form-step" data-step="7">
+                    <!-- Step 8: 특수 사항 -->
+                    <div class="form-step" data-step="8">
                         <p class="question-title">Q13. 아래 해당 사항이 있나요?</p>
                         <p class="question-desc">해당 시 변제 기간 24개월 단축 특례가 적용될 수 있습니다.</p>
                         <p class="question-title" style="font-size:1.1rem;">전세사기 피해자 또는 중증장애인에 해당하나요?</p>
@@ -194,8 +240,8 @@ class SimulationForm extends HTMLElement {
                         </div>
                     </div>
 
-                    <!-- Step 8: 결과 -->
-                    <div class="form-step" data-step="8" id="result-step"></div>
+                    <!-- Step 9: 결과 -->
+                    <div class="form-step" data-step="9" id="result-step"></div>
 
                     <div class="navigation-btns">
                         <button type="button" id="prev-btn" class="nav-btn">이전</button>
@@ -230,8 +276,26 @@ class SimulationForm extends HTMLElement {
         const prevBtn = this.shadowRoot.querySelector('#prev-btn');
 
         nextBtn.addEventListener('click', () => {
-            // Step 0 검증: 거주지 선택 + 채무 1천만원 이상
+            // Step 0 검증: 개인정보 동의 + 이름/연락처
             if (this.currentStep === 0) {
+                const agree = this.shadowRoot.querySelector('#privacy-agree').checked;
+                const name = this.shadowRoot.querySelector('#user_name').value.trim();
+                const phone = this.shadowRoot.querySelector('#user_phone').value.trim();
+                if (!agree) {
+                    alert('개인정보처리방침에 동의해주세요.');
+                    return;
+                }
+                if (!name || !phone) {
+                    alert('이름과 연락처를 모두 입력해주세요.');
+                    return;
+                }
+                this.formData.user_name = name;
+                this.formData.user_phone = phone;
+                this.saveToLocalStorage();
+            }
+
+            // Step 1 검증: 거주지 선택 + 채무 1천만원 이상
+            if (this.currentStep === 1) {
                 if (!this.formData.location) {
                     alert('거주지를 선택해주세요.');
                     return;
@@ -244,7 +308,7 @@ class SimulationForm extends HTMLElement {
                 }
             }
 
-            const lastQuestionStep = this.totalSteps - 2; // step 7
+            const lastQuestionStep = this.totalSteps - 2; // step 8
             if (this.currentStep < lastQuestionStep) {
                 this.currentStep++;
                 this.updateFormView();
@@ -265,6 +329,21 @@ class SimulationForm extends HTMLElement {
 
         this.updateFormView();
         this.populateFormFromData();
+
+        // Zeigarnik effect: warn on page close during form
+        this._beforeUnloadHandler = (e) => {
+            if (this.currentStep > 0 && this.currentStep < this.totalSteps - 1) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        };
+        window.addEventListener('beforeunload', this._beforeUnloadHandler);
+
+        // Step 0 개인정보처리방침 링크 이벤트
+        this.shadowRoot.querySelector('#privacy-policy-link').addEventListener('click', () => this.loadPrivacyPolicy());
+        const modal = this.shadowRoot.querySelector('#privacy-modal');
+        this.shadowRoot.querySelector('#close-modal-btn').addEventListener('click', () => modal.style.display = 'none');
+        modal.addEventListener('click', (e) => { if(e.target === modal) { modal.style.display = 'none'; } });
     }
 
     updateFormView() {
@@ -275,8 +354,17 @@ class SimulationForm extends HTMLElement {
         const progress = (this.currentStep / (this.totalSteps - 1)) * 100;
         this.shadowRoot.querySelector('#progress-bar').style.width = `${progress}%`;
 
+        // Step info update (Zeigarnik + Pygmalion)
+        const stepInfo = STEP_MESSAGES[this.currentStep] || { counter: "", message: "" };
+        const stepInfoEl = this.shadowRoot.querySelector('#step-info');
+        const counterEl = this.shadowRoot.querySelector('#step-counter');
+        const messageEl = this.shadowRoot.querySelector('#step-message');
+        if (counterEl) counterEl.textContent = stepInfo.counter;
+        if (messageEl) messageEl.textContent = stepInfo.message;
+        if (stepInfoEl) stepInfoEl.style.display = (this.currentStep === 0 || this.currentStep === this.totalSteps - 1) ? 'none' : 'flex';
+
         this.shadowRoot.querySelector('#prev-btn').style.display = (this.currentStep === 0 || this.currentStep === this.totalSteps - 1) ? 'none' : 'inline-block';
-        this.shadowRoot.querySelector('#next-btn').textContent = this.currentStep === this.totalSteps - 2 ? '결과 보기' : '다음';
+        this.shadowRoot.querySelector('#next-btn').textContent = this.currentStep === 0 ? '진단 시작하기' : (this.currentStep === this.totalSteps - 2 ? '결과 보기' : '다음');
         this.shadowRoot.querySelector('#next-btn').style.display = this.currentStep === this.totalSteps - 1 ? 'none' : 'inline-block';
     }
 
@@ -304,6 +392,15 @@ class SimulationForm extends HTMLElement {
                     input.value = this.formData[key];
                 }
             }
+        }
+        // Step 0 개인정보 복원
+        if (this.formData.user_name) {
+            const nameInput = this.shadowRoot.querySelector('#user_name');
+            if (nameInput) nameInput.value = this.formData.user_name;
+        }
+        if (this.formData.user_phone) {
+            const phoneInput = this.shadowRoot.querySelector('#user_phone');
+            if (phoneInput) phoneInput.value = this.formData.user_phone;
         }
     }
 
@@ -466,8 +563,9 @@ class SimulationForm extends HTMLElement {
         if (addEduCost > 0) livingCostBreakdown += `\n+ 추가 교육비: ${addEduCost.toLocaleString()}원`;
         livingCostBreakdown += `\n= 총 인정 생계비: ${Math.round(finalLivingCost).toLocaleString()}원`;
 
+        const userName = this.formData.user_name || '';
         const resultsHTML = `
-            <h3 style="text-align:center; margin-bottom: 2rem;">AI 정밀 진단 결과</h3>
+            <h3 style="text-align:center; margin-bottom: 2rem;">${userName}님의 맞춤 진단 결과</h3>
             <div class="result-grid">
                 <div class="result-item"><h4>관할 법원</h4><p style="font-size:1.2rem;">${jurisdictionLabel}</p></div>
                 <div class="result-item"><h4>예상 월 변제금</h4><p>${Math.round(monthlyPayment).toLocaleString()}원</p></div>
@@ -494,37 +592,50 @@ class SimulationForm extends HTMLElement {
         }
 
         finalHtml += `
-            <div class="consultation-form">
-                <h3>전문가 상담 신청</h3>
-                <p>결과에 대해 더 궁금한 점이 있거나, 다음 단계를 진행하고 싶으시면 상담을 신청하세요.</p>
-                 <div class="input-group"><input type="text" id="user_name" placeholder="이름"></div>
-                 <div class="input-group"><input type="text" id="user_phone" placeholder="연락처 ('-' 없이)"></div>
-                 <div class="privacy-policy">
-                    <label><input type="checkbox" id="privacy-agree"> <span class="privacy-policy-link" id="privacy-policy-link">개인정보처리방침</span>에 동의합니다.</label>
+            <div class="immunity-section">
+                <h4>혹시 이런 걱정이 되시나요?</h4>
+                <div class="immunity-item">
+                    <div>
+                        <p class="immunity-q">Q. 상담 비용이 부담되지 않을까?</p>
+                        <p class="immunity-a">자가진단 완료 시 수임료 20만원 할인 + 분할 납부가 가능합니다. 초기 비용 부담 없이 시작할 수 있습니다.</p>
+                    </div>
                 </div>
+                <div class="immunity-item">
+                    <div>
+                        <p class="immunity-q">Q. 개인정보가 안전할까?</p>
+                        <p class="immunity-a">모든 정보는 암호화되어 안전하게 보호되며, 아래 버튼으로 언제든 즉시 삭제할 수 있습니다.</p>
+                    </div>
+                </div>
+                <div class="immunity-item">
+                    <div>
+                        <p class="immunity-q">Q. 상담이 정말 도움이 될까?</p>
+                        <p class="immunity-a">법원 실무준칙 기반의 진단 결과를 전문가가 직접 검토하고, 최적의 방향을 안내해드립니다.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="commitment-section">
+                <h4>2026년, 개인회생의 최적 시기입니다</h4>
+                <p>기준 중위소득 <strong>역대 최대 6.51% 인상</strong>으로 변제금이 크게 줄었습니다.</p>
+                <p>급여 압류금지 최저금액 <strong>250만원 인상</strong>, 생계비 전용계좌 신설 등 채무자 보호가 강화되었습니다.</p>
+                <p class="highlight-text" style="margin-top:1rem;">일찍 시작하면 일찍 끝납니다.<br>지금 시작하면 3년 후, 모든 빚에서 자유로워질 수 있습니다.</p>
+            </div>
+            <div class="consultation-complete" id="consultation-status">
+                <div class="complete-check">&#10003;</div>
+                <h4>진단이 완료되었습니다</h4>
+                <p id="status-message">${this.formData.user_name || ''}님의 연락처로 전문가가 곧 연락드리겠습니다.</p>
+            </div>
+            <div class="consultation-form">
                 <div class="result-actions">
-                    <a href="https://pf.kakao.com/_zkzIX/chat" target="_blank" rel="noopener" id="kakao-btn" class="action-btn">
-                        <svg width="22" height="22" viewBox="0 0 256 256" xmlns="http://www.w3.org/2000/svg"><path d="M128 36C70.6 36 24 72.2 24 116.8c0 29 19.5 54.4 48.8 68.8-1.5 5.6-5.5 20.3-6.3 23.4-.9 3.9 1.4 3.8 3 2.6 1.2-.9 19.4-13.2 27.3-18.6 10.2 1.5 20.7 2.3 31.3 2.3 57.4 0 104-36.2 104-80.8S185.4 36 128 36z" fill="#3C1E1E"/></svg>
-                        카카오톡으로 무료 상담하기
-                    </a>
-                    <button id="submit-consultation-btn" class="action-btn">전화 상담 신청하기</button>
-                    <a href="http://lawchungsong.vercel.app" target="_blank" id="recommend-btn" class="action-btn">부산회생법원 인근 변호사사무실 추천</a>
                     <button id="delete-data-btn" class="action-btn">모든 내 정보 삭제하기</button>
                 </div>
             </div>
         `;
         resultStep.innerHTML = finalHtml;
 
-        this.shadowRoot.querySelector('#privacy-policy-link').addEventListener('click', () => this.loadPrivacyPolicy());
         this.shadowRoot.querySelector('#delete-data-btn').addEventListener('click', () => this.deleteData());
-        this.shadowRoot.querySelector('#submit-consultation-btn').addEventListener('click', (event) => this.submitConsultation(event));
-        this.shadowRoot.querySelector('#recommend-btn').addEventListener('click', () => {
-            if (window.__trackEvent) window.__trackEvent('lawyer_click');
-        });
 
-        const modal = this.shadowRoot.querySelector('#privacy-modal');
-        this.shadowRoot.querySelector('#close-modal-btn').addEventListener('click', () => modal.style.display = 'none');
-        modal.addEventListener('click', (e) => { if(e.target === modal) { modal.style.display = 'none'; } });
+        // Auto-submit consultation (진단 완료 = 상담 신청)
+        this.autoSubmitConsultation();
     }
 
     async loadPrivacyPolicy() {
@@ -544,6 +655,8 @@ class SimulationForm extends HTMLElement {
 
     deleteData() {
         localStorage.removeItem('formData');
+        localStorage.removeItem('consultation_submitted');
+        this._submitted = false;
         this.formData = {};
         alert('모든 정보가 삭제되었습니다.');
         this.currentStep = 0;
@@ -551,9 +664,47 @@ class SimulationForm extends HTMLElement {
         this.connectedCallback();
     }
 
-    async submitConsultation(event) {
-        event.preventDefault();
-        const questionMap = {
+    async autoSubmitConsultation() {
+        // 중복 제출 방지
+        if (this._submitted || localStorage.getItem('consultation_submitted')) return;
+
+        const name = this.formData.user_name;
+        const phone = this.formData.user_phone;
+        if (!name || !phone) return;
+
+        try {
+            const questionMap = this._getQuestionMap();
+            const simulationAnswers = {};
+            const simulationResults = {};
+
+            for (const key in this.formData) {
+                if (key.startsWith('result_')) {
+                    simulationResults[questionMap[key] || key] = this.formData[key];
+                } else {
+                    simulationAnswers[questionMap[key] || key] = this.formData[key];
+                }
+            }
+
+            const consultationData = {
+                requesterInfo: { name, phone },
+                simulationAnswers,
+                simulationResults,
+                createdAt: serverTimestamp()
+            };
+
+            await addDoc(collection(db, "consultations"), consultationData);
+            this._submitted = true;
+            localStorage.setItem('consultation_submitted', 'true');
+            if (window.__trackEvent) window.__trackEvent('consultation_submit');
+        } catch (e) {
+            console.error("Auto-submit error:", e);
+            const statusMsg = this.shadowRoot.querySelector('#status-message');
+            if (statusMsg) statusMsg.textContent = '전송 중 오류가 발생했습니다. 페이지를 새로고침 후 다시 시도해주세요.';
+        }
+    }
+
+    _getQuestionMap() {
+        return {
             location: "Q1. 거주지",
             min_debt: "Q2. 총 채무 1천만원 이상 여부",
             age: "Q3. 만 나이",
@@ -583,48 +734,6 @@ class SimulationForm extends HTMLElement {
             result_title: "진단 결과 요약",
             result_content: "진단 결과 상세 내용"
         };
-        const name = this.shadowRoot.querySelector('#user_name').value;
-        const phone = this.shadowRoot.querySelector('#user_phone').value;
-        const agree = this.shadowRoot.querySelector('#privacy-agree').checked;
-
-        if (!name || !phone) {
-            alert('이름과 연락처를 모두 입력해주세요.');
-            return;
-        }
-        if (!agree) {
-            alert('개인정보처리방침에 동의해주세요.');
-            return;
-        }
-
-        try {
-            const simulationAnswers = {};
-            const simulationResults = {};
-
-            for (const key in this.formData) {
-                if (key.startsWith('result_')) {
-                    simulationResults[questionMap[key] || key] = this.formData[key];
-                } else {
-                    simulationAnswers[questionMap[key] || key] = this.formData[key];
-                }
-            }
-
-            const consultationData = {
-                requesterInfo: {
-                    name: name,
-                    phone: phone,
-                },
-                simulationAnswers: simulationAnswers,
-                simulationResults: simulationResults,
-                createdAt: serverTimestamp()
-            };
-            const docRef = await addDoc(collection(db, "consultations"), consultationData);
-            console.log("Document written with ID: ", docRef.id);
-            if (window.__trackEvent) window.__trackEvent('consultation_submit');
-            alert(`${name}님, 상담 신청이 완료되었습니다. 곧 연락드리겠습니다.`);
-        } catch (e) {
-            console.error("Error adding document: ", e);
-            alert(`상담 신청 중 오류가 발생했습니다. 다시 시도해주세요. 오류: ${e.message}`);
-        }
     }
 }
 
