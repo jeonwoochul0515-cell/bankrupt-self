@@ -70,10 +70,10 @@ class SimulationForm extends HTMLElement {
             .nav-btn { padding: 0.8rem 2rem; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
             #next-btn { background-color: #1A3A6D; color: white; box-shadow: 0 4px 15px rgba(26, 58, 109, 0.2); }
             #prev-btn { background-color: #f1f3f5; color: #495057; }
-            .input-group { display: flex; align-items: center; border: 2px solid #dee2e6; border-radius: 8px; padding-right: 1rem; transition: border-color 0.3s; margin-bottom: 1rem;}
+            .input-group { display: flex; flex-wrap: nowrap; align-items: center; border: 2px solid #dee2e6; border-radius: 8px; padding-right: 1rem; transition: border-color 0.3s; margin-bottom: 1rem;}
             .input-group:focus-within { border-color: #1A3A6D; }
-            input[type="number"], input[type="text"] { width: 100%; padding: 1rem; border: none; border-radius: 8px; font-size: 1.1rem; outline: none; }
-            .input-group span { color: #868e96; font-weight: 600; }
+            input[type="number"], input[type="text"] { flex: 1; min-width: 0; padding: 1rem; border: none; border-radius: 8px; font-size: 1.1rem; outline: none; }
+            .input-group span { color: #868e96; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
             /* Result & Consultation Styles */
             .result-grid, .consultation-form { text-align: center; }
             .result-item { background: #f8f9fa; padding: 1.5rem; border-radius: 12px; margin-bottom: 1rem; }
