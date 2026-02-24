@@ -1,4 +1,14 @@
 {
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        { "type": "host", "value": "bankrupt-self.vercel.app" }
+      ],
+      "destination": "https://busan-hoiseng.pro/:path*",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/robots.txt",
