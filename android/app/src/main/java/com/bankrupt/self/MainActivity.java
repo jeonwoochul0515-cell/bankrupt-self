@@ -25,6 +25,6 @@ public class MainActivity extends AppCompatActivity {
         
         // 여기에 당신의 웹사이트 URL을 입력하세요.
         // my-bankruptcy-app.web.app 부분이 당신의 Firebase 프로젝트 ID와 일치해야 합니다.
-        myWebView.loadUrl("https://my-bankruptcy-app.web.app");
+        myWebView.loadUrl("https://busan-hoiseng.pro");
     }
 }
