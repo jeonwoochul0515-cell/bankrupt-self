@@ -135,6 +135,39 @@
             </div>
         </section>
 
+        <!-- 전환 퍼널 분석 -->
+        <section class="funnel-section">
+            <div class="funnel-card">
+                <div class="funnel-header">
+                    <h3><i class="fas fa-filter"></i> 전환 퍼널 분석</h3>
+                </div>
+                <div class="funnel-body">
+                    <div id="funnel-chart">
+                        <div class="loading-spinner">
+                            <i class="fas fa-spinner fa-spin"></i>
+                            <span>집계 중...</span>
+                        </div>
+                    </div>
+                    <p id="funnel-insight" class="funnel-insight"></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 유입 채널별 통계 -->
+        <section class="referrer-section">
+            <div class="referrer-card">
+                <div class="referrer-header">
+                    <h3><i class="fas fa-share-alt"></i> 유입 채널별 통계</h3>
+                </div>
+                <div class="referrer-body" id="referrer-stats">
+                    <div class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span>집계 중...</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- 툴바 -->
         <section class="toolbar">
             <div class="toolbar-left">
@@ -147,6 +180,13 @@
                 </select>
                 <input type="date" id="filter-date-start" class="toolbar-date" title="시작일">
                 <input type="date" id="filter-date-end" class="toolbar-date" title="종료일">
+                <select id="filter-status" class="toolbar-select">
+                    <option value="">전체 상태</option>
+                    <option value="new">신규</option>
+                    <option value="contacted">연락완료</option>
+                    <option value="converted">수임성사</option>
+                    <option value="closed">종료</option>
+                </select>
                 <select id="sort-select" class="toolbar-select">
                     <option value="newest">최신순</option>
                     <option value="oldest">오래된순</option>
@@ -213,7 +253,14 @@
     </div>
 
     <script>
-        const ADMIN_PASSWORD = '0517141515';
+        const ADMIN_PASSWORD_HASH = '0b4dfe8635672f7029a4a9e2f4bc60cbbdaf785b3a18350b2a300aa9cb4383a7';
+
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hash = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
 
         function checkAuth() {
             return sessionStorage.getItem('admin_auth') === 'true';
@@ -230,10 +277,11 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('login-form').addEventListener('submit', (e) => {
+            document.getElementById('login-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const pw = document.getElementById('login-password').value;
-                if (pw === ADMIN_PASSWORD) {
+                const inputHash = await hashPassword(pw);
+                if (inputHash === ADMIN_PASSWORD_HASH) {
                     sessionStorage.setItem('admin_auth', 'true');
                     showApp();
                     document.getElementById('login-error').hidden = true;

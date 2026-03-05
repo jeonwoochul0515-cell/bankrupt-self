@@ -1,12 +1,15 @@
 {
     "name": "부산회생프로 - 부산 개인회생 자가진단",
     "short_name": "부산회생프로",
-    "description": "부산회생프로 | 부산·울산·경남 개인회생 전문 자가진단. 부산회생법원 실무준칙 기반 1분 무료 변제금 계산.",
-    "start_url": "/",
+    "description": "부산회생법원 기준 1분 무료 변제금 계산. 자가진단·전문가 상담 완전 무료.",
+    "start_url": "/?source=pwa",
     "display": "standalone",
+    "orientation": "portrait",
     "background_color": "#f6f7f8",
     "theme_color": "#137fec",
     "lang": "ko",
+    "id": "/",
+    "categories": ["finance", "utilities"],
     "icons": [
         {
             "src": "icons/icon-192x192.png",
@@ -17,6 +20,12 @@
             "src": "icons/icon-512x512.png",
             "sizes": "512x512",
             "type": "image/png"
+        },
+        {
+            "src": "icons/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
         }
     ]
 }

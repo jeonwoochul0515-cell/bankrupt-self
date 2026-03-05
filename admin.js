@@ -1,5 +1,5 @@
 import { db } from './firebase-config.js';
-import { collection, getDocs, orderBy, query, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, getDocs, orderBy, query, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 function showError(message) {
     let banner = document.getElementById('error-banner');
@@ -111,6 +111,8 @@ async function loadData() {
     updateStats();
     updateAnalyticsStats();
     updateDailyStats();
+    updateFunnelAnalysis();
+    updateReferrerStats();
     renderList();
     document.getElementById('select-all-bar').hidden = allConsultations.length === 0;
 }
@@ -210,6 +212,172 @@ function updateDailyStats() {
     container.innerHTML = chartHtml;
 }
 
+// ========== 전환 퍼널 분석 ==========
+
+function updateFunnelAnalysis() {
+    const container = document.getElementById('funnel-chart');
+    const insightEl = document.getElementById('funnel-insight');
+
+    const funnelEvents = allAnalytics.filter(a => a.type === 'funnel_step');
+
+    const stepLabels = [
+        '페이지 방문',
+        '시뮬레이션 시작',
+        'Q1 응답',
+        'Q2 응답',
+        'Q3 응답',
+        'Q4 응답',
+        'Q5 응답',
+        '상담 신청 완료'
+    ];
+
+    // 각 단계별 도달 수 집계
+    const stepCounts = new Array(8).fill(0);
+    funnelEvents.forEach(a => {
+        const step = a.step ?? a.funnelStep;
+        if (step !== undefined && step >= 0 && step <= 7) {
+            stepCounts[step]++;
+        }
+    });
+
+    // 퍼널 이벤트가 없으면 pageview/consultation 기반 기본 퍼널 생성
+    const totalPageviews = allAnalytics.filter(a => a.type === 'pageview').length;
+    const totalConsultations = allConsultations.length;
+    if (stepCounts.every(c => c === 0) && totalPageviews > 0) {
+        stepCounts[0] = totalPageviews;
+        stepCounts[7] = totalConsultations;
+    }
+
+    const maxCount = Math.max(...stepCounts, 1);
+
+    let chartHtml = '<div class="funnel-bars">';
+    stepCounts.forEach((count, i) => {
+        const widthPercent = maxCount > 0 ? (count / maxCount) * 100 : 0;
+        chartHtml += `
+            <div class="funnel-row">
+                <span class="funnel-label">${stepLabels[i]}</span>
+                <div class="funnel-bar-track">
+                    <div class="funnel-bar" style="width:${Math.max(widthPercent, 2)}%"></div>
+                </div>
+                <span class="funnel-count">${count}</span>
+            </div>
+        `;
+    });
+    chartHtml += '</div>';
+    container.innerHTML = chartHtml;
+
+    // 가장 이탈률이 높은 단계 찾기
+    let maxDropRate = 0;
+    let maxDropStep = -1;
+    for (let i = 0; i < stepCounts.length - 1; i++) {
+        if (stepCounts[i] > 0) {
+            const dropRate = ((stepCounts[i] - stepCounts[i + 1]) / stepCounts[i]) * 100;
+            if (dropRate > maxDropRate) {
+                maxDropRate = dropRate;
+                maxDropStep = i;
+            }
+        }
+    }
+
+    if (maxDropStep >= 0) {
+        insightEl.innerHTML = `<i class="fas fa-lightbulb"></i> 가장 이탈률이 높은 단계: <strong>${stepLabels[maxDropStep]} → ${stepLabels[maxDropStep + 1]}</strong> (이탈률 ${maxDropRate.toFixed(1)}%)`;
+    } else {
+        insightEl.innerHTML = '<i class="fas fa-info-circle"></i> 퍼널 데이터가 부족합니다.';
+    }
+}
+
+// ========== 유입 채널별 통계 ==========
+
+function updateReferrerStats() {
+    const container = document.getElementById('referrer-stats');
+    const pageviews = allAnalytics.filter(a => a.type === 'pageview');
+
+    const channels = {
+        '네이버': 0,
+        '구글': 0,
+        '카카오': 0,
+        '직접 방문': 0,
+        '기타': 0
+    };
+
+    const channelIcons = {
+        '네이버': 'fas fa-leaf',
+        '구글': 'fab fa-google',
+        '카카오': 'fas fa-comment',
+        '직접 방문': 'fas fa-desktop',
+        '기타': 'fas fa-globe'
+    };
+
+    const channelColors = {
+        '네이버': '#03C75A',
+        '구글': '#4285F4',
+        '카카오': '#FEE500',
+        '직접 방문': '#6c5ce7',
+        '기타': '#636e72'
+    };
+
+    pageviews.forEach(a => {
+        const ref = (a.referrer || '').toLowerCase();
+        if (!ref || ref === '' || ref === 'direct') {
+            channels['직접 방문']++;
+        } else if (ref.includes('naver')) {
+            channels['네이버']++;
+        } else if (ref.includes('google')) {
+            channels['구글']++;
+        } else if (ref.includes('kakao')) {
+            channels['카카오']++;
+        } else {
+            channels['기타']++;
+        }
+    });
+
+    const totalViews = pageviews.length || 1;
+
+    let html = '<div class="referrer-grid">';
+    Object.entries(channels).forEach(([name, count]) => {
+        const percent = ((count / totalViews) * 100).toFixed(1);
+        html += `
+            <div class="referrer-item">
+                <div class="referrer-item-header">
+                    <span class="referrer-icon" style="color:${channelColors[name]}"><i class="${channelIcons[name]}"></i></span>
+                    <span class="referrer-name">${name}</span>
+                </div>
+                <div class="referrer-bar-track">
+                    <div class="referrer-bar" style="width:${Math.max(parseFloat(percent), 1)}%;background:${channelColors[name]}"></div>
+                </div>
+                <div class="referrer-values">
+                    <span class="referrer-count">${count}명</span>
+                    <span class="referrer-percent">${percent}%</span>
+                </div>
+            </div>
+        `;
+    });
+    html += '</div>';
+
+    container.innerHTML = html;
+}
+
+// ========== 상담 상태 관리 ==========
+
+const STATUS_CONFIG = {
+    new: { label: '신규', color: '#3498db' },
+    contacted: { label: '연락완료', color: '#f39c12' },
+    converted: { label: '수임성사', color: '#27ae60' },
+    closed: { label: '종료', color: '#95a5a6' }
+};
+
+async function updateConsultationStatus(docId, newStatus) {
+    try {
+        await updateDoc(doc(db, 'consultations', docId), { status: newStatus });
+        // 로컬 데이터도 업데이트
+        const item = allConsultations.find(c => c.id === docId);
+        if (item) item.status = newStatus;
+    } catch (err) {
+        console.error('상태 업데이트 실패:', err);
+        alert('상태 변경 중 오류가 발생했습니다.');
+    }
+}
+
 // ========== 관할 법원 필터 ==========
 
 function populateCourtFilter() {
@@ -248,6 +416,12 @@ function getFilteredData() {
     const courtFilter = document.getElementById('filter-court').value;
     if (courtFilter) {
         data = data.filter(c => c.simulationResults?.['관할 법원'] === courtFilter);
+    }
+
+    // 상태 필터
+    const statusFilter = document.getElementById('filter-status').value;
+    if (statusFilter) {
+        data = data.filter(c => (c.status || 'new') === statusFilter);
     }
 
     // 날짜 필터
@@ -319,12 +493,23 @@ function renderList() {
         const court = c.simulationResults?.['관할 법원'] || '-';
         const debt = parseDebt(getDebtValue(c));
         const rate = c.simulationResults?.['예상 탕감률'] || '-';
+        const status = c.status || 'new';
+        const statusInfo = STATUS_CONFIG[status] || STATUS_CONFIG['new'];
 
         card.innerHTML = `
             <input type="checkbox" class="card-checkbox" data-id="${c.id}" ${selectedIds.has(c.id) ? 'checked' : ''}>
             <div class="card-header">
                 <span class="card-name">${escapeHtml(name)}</span>
                 <span class="card-date">${dateStr}</span>
+            </div>
+            <div class="card-status-row">
+                <span class="status-badge" style="background:${statusInfo.color}">${statusInfo.label}</span>
+                <select class="status-select" data-id="${c.id}">
+                    <option value="new" ${status === 'new' ? 'selected' : ''}>신규</option>
+                    <option value="contacted" ${status === 'contacted' ? 'selected' : ''}>연락완료</option>
+                    <option value="converted" ${status === 'converted' ? 'selected' : ''}>수임성사</option>
+                    <option value="closed" ${status === 'closed' ? 'selected' : ''}>종료</option>
+                </select>
             </div>
             <div class="card-body">
                 <div class="card-field"><span class="label">연락처</span> <span class="value">${phone}</span></div>
@@ -337,9 +522,9 @@ function renderList() {
             </div>
         `;
 
-        // 카드 클릭 → 상세보기 (체크박스/삭제 버튼 제외)
+        // 카드 클릭 → 상세보기 (체크박스/삭제 버튼/상태 셀렉트 제외)
         card.addEventListener('click', (e) => {
-            if (e.target.closest('.card-checkbox') || e.target.closest('.delete-btn')) return;
+            if (e.target.closest('.card-checkbox') || e.target.closest('.delete-btn') || e.target.closest('.status-select')) return;
             showDetail(c);
         });
 
@@ -354,6 +539,22 @@ function renderList() {
             if (cb.checked) selectedIds.add(id);
             else selectedIds.delete(id);
             updateBulkUI();
+        });
+    });
+
+    // 상태 변경 이벤트
+    container.querySelectorAll('.status-select').forEach(sel => {
+        sel.addEventListener('click', (e) => e.stopPropagation());
+        sel.addEventListener('change', async (e) => {
+            e.stopPropagation();
+            const docId = sel.dataset.id;
+            const newStatus = sel.value;
+            await updateConsultationStatus(docId, newStatus);
+            // 배지 업데이트
+            const badge = sel.parentElement.querySelector('.status-badge');
+            const info = STATUS_CONFIG[newStatus] || STATUS_CONFIG['new'];
+            badge.style.background = info.color;
+            badge.textContent = info.label;
         });
     });
 
@@ -554,6 +755,7 @@ document.getElementById('csv-export-btn').addEventListener('click', () => {
 
 document.getElementById('search-input').addEventListener('input', renderList);
 document.getElementById('filter-court').addEventListener('change', renderList);
+document.getElementById('filter-status').addEventListener('change', renderList);
 document.getElementById('filter-date-start').addEventListener('change', renderList);
 document.getElementById('filter-date-end').addEventListener('change', renderList);
 document.getElementById('sort-select').addEventListener('change', renderList);

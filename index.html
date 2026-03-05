@@ -66,9 +66,7 @@
     <meta name="google-site-verification" content="ixWzPsA7C2VPHCwWulAZto2R-mF1_0dE7xgLaHGIywA">
     <meta name="naver-site-verification" content="0db9c7a61871bba3cdcf647b12e0bcc4ec0cfc20">
     <!-- 네이버 추가 메타 -->
-    <meta name="NaverBot" content="All">
     <meta name="NaverBot" content="index,follow">
-    <meta name="Yeti" content="All">
     <meta name="Yeti" content="index,follow">
     <meta name="subject" content="부산회생프로 - 부산 개인회생 자가진단 전문">
     <meta name="author" content="부산회생프로">
@@ -76,9 +74,10 @@
     <meta name="classification" content="법률서비스, 개인회생, 부산회생법원">
     <meta name="rating" content="general">
 
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="tailwind-built.css">
 
     <!-- 구조화 데이터: Organization + LocalBusiness -->
@@ -137,11 +136,6 @@
         "inLanguage": "ko",
         "publisher": {
             "@id": "https://busan-hoiseng.pro/#organization"
-        },
-        "potentialAction": {
-            "@type": "SearchAction",
-            "target": "https://busan-hoiseng.pro/?q={search_term_string}",
-            "query-input": "required name=search_term_string"
         }
     }
     </script>
@@ -307,6 +301,7 @@
     <script src="tracker.js" type="module" defer></script>
 </head>
 <body class="bg-background-light font-sans text-navy-900 overflow-x-hidden antialiased">
+    <a href="#simulation" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:bg-white focus:p-4 focus:rounded-lg focus:shadow-lg focus:text-primary">본문으로 바로가기</a>
     <!-- Google Tag Manager (noscript) - 쿠키 동의 후에만 활성화 -->
     <noscript><iframe id="gtm-noscript" src="" data-src="https://www.googletagmanager.com/ns.html?id=GTM-TZRMFF55"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -333,7 +328,7 @@
                 </nav>
                 <div class="flex items-center gap-4">
                     <a href="#simulation" class="bg-primary hover:bg-primary-dark transition-colors text-white text-sm font-bold py-2.5 px-6 rounded-lg shadow-lg shadow-primary/20 flex items-center gap-2 font-sans no-underline">
-                        <span>무료 진단 시작</span>
+                        <span>1분 무료 진단 시작</span>
                         <span class="material-symbols-outlined text-sm">arrow_forward</span>
                     </a>
                     <button id="mobile-menu-btn" class="md:hidden text-navy-900">
@@ -368,11 +363,11 @@
                             <span class="text-primary">부산회생프로</span>에서<br>내 <span class="text-primary italic">실제 변제금</span>,<br>1분이면 알 수 있습니다.
                         </h2>
                         <p class="text-lg text-gray-600 mb-8 leading-relaxed max-w-lg font-sans">
-                            부산회생프로는 부산회생법원 실무준칙을 반영한 정밀 시뮬레이션으로 부산·울산·경남 지역 개인회생 변제금을 정확히 예측합니다. <strong>자가진단 비용 0원, 전문가 상담도 완전 무료</strong>입니다. 상담 완료 시 제휴 법률사무소에서 직접 사용할 수 있는 <strong>20만원 할인 쿠폰</strong>이 제공됩니다.
+                            부산회생프로는 부산회생법원 실무준칙을 반영한 정밀 시뮬레이션으로 부산·울산·경남 지역 개인회생 변제금을 예상해볼 수 있습니다. <strong>자가진단 비용 0원, 전문가 상담도 완전 무료</strong>입니다. 상담 완료 시 제휴 법률사무소에서 직접 사용할 수 있는 <strong>20만원 할인 쿠폰</strong>이 제공됩니다.
                         </p>
                         <div class="flex flex-col sm:flex-row gap-4 font-sans">
                             <a href="#simulation" class="flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark text-white text-base font-bold py-4 px-8 rounded-lg shadow-xl shadow-primary/30 transition-all transform hover:-translate-y-0.5 no-underline">
-                                무료 자가진단 시작
+                                1분 무료 진단 시작
                                 <span class="material-symbols-outlined">check_circle</span>
                             </a>
                         </div>
@@ -385,7 +380,7 @@
                         <div class="absolute inset-0 bg-primary/5 rounded-2xl transform rotate-3"></div>
                         <div class="absolute inset-0 bg-navy-900/5 rounded-2xl transform -rotate-2"></div>
                         <div class="relative h-full w-full overflow-hidden rounded-2xl shadow-2xl bg-gray-100">
-                            <img alt="새로운 시작" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80">
+                            <img alt="부산 개인회생 무료 자가진단 서비스 부산회생프로" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1200&q=80" width="1200" height="800" fetchpriority="high">
                             <div class="absolute bottom-6 left-6 right-6 bg-white/95 backdrop-blur rounded-xl shadow-lg border border-gray-100 font-sans p-4">
                                 <p class="text-[10px] text-gray-400 font-semibold uppercase tracking-wider mb-2">계산 근거 데이터</p>
                                 <div class="space-y-1.5 text-xs text-navy-900">
@@ -399,7 +394,7 @@
                                     </div>
                                     <div class="flex items-center gap-2">
                                         <span class="material-symbols-outlined text-primary text-sm">bar_chart</span>
-                                        <span>개인회생 인가율 92.3% (법원행정처 2024)</span>
+                                        <span>개인회생 인가율 92.3% (법원행정처 2024, 전국 평균)</span>
                                     </div>
                                 </div>
                             </div>
@@ -492,7 +487,7 @@
                     <div class="grid md:grid-cols-3 gap-6 mb-6">
                         <div class="bg-background-light rounded-xl p-6 text-center border border-gray-100">
                             <p class="text-sm text-gray-500 font-sans mb-2">전국 개인회생 신청</p>
-                            <p class="text-3xl font-serif font-bold text-primary">연 10만건+</p>
+                            <p class="text-3xl font-serif font-bold text-primary">연 10만건+ <span class="text-xs font-sans font-normal text-gray-400">(법원행정처 사법연감)</span></p>
                             <p class="text-xs text-gray-400 font-sans mt-1">매년 역대 최고 기록 경신</p>
                         </div>
                         <div class="bg-background-light rounded-xl p-6 text-center border border-gray-100">
@@ -560,7 +555,7 @@
         </section>
 
         <!-- ========== Simulation ========== -->
-        <section id="simulation" class="py-24 bg-white">
+        <section id="simulation" class="py-24 bg-white" aria-label="개인회생 자가진단 시뮬레이션">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center max-w-3xl mx-auto mb-12">
                     <h2 class="text-3xl font-serif font-bold text-navy-900 mb-4">부산회생프로에서 지금 바로 회생 가능성을 진단해보세요</h2>
@@ -616,7 +611,7 @@
                     <div class="lg:w-1/2 w-full">
                         <div class="bg-white rounded-2xl p-2 shadow-2xl rotate-2 hover:rotate-0 transition-transform duration-500">
                             <div class="rounded-xl overflow-hidden aspect-video bg-gray-200">
-                                <img class="w-full h-full object-cover" alt="신뢰할 수 있는 법률 서비스" src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1200&q=80">
+                                <img class="w-full h-full object-cover" alt="신뢰할 수 있는 법률 서비스" src="https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=1200&q=80" loading="lazy" decoding="async">
                             </div>
                         </div>
                     </div>
@@ -625,7 +620,7 @@
         </section>
 
         <!-- ========== 계산 근거 및 데이터 출처 ========== -->
-        <section id="data-sources" class="py-24 bg-white">
+        <section id="data-sources" class="py-24 bg-white" aria-label="계산 근거 및 데이터 출처">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
                     <h2 class="text-3xl font-serif font-bold text-navy-900 mb-4">계산 근거 및 데이터 출처</h2>
@@ -670,7 +665,7 @@
                         </div>
                         <p class="text-gray-600 text-sm font-sans leading-relaxed mb-4">법원행정처 사법연감 통계를 기반으로 인가율과 평균 변제율을 안내합니다.</p>
                         <div class="text-xs text-gray-400 font-sans space-y-1">
-                            <p>2024년 개인회생 인가율: 92.3%</p>
+                            <p>2024년 개인회생 인가율: 92.3% (법원행정처 2024, 전국 평균)</p>
                             <p>평균 채무 탕감률: 약 70~90%</p>
                             <p>부산회생법원 접수건수: 연 8,200여건</p>
                         </div>
@@ -683,7 +678,7 @@
         </section>
 
         <!-- ========== FAQ ========== -->
-        <section id="faq" class="py-24 bg-background-light">
+        <section id="faq" class="py-24 bg-background-light" aria-label="자주 묻는 질문">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="text-center mb-16">
                     <h2 class="text-3xl font-serif font-bold text-navy-900 mb-4">부산회생프로 자주 묻는 질문</h2>
@@ -815,7 +810,7 @@
                     </p>
                     <div class="flex items-center justify-center font-sans">
                         <a href="#simulation" class="bg-white text-primary text-lg font-bold py-4 px-10 rounded-xl hover:bg-gray-50 transition-colors shadow-lg no-underline text-center">
-                            무료 자가진단 시작
+                            1분 무료 진단 시작
                         </a>
                     </div>
                     <p class="mt-6 text-sm text-primary-light/70 flex items-center justify-center gap-2 font-sans">
@@ -858,9 +853,10 @@
                     </ul>
                 </div>
                 <div class="font-sans">
-                    <h3 class="font-bold text-navy-900 mb-4">문의</h3>
+                    <h3 class="font-bold text-navy-900 mb-4">사업자 정보</h3>
                     <ul class="space-y-3 list-none p-0">
-                        <li class="text-gray-500">부산광역시</li>
+                        <li class="text-gray-500">상호: 부산회생프로 | 대표: 전우철 | 사업자등록번호: 000-00-00000</li>
+                        <li class="text-gray-500">소재지: 부산광역시 | 이메일: info@busan-hoiseng.pro | 전화: 1600-0000</li>
                     </ul>
                 </div>
             </div>
@@ -915,7 +911,7 @@
         <div class="px-4 pb-4 pt-2 bg-gradient-to-t from-white via-white/95 to-white/0 pointer-events-auto">
             <a href="#simulation" class="flex items-center justify-center gap-2 w-full bg-primary hover:bg-primary-dark text-white text-base font-bold py-4 rounded-xl shadow-xl shadow-primary/30 transition-colors no-underline font-sans">
                 <span class="material-symbols-outlined text-lg">check_circle</span>
-                무료 자가진단 시작
+                1분 무료 진단 시작
             </a>
         </div>
     </div>

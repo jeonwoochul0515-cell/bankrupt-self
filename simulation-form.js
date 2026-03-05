@@ -63,7 +63,7 @@ class SimulationForm extends HTMLElement {
             .option-btn { padding: 1rem; border: 2px solid #dee2e6; border-radius: 8px; font-size: 1rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease; background-color: #fff; text-align: center; }
             .option-btn.selected { background-color: #e8f1ff; border-color: #1A3A6D; font-weight: 600; color: #1A3A6D; }
             .navigation-btns { margin-top: 2rem; display: flex; justify-content: space-between; align-items: center; }
-            .nav-btn { padding: 0.8rem 2rem; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+            .nav-btn { padding: 1rem 2rem; min-height: 48px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
             #next-btn { background-color: #1A3A6D; color: white; box-shadow: 0 4px 15px rgba(26, 58, 109, 0.2); }
             #prev-btn { background-color: #f1f3f5; color: #495057; }
             .input-group { display: flex; flex-wrap: nowrap; align-items: center; border: 2px solid #dee2e6; border-radius: 8px; padding-right: 1rem; transition: border-color 0.3s; margin-bottom: 1rem; }
@@ -134,11 +134,15 @@ class SimulationForm extends HTMLElement {
             .complete-check { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: #22c55e; color: white; font-size: 24px; font-weight: bold; margin-bottom: 0.75rem; }
             /* Delete section */
             .delete-section { margin-top: 1rem; padding: 1.5rem; border: 1px solid #e9ecef; border-radius: 12px; background: #fff; }
+            /* Focus-visible styles */
+            .option-btn:focus-visible { outline: 2px solid #137fec; outline-offset: 2px; }
+            .nav-btn:focus-visible { outline: 2px solid #137fec; outline-offset: 2px; }
+            input:focus-visible { outline: 2px solid #137fec; outline-offset: 2px; }
         `;
 
         const template = `
             <div class="simulation-form-wrapper">
-                <div id="progress-bar-container"><div id="progress-bar"></div></div>
+                <div id="progress-bar-container" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" aria-label="진단 진행률"><div id="progress-bar"></div></div>
                 <div id="step-info" class="step-info" style="display:none;"><span id="step-counter" class="step-counter"></span><span id="step-message" class="step-message"></span></div>
                 <form id="simulation-steps">
                     <!-- Step 0: Welcome (trust signals) -->
@@ -192,7 +196,7 @@ class SimulationForm extends HTMLElement {
                     <div class="form-step" data-step="2">
                         <p class="question-title">Q3. 만 나이를 입력해주세요.</p>
                         <p class="question-desc">만 30세 미만 또는 만 65세 이상은 변제 기간 단축(24개월) 특례가 적용될 수 있습니다.</p>
-                        <div class="input-group"><input type="number" data-question="age" placeholder="35"><span>세</span></div>
+                        <div class="input-group"><input type="text" inputmode="numeric" pattern="[0-9]*" data-question="age" placeholder="35"><span>세</span></div>
                         <p class="question-title">Q4. 소득 형태가 어떻게 되시나요?</p>
                         <div class="option-group" data-question="income_source">
                             <button type="button" class="option-btn" data-value="salary">급여소득자</button>
@@ -200,16 +204,16 @@ class SimulationForm extends HTMLElement {
                             <button type="button" class="option-btn" data-value="none">무소득</button>
                         </div>
                         <p class="question-title">Q5. 월 평균 소득(세후)은 얼마인가요?</p>
-                        <div class="input-group"><input type="number" data-question="monthly_income" placeholder="3000000"><span>원</span></div>
+                        <div class="input-group"><input type="text" inputmode="numeric" pattern="[0-9]*" data-question="monthly_income" placeholder="3000000"><span>원</span></div>
                     </div>
 
                     <!-- Step 3: Debt + Assets -->
                     <div class="form-step" data-step="3">
                         <p class="question-title">Q6. 총 채무액은 얼마인가요?</p>
-                        <div class="input-group"><input type="number" data-question="total_debt" placeholder="10000"><span>만원</span></div>
+                        <div class="input-group"><input type="text" inputmode="numeric" pattern="[0-9]*" data-question="total_debt" placeholder="10000"><span>만원</span></div>
                         <p class="question-title">Q7. 본인 명의 총 재산가치는 얼마인가요?</p>
                         <p class="question-desc">부동산, 차량, 보험해약환급금, 예금 등 합산</p>
-                        <div class="input-group"><input type="number" data-question="my_assets" placeholder="5000"><span>만원</span></div>
+                        <div class="input-group"><input type="text" inputmode="numeric" pattern="[0-9]*" data-question="my_assets" placeholder="5000"><span>만원</span></div>
                     </div>
 
                     <!-- Step 4: Dependents + Housing -->
@@ -222,25 +226,25 @@ class SimulationForm extends HTMLElement {
                             <button type="button" class="option-btn" data-value="no">없음</button>
                         </div>
                         <p class="question-title" style="font-size:1.1rem;">미성년 자녀 수</p>
-                        <div class="input-group"><input type="number" data-question="minor_children" placeholder="0" value="0"><span>명</span></div>
+                        <div class="input-group"><input type="text" inputmode="numeric" pattern="[0-9]*" data-question="minor_children" placeholder="0" value="0"><span>명</span></div>
                         <p class="question-title" style="font-size:1.1rem;">부양 노부모 수</p>
-                        <div class="input-group"><input type="number" data-question="elderly_parents" placeholder="0" value="0"><span>명</span></div>
+                        <div class="input-group"><input type="text" inputmode="numeric" pattern="[0-9]*" data-question="elderly_parents" placeholder="0" value="0"><span>명</span></div>
                         <p class="question-title">Q9. 월세 + 주택담보대출 이자는 얼마인가요?</p>
                         <p class="question-desc">해당 없으면 0을 입력해주세요. 지역별 한도 내에서 생계비에 추가 인정됩니다.</p>
-                        <div class="input-group"><input type="number" data-question="housing_cost" placeholder="0"><span>원/월</span></div>
+                        <div class="input-group"><input type="text" inputmode="numeric" pattern="[0-9]*" data-question="housing_cost" placeholder="0"><span>원/월</span></div>
                     </div>
 
                     <!-- Step 5: Spouse Assets + Losses -->
                     <div class="form-step" data-step="5">
                         <p class="question-title">Q10. 배우자 명의 재산이 있나요?</p>
                         <p class="question-desc">전문법원(부산/서울/수원)은 배우자 재산 미반영, 일반법원은 50% 반영됩니다.</p>
-                        <div class="input-group"><input type="number" data-question="spouse_assets" placeholder="0"><span>만원</span></div>
+                        <div class="input-group"><input type="text" inputmode="numeric" pattern="[0-9]*" data-question="spouse_assets" placeholder="0"><span>만원</span></div>
                         <p class="question-title">Q11. 주식/코인 투자 손실액이 있나요?</p>
                         <p class="question-desc">전문법원(부산/서울/수원)은 투자 손실을 청산가치에서 제외합니다.</p>
-                        <div class="input-group"><input type="number" data-question="invest_loss" placeholder="0"><span>만원</span></div>
+                        <div class="input-group"><input type="text" inputmode="numeric" pattern="[0-9]*" data-question="invest_loss" placeholder="0"><span>만원</span></div>
                         <p class="question-title">Q12. 도박 등으로 인한 손실액이 있나요?</p>
                         <p class="question-desc">도박 손실은 모든 법원에서 청산가치에 반영됩니다.</p>
-                        <div class="input-group"><input type="number" data-question="gambling_loss" placeholder="0"><span>만원</span></div>
+                        <div class="input-group"><input type="text" inputmode="numeric" pattern="[0-9]*" data-question="gambling_loss" placeholder="0"><span>만원</span></div>
                     </div>
 
                     <!-- Step 6: 24-month Shortening Check -->
@@ -360,12 +364,28 @@ class SimulationForm extends HTMLElement {
     }
 
     updateFormView() {
+        // 단계별 체류 시간 측정
+        if (this._stepStartTime && this._prevStep !== undefined) {
+            const timeSpent = Date.now() - this._stepStartTime;
+            if (window.__trackEvent) {
+                window.__trackEvent('step_time', { step: this._prevStep, timeSpentMs: timeSpent });
+            }
+        }
+        this._stepStartTime = Date.now();
+        this._prevStep = this.currentStep;
+
         this.shadowRoot.querySelectorAll('.form-step').forEach(step => step.classList.remove('active'));
         const currentStepEl = this.shadowRoot.querySelector(`.form-step[data-step="${this.currentStep}"]`);
         if (currentStepEl) currentStepEl.classList.add('active');
 
         const progress = (this.currentStep / (this.totalSteps - 1)) * 100;
         this.shadowRoot.querySelector('#progress-bar').style.width = `${progress}%`;
+
+        // ARIA progressbar 업데이트
+        const progressContainer = this.shadowRoot.querySelector('#progress-bar-container');
+        if (progressContainer) {
+            progressContainer.setAttribute('aria-valuenow', Math.round(progress));
+        }
 
         const stepInfo = STEP_MESSAGES[this.currentStep] || { counter: "", message: "" };
         const stepInfoEl = this.shadowRoot.querySelector('#step-info');
@@ -383,6 +403,19 @@ class SimulationForm extends HTMLElement {
         if (this.currentStep === 6) {
             this.updateShorteningCheck();
         }
+
+        // 퍼널 단계 추적
+        if (window.__trackEvent) {
+            const stepNames = ['welcome','location_debt','age_income','debt_assets','family_housing','spouse_losses','shortening','result'];
+            window.__trackEvent('funnel_step', {
+                step: stepNames[this.currentStep] || 'unknown',
+                stepIndex: this.currentStep
+            });
+        }
+
+        // 스텝 전환 시 폼 상단으로 스크롤
+        this.shadowRoot.querySelector('.simulation-form-wrapper')
+            ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     updateShorteningCheck() {
@@ -561,6 +594,9 @@ class SimulationForm extends HTMLElement {
 
         const resultsHTML = `
             <h3 style="text-align:center; margin-bottom: 2rem;">진단 결과</h3>
+            <div style="background:#FFF8E1; border:1px solid #FFE082; border-radius:8px; padding:12px 16px; margin-bottom:20px; font-size:0.82rem; color:#5D4037; line-height:1.6;">
+                <strong>⚠ 안내</strong> 본 시뮬레이션 결과는 2026년 보건복지부 고시 기준 중위소득 및 부산회생법원 실무준칙을 참고하여 산출한 <strong>참고용 예상값</strong>으로, 법률 자문이 아닙니다. 실제 변제금은 법원 심사 과정에서 개인 상황에 따라 달라질 수 있습니다.
+            </div>
             <div class="result-grid">
                 <div class="result-item"><h4>관할 법원</h4><p style="font-size:1.2rem;">${jurisdictionLabel}</p></div>
                 <div class="result-item"><h4>예상 월 변제금</h4><p>${Math.round(monthlyPayment).toLocaleString()}원</p></div>
@@ -572,7 +608,7 @@ class SimulationForm extends HTMLElement {
                 <div class="result-item full-width"><h4>청산가치 (재산가치)</h4><p style="font-size:1.2rem;">${Math.round(liquidationValue).toLocaleString()}원${!isSpecializedCourt && spouseAssets > 0 ? ' (배우자 재산 50% 포함)' : ''}</p></div>
             </div>
         `;
-        this.displayResult("회생 가능성 높음", resultsHTML, true);
+        this.displayResult("회생 요건 충족 가능성 있음 (참고용)", resultsHTML, true);
     }
 
     displayResult(title, content, isHtml = false) {
@@ -588,7 +624,7 @@ class SimulationForm extends HTMLElement {
 
         finalHtml += `
             <div class="commitment-section">
-                <h4>2026년, 개인회생의 최적 시기입니다</h4>
+                <h4>현재 기준 중위소득 인상으로 변제금이 이전보다 줄어들 수 있습니다</h4>
                 <p>기준 중위소득 <strong>역대 최대 6.51% 인상</strong>으로 변제금이 크게 줄었습니다.</p>
                 <p>급여 압류금지 최저금액 <strong>250만원 인상</strong>, 생계비 전용계좌 신설 등 채무자 보호가 강화되었습니다.</p>
                 <p class="highlight-text" style="margin-top:1rem;">일찍 시작하면 일찍 끝납니다.<br>지금 시작하면 3년 후, 모든 빚에서 자유로워질 수 있습니다.</p>
@@ -703,7 +739,9 @@ class SimulationForm extends HTMLElement {
             await addDoc(collection(db, "consultations"), consultationData);
             this._submitted = true;
             localStorage.setItem('consultation_submitted', 'true');
-            if (window.__trackEvent) window.__trackEvent('consultation_submit');
+            if (window.__trackEvent) {
+                window.__trackEvent('consultation_submit', { source: 'simulation_result' });
+            }
 
             this._showSubmittedState();
         } catch (e) {

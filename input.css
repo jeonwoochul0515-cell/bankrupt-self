@@ -21,3 +21,6 @@ html { scroll-behavior: smooth; }
 .shadow-soft { box-shadow: 0 4px 20px -2px rgba(19, 127, 236, 0.08); }
 .faq-icon.open { transform: rotate(180deg); }
 .faq-content { transition: max-height 0.3s ease, padding 0.3s ease; }
+
+/* Skip navigation - 접근성 */
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }

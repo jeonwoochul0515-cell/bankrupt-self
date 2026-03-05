@@ -21,4 +21,3 @@ User-agent: Bingbot
 Allow: /
 
 Sitemap: https://busan-hoiseng.pro/sitemap.xml
-Host: https://busan-hoiseng.pro
