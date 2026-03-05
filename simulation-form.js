@@ -606,7 +606,7 @@ class SimulationForm extends HTMLElement {
                 <div class="immunity-section">
                     <div class="immunity-item">
                         <p class="immunity-q">Q. 상담 비용이 부담되지 않을까?</p>
-                        <p class="immunity-a">자가진단 완료 시 수임료 20만원 할인 + 분할 납부가 가능합니다.</p>
+                        <p class="immunity-a">자가진단도, 전문가 상담도 완전 무료입니다. 상담 완료 시 제휴 법률사무소 수임료 20만원 할인 쿠폰이 제공됩니다.</p>
                     </div>
                     <div class="immunity-item">
                         <p class="immunity-q">Q. 개인정보가 안전할까?</p>
