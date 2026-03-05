@@ -105,6 +105,7 @@ async function loadData() {
     populateCourtFilter();
     updateStats();
     updateAnalyticsStats();
+    updateDailyStats();
     renderList();
     document.getElementById('select-all-bar').hidden = allConsultations.length === 0;
 }
@@ -148,6 +149,61 @@ function updateAnalyticsStats() {
         ? ((allConsultations.length / pageviews.length) * 100).toFixed(1) + '%'
         : '-';
     document.getElementById('stat-conversion').textContent = rate;
+}
+
+// ========== 일별 방문자 추이 ==========
+
+function updateDailyStats() {
+    const pageviews = allAnalytics.filter(a => a.type === 'pageview');
+    const container = document.getElementById('daily-stats-body');
+
+    // 최근 7일 날짜 생성
+    const days = [];
+    const dayLabels = ['일', '월', '화', '수', '목', '금', '토'];
+    for (let i = 6; i >= 0; i--) {
+        const d = new Date();
+        d.setHours(0, 0, 0, 0);
+        d.setDate(d.getDate() - i);
+        days.push(d);
+    }
+
+    // 일별 방문자 수 집계
+    const dailyCounts = days.map(day => {
+        const nextDay = new Date(day);
+        nextDay.setDate(nextDay.getDate() + 1);
+        return pageviews.filter(a => {
+            const date = a.createdAt?.toDate ? a.createdAt.toDate() : new Date(a.createdAt);
+            return date >= day && date < nextDay;
+        }).length;
+    });
+
+    const maxCount = Math.max(...dailyCounts, 1);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // 평균 계산
+    const totalVisits = dailyCounts.reduce((a, b) => a + b, 0);
+    const avgVisits = (totalVisits / 7).toFixed(1);
+
+    let chartHtml = '<div class="daily-chart">';
+    days.forEach((day, i) => {
+        const count = dailyCounts[i];
+        const heightPercent = maxCount > 0 ? (count / maxCount) * 100 : 0;
+        const isToday = day.getTime() === today.getTime();
+        const label = `${day.getMonth() + 1}/${day.getDate()}(${dayLabels[day.getDay()]})`;
+
+        chartHtml += `
+            <div class="daily-bar-wrapper${isToday ? ' daily-bar-today' : ''}">
+                <span class="daily-bar-count">${count}</span>
+                <div class="daily-bar" style="height:${Math.max(heightPercent, 3)}%"></div>
+                <span class="daily-bar-label">${label}</span>
+            </div>
+        `;
+    });
+    chartHtml += '</div>';
+    chartHtml += `<div class="daily-avg">일 평균 방문자: <strong>${avgVisits}명</strong></div>`;
+
+    container.innerHTML = chartHtml;
 }
 
 // ========== 관할 법원 필터 ==========

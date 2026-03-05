@@ -10,7 +10,7 @@
     <!-- End Google Tag Manager -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>관리자 페이지 - 개인회생 자가진단</title>
+    <title>관리자 페이지 - 부산회생프로</title>
     <link rel="icon" href="/favicon.ico" sizes="48x48">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -28,7 +28,7 @@
         <div class="login-box">
             <div class="login-logo">
                 <i class="fas fa-balance-scale"></i>
-                <span>관리자 페이지</span>
+                <span>부산회생프로 관리자</span>
             </div>
             <form id="login-form">
                 <div class="input-group">
@@ -48,10 +48,10 @@
         <header class="admin-header">
             <div class="header-left">
                 <i class="fas fa-balance-scale"></i>
-                <span class="header-title">관리자 대시보드</span>
+                <span class="header-title">부산회생프로 관리자</span>
             </div>
             <div class="header-right">
-                <a href="/" class="header-link"><i class="fas fa-home"></i> 메인</a>
+                <a href="https://busan-hoiseng.pro" class="header-link"><i class="fas fa-home"></i> 메인</a>
                 <button id="logout-btn" class="header-link logout-btn"><i class="fas fa-sign-out-alt"></i> 로그아웃</button>
             </div>
         </header>
@@ -116,6 +116,21 @@
                 <div class="stat-info">
                     <span class="stat-value" id="stat-top-court">-</span>
                     <span class="stat-label">최다 관할 법원</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 일별 방문자 추이 -->
+        <section class="daily-stats-section">
+            <div class="daily-stats-card">
+                <div class="daily-stats-header">
+                    <h3><i class="fas fa-chart-bar"></i> 일별 방문자 추이 (최근 7일)</h3>
+                </div>
+                <div class="daily-stats-body" id="daily-stats-body">
+                    <div class="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span>집계 중...</span>
+                    </div>
                 </div>
             </div>
         </section>
