@@ -60,6 +60,11 @@ function parseDebt(value) {
     return isNaN(num) ? 0 : num;
 }
 
+function getDebtValue(c) {
+    const a = c.simulationAnswers;
+    return a?.['Q6. 총 채무액 (만원)'] ?? a?.['Q5. 총 채무액 (만원)'];
+}
+
 function formatMoney(manwon) {
     if (manwon >= 10000) return (manwon / 10000).toFixed(1) + '억';
     return manwon.toLocaleString() + '만원';
@@ -118,8 +123,7 @@ function updateStats() {
     document.getElementById('stat-today').textContent = data.filter(c => isToday(c.createdAt)).length;
 
     const debts = data.map(c => {
-        const val = c.simulationAnswers?.['Q5. 총 채무액 (만원)'];
-        return parseDebt(val);
+        return parseDebt(getDebtValue(c));
     }).filter(v => v > 0);
     const avgDebt = debts.length > 0 ? Math.round(debts.reduce((a, b) => a + b, 0) / debts.length) : 0;
     document.getElementById('stat-avg-debt').textContent = avgDebt > 0 ? formatMoney(avgDebt) : '-';
@@ -281,9 +285,9 @@ function getFilteredData() {
                 return da - db2;
             }
             case 'debt-high':
-                return parseDebt(b.simulationAnswers?.['Q5. 총 채무액 (만원)']) - parseDebt(a.simulationAnswers?.['Q5. 총 채무액 (만원)']);
+                return parseDebt(getDebtValue(b)) - parseDebt(getDebtValue(a));
             case 'debt-low':
-                return parseDebt(a.simulationAnswers?.['Q5. 총 채무액 (만원)']) - parseDebt(b.simulationAnswers?.['Q5. 총 채무액 (만원)']);
+                return parseDebt(getDebtValue(a)) - parseDebt(getDebtValue(b));
             default: return 0;
         }
     });
@@ -313,7 +317,7 @@ function renderList() {
         const phone = maskPhone(c.requesterInfo?.phone);
         const dateStr = formatDateShort(c.createdAt);
         const court = c.simulationResults?.['관할 법원'] || '-';
-        const debt = parseDebt(c.simulationAnswers?.['Q5. 총 채무액 (만원)']);
+        const debt = parseDebt(getDebtValue(c));
         const rate = c.simulationResults?.['예상 탕감률'] || '-';
 
         card.innerHTML = `
