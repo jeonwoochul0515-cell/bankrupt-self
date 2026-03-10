@@ -44,4 +44,33 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.setAttribute('aria-expanded', !isOpen);
         });
     });
+
+    // --- Mobile Floating CTA (Issue #10) ---
+    const floatingCta = document.getElementById('floating-cta');
+    if (floatingCta) {
+        let lastScrollY = 0;
+        const showThreshold = 400; // 400px 이상 스크롤 시 표시
+
+        window.addEventListener('scroll', () => {
+            const currentScrollY = window.scrollY;
+            if (currentScrollY > showThreshold) {
+                floatingCta.classList.remove('translate-y-full');
+            } else {
+                floatingCta.classList.add('translate-y-full');
+            }
+            lastScrollY = currentScrollY;
+        }, { passive: true });
+    }
+
+    // --- Cookie Settings Reset (Issue #8) ---
+    const cookieSettingsBtn = document.getElementById('cookie-settings-btn');
+    if (cookieSettingsBtn) {
+        cookieSettingsBtn.addEventListener('click', () => {
+            localStorage.removeItem('cookie_consent');
+            const banner = document.getElementById('cookie-banner');
+            if (banner) {
+                banner.style.display = 'block';
+            }
+        });
+    }
 });

@@ -2,13 +2,13 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // 상담 신청: 누구나 생성 가능, 읽기/수정/삭제는 인증된 관리자만
+    // 상담 신청: 누구나 생성 가능, 읽기/수정/삭제는 인증된 사용자만
     match /consultations/{docId} {
       allow create: if request.resource.data.keys().hasAll(['requesterInfo', 'createdAt']);
       allow read, update, delete: if request.auth != null;
     }
 
-    // 분석 데이터: 누구나 생성 가능, 읽기는 인증된 관리자만
+    // 분석 데이터: 누구나 생성 가능, 읽기/삭제는 인증된 사용자만
     match /analytics/{docId} {
       allow create: if true;
       allow read, delete: if request.auth != null;

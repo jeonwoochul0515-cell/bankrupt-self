@@ -1,5 +1,6 @@
 import { db } from './firebase-config.js';
-import { collection, getDocs, orderBy, query, doc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, getDocs, orderBy, query, doc, deleteDoc, updateDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 function showError(message) {
     let banner = document.getElementById('error-banner');
@@ -76,14 +77,9 @@ let allConsultations = [];
 let allAnalytics = [];
 let selectedIds = new Set();
 
-// ========== 비밀번호 인증 ==========
+// ========== 데이터 로드 트리거 ==========
 
 window.__loadData = loadData;
-
-// 이미 인증된 상태라면 바로 데이터 로드
-if (sessionStorage.getItem('admin_auth') === 'true') {
-    loadData();
-}
 
 // ========== 데이터 로드 ==========
 
@@ -93,6 +89,15 @@ async function loadData() {
     document.getElementById('empty-state').hidden = true;
 
     try {
+        // Firebase 인증 확인
+        const auth = getAuth();
+        if (!auth.currentUser) {
+            const pw = sessionStorage.getItem('admin_pw');
+            if (pw) {
+                await signInWithEmailAndPassword(auth, 'jeonwoochul0515@gmail.com', pw);
+            }
+        }
+
         const [consultSnap, analyticsSnap] = await Promise.all([
             getDocs(query(collection(db, 'consultations'), orderBy('createdAt', 'desc'))),
             getDocs(query(collection(db, 'analytics'), orderBy('createdAt', 'desc')))
@@ -727,7 +732,7 @@ document.getElementById('csv-export-btn').addEventListener('click', () => {
     const rows = filtered.map(c => {
         const row = [
             c.requesterInfo?.name || '',
-            c.requesterInfo?.phone || '',
+            maskPhone(c.requesterInfo?.phone),
             formatDate(c.createdAt),
         ];
         answerKeys.forEach(k => row.push(String(c.simulationAnswers?.[k] ?? '')));
@@ -769,6 +774,35 @@ document.addEventListener('keydown', (e) => {
         pendingDeleteIds = [];
     }
 });
+
+// ========== 6개월 경과 데이터 정리 ==========
+
+async function cleanupOldData() {
+    const sixMonthsAgo = new Date();
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+
+    const snapshot = await getDocs(
+        query(collection(db, 'consultations'),
+              where('createdAt', '<', sixMonthsAgo))
+    );
+
+    if (snapshot.empty) {
+        alert('삭제할 오래된 데이터가 없습니다.');
+        return;
+    }
+
+    if (!confirm(`${snapshot.size}건의 6개월 경과 데이터를 삭제하시겠습니까?`)) return;
+
+    let deleted = 0;
+    for (const doc of snapshot.docs) {
+        await deleteDoc(doc.ref);
+        deleted++;
+    }
+    alert(`${deleted}건의 데이터가 삭제되었습니다.`);
+    loadData(); // 데이터 새로고침
+}
+
+window.cleanupOldData = cleanupOldData;
 
 // ========== 초기화 ==========
 // Firebase Auth의 onAuthStateChanged가 인증 상태를 자동으로 관리합니다.

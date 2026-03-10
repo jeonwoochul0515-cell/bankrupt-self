@@ -1,12 +1,13 @@
 
-const CACHE_NAME = 'bankrupt-self-cache-v2';
+const CACHE_NAME = 'bankrupt-self-cache-v3';
 const urlsToCache = [
   '/',
   '/index.html',
   '/tailwind-built.css',
   '/main.js',
   '/manifest.json',
-  '/privacy.html'
+  '/privacy.html',
+  '/404.html'
 ];
 
 // Install a service worker

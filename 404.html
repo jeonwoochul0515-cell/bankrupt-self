@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>페이지를 찾을 수 없습니다 - 부산회생프로</title>
+    <meta name="robots" content="noindex">
+    <link rel="icon" href="/favicon.ico" sizes="48x48">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f7f9fc;
+            color: #0a1f33;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 2rem 1.5rem;
+        }
+
+        .error-container {
+            max-width: 520px;
+            width: 100%;
+        }
+
+        .error-code {
+            font-size: 8rem;
+            font-weight: 900;
+            line-height: 1;
+            color: #137fec;
+            letter-spacing: -0.04em;
+            margin-bottom: 1rem;
+        }
+
+        .error-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #0a1f33;
+            margin-bottom: 0.75rem;
+        }
+
+        .error-description {
+            font-size: 1rem;
+            color: #5a6a7a;
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+        }
+
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-block;
+            width: 100%;
+            max-width: 280px;
+            padding: 0.875rem 1.5rem;
+            border-radius: 8px;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            text-decoration: none;
+            text-align: center;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background-color: #137fec;
+            color: #ffffff;
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: #137fec;
+            border: 2px solid #137fec;
+        }
+
+        .footer-text {
+            margin-top: 3rem;
+            font-size: 0.8125rem;
+            color: #9aa8b8;
+        }
+
+        @media (min-width: 480px) {
+            .error-code {
+                font-size: 10rem;
+            }
+
+            .error-title {
+                font-size: 1.75rem;
+            }
+
+            .button-group {
+                flex-direction: row;
+                justify-content: center;
+            }
+
+            .btn {
+                width: auto;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="error-container">
+        <div class="error-code">404</div>
+        <h1 class="error-title">페이지를 찾을 수 없습니다</h1>
+        <p class="error-description">요청하신 페이지가 존재하지 않거나 이동되었습니다.</p>
+        <div class="button-group">
+            <a href="/" class="btn btn-primary">부산회생프로 메인으로</a>
+            <a href="/#simulation" class="btn btn-outline">무료 자가진단 시작</a>
+        </div>
+    </div>
+    <p class="footer-text">부산회생프로 | busan-hoiseng.pro</p>
+</body>
+</html>

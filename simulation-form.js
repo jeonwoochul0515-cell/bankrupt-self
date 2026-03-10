@@ -315,7 +315,7 @@ class SimulationForm extends HTMLElement {
             // Step 1 validation
             if (this.currentStep === 1) {
                 if (!this.formData.location) {
-                    alert('거주지를 선택해주세요.');
+                    this.showInlineError('location', '거주지를 선택해주세요.');
                     return;
                 }
                 if (this.formData.min_debt !== 'yes') {
@@ -332,6 +332,9 @@ class SimulationForm extends HTMLElement {
                 this.updateFormView();
             } else if (this.currentStep === lastQuestionStep) {
                 this.collectInputData();
+                if (!this.validateInputRanges()) {
+                    return;
+                }
                 this.calculateAndShowResults();
                 this.currentStep++;
                 this.updateFormView();
@@ -351,6 +354,10 @@ class SimulationForm extends HTMLElement {
         // Zeigarnik effect: warn on page close during form
         this._beforeUnloadHandler = (e) => {
             if (this.currentStep > 0 && this.currentStep < this.totalSteps - 1) {
+                const stepNames = ['welcome','location_debt','age_income','debt_assets','family_housing','spouse_losses','shortening','result'];
+                if (window.__trackEvent) {
+                    window.__trackEvent('form_abandon', { step: this.currentStep, stepName: stepNames[this.currentStep] || 'unknown' });
+                }
                 e.preventDefault();
                 e.returnValue = '';
             }
@@ -442,6 +449,31 @@ class SimulationForm extends HTMLElement {
             }
         });
         this.saveToLocalStorage();
+    }
+
+    validateInputRanges() {
+        const age = parseInt(this.formData.age) || 0;
+        const monthlyIncome = parseFloat(this.formData.monthly_income) || 0;
+        const totalDebt = parseFloat(this.formData.total_debt) || 0;
+        const myAssets = parseFloat(this.formData.my_assets) || 0;
+
+        if (age < 19 || age > 99) {
+            this.showInlineError('age', '나이는 19세~99세 범위로 입력해주세요.');
+            return false;
+        }
+        if (monthlyIncome < 0) {
+            this.showInlineError('monthly_income', '월소득은 0 이상이어야 합니다.');
+            return false;
+        }
+        if (totalDebt <= 0) {
+            this.showInlineError('total_debt', '채무액은 0보다 커야 합니다.');
+            return false;
+        }
+        if (myAssets < 0) {
+            this.showInlineError('my_assets', '자산은 0 이상이어야 합니다.');
+            return false;
+        }
+        return true;
     }
 
     saveToLocalStorage() {
@@ -628,10 +660,26 @@ class SimulationForm extends HTMLElement {
                 <p>기준 중위소득 <strong>역대 최대 6.51% 인상</strong>으로 변제금이 크게 줄었습니다.</p>
                 <p>급여 압류금지 최저금액 <strong>250만원 인상</strong>, 생계비 전용계좌 신설 등 채무자 보호가 강화되었습니다.</p>
                 <p class="highlight-text" style="margin-top:1rem;">일찍 시작하면 일찍 끝납니다.<br>지금 시작하면 3년 후, 모든 빚에서 자유로워질 수 있습니다.</p>
+                <p style="font-size:0.78rem; color:#888; margin-top:4px;">※ 본 계산은 2026년 보건복지부 고시 기준 중위소득을 기반으로 합니다. 매년 갱신됩니다.</p>
+            </div>
+            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-bottom:1.5rem;">
+                <div style="background:#f8f9fa; border-radius:10px; padding:1rem; text-align:center;">
+                    <div style="font-size:1.5rem; margin-bottom:0.25rem;">🔒</div>
+                    <p style="font-size:0.8rem; color:#555; margin:0;">개인정보 암호화 보호</p>
+                </div>
+                <div style="background:#f8f9fa; border-radius:10px; padding:1rem; text-align:center;">
+                    <div style="font-size:1.5rem; margin-bottom:0.25rem;">💰</div>
+                    <p style="font-size:0.8rem; color:#555; margin:0;">상담료 완전 무료</p>
+                </div>
+                <div style="background:#f8f9fa; border-radius:10px; padding:1rem; text-align:center;">
+                    <div style="font-size:1.5rem; margin-bottom:0.25rem;">⚖️</div>
+                    <p style="font-size:0.8rem; color:#555; margin:0;">전문 변호사 직접 상담</p>
+                </div>
             </div>
             <div class="consultation-form" id="consultation-form-section">
                 <h4>전문가 무료 상담 신청 (선택)</h4>
                 <p class="form-desc">상담을 원하시면 아래 정보를 입력해주세요. 입력하지 않아도 진단 결과는 유지됩니다.</p>
+                <div style="position:absolute;left:-9999px;"><input type="text" id="website_url" tabindex="-1" autocomplete="off"></div>
                 <p class="question-title" style="font-size:1rem; margin-top:0;">이름</p>
                 <div class="input-group"><input type="text" id="consult_name" placeholder="이름을 입력해주세요"></div>
                 <p class="question-title" style="font-size:1rem;">연락처</p>
@@ -665,6 +713,24 @@ class SimulationForm extends HTMLElement {
         `;
         resultStep.innerHTML = finalHtml;
 
+        // 결과 화면 진입 추적
+        if (window.__trackEvent) {
+            window.__trackEvent('result_view', { hasConsultation: false });
+        }
+
+        // 상담 폼 이름 필드 focus 추적
+        const consultNameInput = this.shadowRoot.querySelector('#consult_name');
+        if (consultNameInput) {
+            consultNameInput.addEventListener('focus', () => {
+                if (!this._consultFormStartTracked) {
+                    this._consultFormStartTracked = true;
+                    if (window.__trackEvent) {
+                        window.__trackEvent('consult_form_start', { field: 'name' });
+                    }
+                }
+            }, { once: true });
+        }
+
         // Restore submitted state if already submitted
         if (localStorage.getItem('consultation_submitted')) {
             this._showSubmittedState();
@@ -691,16 +757,31 @@ class SimulationForm extends HTMLElement {
     }
 
     async submitConsultation() {
+        // 허니팟 스팸 방지 체크
+        const honeypot = this.shadowRoot.querySelector('#website_url');
+        if (honeypot && honeypot.value) {
+            // 봇으로 간주, 조용히 무시 (성공한 것처럼 보여줌)
+            this._showSubmittedState();
+            return;
+        }
+
         const name = this.shadowRoot.querySelector('#consult_name').value.trim();
         const phone = this.shadowRoot.querySelector('#consult_phone').value.trim();
         const agree = this.shadowRoot.querySelector('#privacy-agree').checked;
 
         if (!name || !phone) {
-            alert('이름과 연락처를 모두 입력해주세요.');
+            this.showInlineError(!name ? 'consult_name' : 'consult_phone', '이름과 연락처를 모두 입력해주세요.');
             return;
         }
+
+        const phoneClean = phone.replace(/[^0-9]/g, '');
+        if (!/^01[0-9]\d{7,8}$/.test(phoneClean)) {
+            this.showInlineError('consult_phone', '올바른 휴대폰 번호를 입력해주세요.');
+            return;
+        }
+
         if (!agree) {
-            alert('개인정보처리방침에 동의해주세요.');
+            this.showInlineError('privacy-agree', '개인정보처리방침에 동의해주세요.');
             return;
         }
         if (this._submitted || localStorage.getItem('consultation_submitted')) {
@@ -748,21 +829,27 @@ class SimulationForm extends HTMLElement {
             console.error("Submit error:", e);
             submitBtn.disabled = false;
             submitBtn.textContent = '무료 상담 신청하기';
-            alert('전송 중 오류가 발생했습니다. 다시 시도해주세요.');
+            this.showInlineError('submit-consultation-btn', '전송 중 오류가 발생했습니다. 다시 시도해주세요.');
         }
     }
 
     _showSubmittedState() {
-        const formSection = this.shadowRoot.querySelector('#consultation-form-section');
-        if (formSection) {
-            const name = this.formData.user_name || '';
-            formSection.innerHTML = `
-                <div class="consultation-complete">
-                    <div class="complete-check">&#10003;</div>
-                    <h4>상담 신청이 완료되었습니다</h4>
-                    <p>${name}님의 연락처로 전문가가 곧 연락드리겠습니다.</p>
-                </div>
-            `;
+        const section = this.shadowRoot.querySelector('#consultation-form-section');
+        if (section) {
+            section.innerHTML = `
+                <div style="text-align:center; padding:2rem 1rem;">
+                    <div style="font-size:3rem; margin-bottom:1rem;">✓</div>
+                    <h4 style="font-size:1.3rem; color:#0a1f33; margin-bottom:0.5rem;">신청이 완료되었습니다!</h4>
+                    <p style="color:#666; margin-bottom:1.5rem;">일반적으로 <strong>30분~2시간 이내</strong>에 전문가가 연락을 드립니다.</p>
+                    <div style="background:#f0f7ff; border-radius:12px; padding:1.25rem; text-align:left; margin-bottom:1rem;">
+                        <p style="font-weight:700; color:#0a1f33; margin-bottom:0.75rem;">상담 전 이렇게 준비하세요</p>
+                        <ul style="list-style:none; padding:0; margin:0; font-size:0.9rem; color:#555;">
+                            <li style="margin-bottom:0.5rem;">📱 휴대폰 수신 가능 상태 확인</li>
+                            <li style="margin-bottom:0.5rem;">📄 채무 관련 서류 준비 (독촉장, 대출 내역 등)</li>
+                            <li style="margin-bottom:0.5rem;">💳 월 소득 및 지출 내역 정리</li>
+                        </ul>
+                    </div>
+                </div>`;
         }
     }
 
@@ -781,12 +868,26 @@ class SimulationForm extends HTMLElement {
         }
     }
 
+    showInlineError(fieldId, message) {
+        // 기존 에러 메시지 제거
+        this.shadowRoot.querySelectorAll('.inline-error').forEach(el => el.remove());
+        const field = this.shadowRoot.querySelector(`#${fieldId}`) ||
+                      this.shadowRoot.querySelector(`[data-question="${fieldId}"]`);
+        if (field) {
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'inline-error';
+            errorDiv.textContent = message;
+            errorDiv.style.cssText = 'color:#e53e3e; font-size:0.85rem; margin-top:4px; padding:4px 8px;';
+            field.parentNode.insertBefore(errorDiv, field.nextSibling);
+            field.focus();
+        }
+    }
+
     deleteData() {
         localStorage.removeItem('formData');
         localStorage.removeItem('consultation_submitted');
         this._submitted = false;
         this.formData = {};
-        alert('모든 정보가 삭제되었습니다.');
         this.currentStep = 0;
         this.render();
         this.connectedCallback();

@@ -3,6 +3,7 @@
 
 @source "./index.html";
 @source "./admin.html";
+@source "./404.html";
 @source "./main.js";
 
 @theme {
@@ -18,6 +19,7 @@
 
 /* Custom utilities */
 html { scroll-behavior: smooth; }
+#floating-cta { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
 .shadow-soft { box-shadow: 0 4px 20px -2px rgba(19, 127, 236, 0.08); }
 .faq-icon.open { transform: rotate(180deg); }
 .faq-content { transition: max-height 0.3s ease, padding 0.3s ease; }

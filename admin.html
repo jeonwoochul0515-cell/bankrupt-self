@@ -195,6 +195,9 @@
                 </select>
             </div>
             <div class="toolbar-right">
+                <button onclick="cleanupOldData()" class="cleanup-btn" style="background:#dc3545; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-size:0.85rem;">
+                    6개월 경과 데이터 정리
+                </button>
                 <button id="csv-export-btn" class="btn btn-accent"><i class="fas fa-file-csv"></i> CSV 내보내기</button>
                 <button id="bulk-delete-btn" class="btn btn-danger" hidden><i class="fas fa-trash-alt"></i> 선택 삭제 (<span id="selected-count">0</span>)</button>
             </div>
@@ -253,47 +256,46 @@
     </div>
 
     <script>
-        const ADMIN_PASSWORD_HASH = '0b4dfe8635672f7029a4a9e2f4bc60cbbdaf785b3a18350b2a300aa9cb4383a7';
-
-        async function hashPassword(password) {
-            const encoder = new TextEncoder();
-            const data = encoder.encode(password);
-            const hash = await crypto.subtle.digest('SHA-256', data);
-            return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
-        }
-
-        function checkAuth() {
-            return sessionStorage.getItem('admin_auth') === 'true';
-        }
-
         function showApp() {
             document.getElementById('login-overlay').hidden = true;
             document.getElementById('admin-content').hidden = false;
         }
 
         // 이미 인증된 경우
-        if (checkAuth()) {
-            document.addEventListener('DOMContentLoaded', showApp);
+        if (sessionStorage.getItem('admin_auth') === 'true') {
+            document.addEventListener('DOMContentLoaded', () => {
+                showApp();
+                if (window.__loadData) window.__loadData();
+            });
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('login-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const pw = document.getElementById('login-password').value;
-                const inputHash = await hashPassword(pw);
-                if (inputHash === ADMIN_PASSWORD_HASH) {
+                const errorEl = document.getElementById('login-error');
+
+                // Firebase Auth로 직접 로그인 시도
+                try {
+                    const { getAuth, signInWithEmailAndPassword } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
+                    const auth = getAuth();
+                    await signInWithEmailAndPassword(auth, 'jeonwoochul0515@gmail.com', pw);
                     sessionStorage.setItem('admin_auth', 'true');
+                    sessionStorage.setItem('admin_pw', pw);
+                    errorEl.hidden = true;
                     showApp();
-                    document.getElementById('login-error').hidden = true;
-                    // admin.js 데이터 로드 트리거
                     if (window.__loadData) window.__loadData();
-                } else {
-                    document.getElementById('login-error').hidden = false;
+                } catch (err) {
+                    console.error('로그인 실패:', err);
+                    errorEl.hidden = false;
                 }
             });
 
-            document.getElementById('logout-btn').addEventListener('click', () => {
+            document.getElementById('logout-btn').addEventListener('click', async () => {
+                const { getAuth, signOut } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
+                await signOut(getAuth());
                 sessionStorage.removeItem('admin_auth');
+                sessionStorage.removeItem('admin_pw');
                 location.reload();
             });
         });
