@@ -16,6 +16,9 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="admin.css">
+    <script src="https://cdn.jsdelivr.net/npm/docx@9.6.0/build/index.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
 </head>
 <body>
     <!-- Google Tag Manager (noscript) -->
@@ -41,189 +44,304 @@
         </div>
     </div>
 
-    <!-- 메인 콘텐츠 -->
+    <!-- 메인 레이아웃: 사이드바 + 콘텐츠 -->
     <div id="admin-content" class="admin-content" hidden>
 
-        <!-- 헤더 -->
-        <header class="admin-header">
-            <div class="header-left">
-                <i class="fas fa-balance-scale"></i>
-                <span class="header-title">부산회생프로 관리자</span>
-            </div>
-            <div class="header-right">
-                <a href="https://busan-hoiseng.pro" class="header-link"><i class="fas fa-home"></i> 메인</a>
-                <button id="logout-btn" class="header-link logout-btn"><i class="fas fa-sign-out-alt"></i> 로그아웃</button>
-            </div>
-        </header>
+        <!-- 모바일 햄버거 버튼 -->
+        <button id="sidebar-toggle" class="sidebar-toggle" aria-label="메뉴 열기">
+            <i class="fas fa-bars"></i>
+        </button>
 
-        <!-- 방문자 통계 -->
-        <section class="stats-section">
-            <div class="stat-card">
-                <div class="stat-icon" style="background:linear-gradient(135deg,#6c5ce7,#a29bfe)"><i class="fas fa-eye"></i></div>
-                <div class="stat-info">
-                    <span class="stat-value" id="stat-views">-</span>
-                    <span class="stat-label">전체 방문</span>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon" style="background:linear-gradient(135deg,#00b894,#55efc4)"><i class="fas fa-eye"></i></div>
-                <div class="stat-info">
-                    <span class="stat-value" id="stat-views-today">-</span>
-                    <span class="stat-label">오늘 방문</span>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon" style="background:linear-gradient(135deg,#e17055,#fab1a0)"><i class="fas fa-gavel"></i></div>
-                <div class="stat-info">
-                    <span class="stat-value" id="stat-lawyer-clicks">-</span>
-                    <span class="stat-label">변호사 추천 클릭</span>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon" style="background:linear-gradient(135deg,#fdcb6e,#e17055)"><i class="fas fa-percentage"></i></div>
-                <div class="stat-info">
-                    <span class="stat-value" id="stat-conversion">-</span>
-                    <span class="stat-label">상담 전환율</span>
-                </div>
-            </div>
-        </section>
+        <!-- 사이드바 오버레이 (모바일) -->
+        <div id="sidebar-overlay" class="sidebar-overlay"></div>
 
-        <!-- 상담 통계 -->
-        <section class="stats-section">
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-clipboard-list"></i></div>
-                <div class="stat-info">
-                    <span class="stat-value" id="stat-total">-</span>
-                    <span class="stat-label">전체 상담</span>
-                </div>
+        <!-- 좌측 사이드바 -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-logo">부산회생프로</div>
+            <ul class="sidebar-menu">
+                <li class="sidebar-item active" data-page="dashboard"><i class="fas fa-chart-line"></i><span>대시보드</span></li>
+                <li class="sidebar-item" data-page="consultations"><i class="fas fa-comments"></i><span>상담 접수</span></li>
+                <li class="sidebar-item" data-page="cases"><i class="fas fa-briefcase"></i><span>사건 관리</span></li>
+                <li class="sidebar-item" data-page="documents"><i class="fas fa-file-word"></i><span>서류 생성</span></li>
+                <li class="sidebar-item" data-page="settings"><i class="fas fa-cog"></i><span>설정</span></li>
+            </ul>
+            <div class="sidebar-footer">
+                <a href="https://busan-hoiseng.pro" class="sidebar-link"><i class="fas fa-home"></i> 메인사이트</a>
+                <button id="logout-btn" class="sidebar-link"><i class="fas fa-sign-out-alt"></i> 로그아웃</button>
             </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
-                <div class="stat-info">
-                    <span class="stat-value" id="stat-today">-</span>
-                    <span class="stat-label">오늘 상담</span>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-won-sign"></i></div>
-                <div class="stat-info">
-                    <span class="stat-value" id="stat-avg-debt">-</span>
-                    <span class="stat-label">평균 채무액</span>
-                </div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon"><i class="fas fa-landmark"></i></div>
-                <div class="stat-info">
-                    <span class="stat-value" id="stat-top-court">-</span>
-                    <span class="stat-label">최다 관할 법원</span>
-                </div>
-            </div>
-        </section>
+        </nav>
 
-        <!-- 일별 방문자 추이 -->
-        <section class="daily-stats-section">
-            <div class="daily-stats-card">
-                <div class="daily-stats-header">
-                    <h3><i class="fas fa-chart-bar"></i> 일별 방문자 추이 (최근 7일)</h3>
-                </div>
-                <div class="daily-stats-body" id="daily-stats-body">
-                    <div class="loading-spinner">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <span>집계 중...</span>
-                    </div>
-                </div>
-            </div>
-        </section>
+        <!-- 우측 콘텐츠 영역 -->
+        <main class="main-content">
 
-        <!-- 전환 퍼널 분석 -->
-        <section class="funnel-section">
-            <div class="funnel-card">
-                <div class="funnel-header">
-                    <h3><i class="fas fa-filter"></i> 전환 퍼널 분석</h3>
-                </div>
-                <div class="funnel-body">
-                    <div id="funnel-chart">
-                        <div class="loading-spinner">
-                            <i class="fas fa-spinner fa-spin"></i>
-                            <span>집계 중...</span>
+            <!-- ==================== 대시보드 ==================== -->
+            <div class="page-content" data-page="dashboard">
+
+                <!-- 방문자 통계 -->
+                <section class="stats-section">
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:linear-gradient(135deg,#6c5ce7,#a29bfe)"><i class="fas fa-eye"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-views">-</span>
+                            <span class="stat-label">전체 방문</span>
                         </div>
                     </div>
-                    <p id="funnel-insight" class="funnel-insight"></p>
-                </div>
-            </div>
-        </section>
-
-        <!-- 유입 채널별 통계 -->
-        <section class="referrer-section">
-            <div class="referrer-card">
-                <div class="referrer-header">
-                    <h3><i class="fas fa-share-alt"></i> 유입 채널별 통계</h3>
-                </div>
-                <div class="referrer-body" id="referrer-stats">
-                    <div class="loading-spinner">
-                        <i class="fas fa-spinner fa-spin"></i>
-                        <span>집계 중...</span>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:linear-gradient(135deg,#00b894,#55efc4)"><i class="fas fa-eye"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-views-today">-</span>
+                            <span class="stat-label">오늘 방문</span>
+                        </div>
                     </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:linear-gradient(135deg,#e17055,#fab1a0)"><i class="fas fa-gavel"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-lawyer-clicks">-</span>
+                            <span class="stat-label">변호사 추천 클릭</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon" style="background:linear-gradient(135deg,#fdcb6e,#e17055)"><i class="fas fa-percentage"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-conversion">-</span>
+                            <span class="stat-label">상담 전환율</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 상담 통계 -->
+                <section class="stats-section">
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-clipboard-list"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-total">-</span>
+                            <span class="stat-label">전체 상담</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-calendar-day"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-today">-</span>
+                            <span class="stat-label">오늘 상담</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-won-sign"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-avg-debt">-</span>
+                            <span class="stat-label">평균 채무액</span>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon"><i class="fas fa-landmark"></i></div>
+                        <div class="stat-info">
+                            <span class="stat-value" id="stat-top-court">-</span>
+                            <span class="stat-label">최다 관할 법원</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 일별 방문자 추이 -->
+                <section class="daily-stats-section">
+                    <div class="daily-stats-card">
+                        <div class="daily-stats-header">
+                            <h3><i class="fas fa-chart-bar"></i> 일별 방문자 추이 (최근 7일)</h3>
+                        </div>
+                        <div class="daily-stats-body" id="daily-stats-body">
+                            <div class="loading-spinner">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span>집계 중...</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 전환 퍼널 분석 -->
+                <section class="funnel-section">
+                    <div class="funnel-card">
+                        <div class="funnel-header">
+                            <h3><i class="fas fa-filter"></i> 전환 퍼널 분석</h3>
+                        </div>
+                        <div class="funnel-body">
+                            <div id="funnel-chart">
+                                <div class="loading-spinner">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <span>집계 중...</span>
+                                </div>
+                            </div>
+                            <p id="funnel-insight" class="funnel-insight"></p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 유입 채널별 통계 -->
+                <section class="referrer-section">
+                    <div class="referrer-card">
+                        <div class="referrer-header">
+                            <h3><i class="fas fa-share-alt"></i> 유입 채널별 통계</h3>
+                        </div>
+                        <div class="referrer-body" id="referrer-stats">
+                            <div class="loading-spinner">
+                                <i class="fas fa-spinner fa-spin"></i>
+                                <span>집계 중...</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+
+            <!-- ==================== 상담 접수 ==================== -->
+            <div class="page-content" data-page="consultations" hidden>
+
+                <!-- 툴바 -->
+                <section class="toolbar">
+                    <div class="toolbar-left">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="search-input" placeholder="이름 또는 연락처 검색">
+                        </div>
+                        <select id="filter-court" class="toolbar-select">
+                            <option value="">전체 관할 법원</option>
+                        </select>
+                        <input type="date" id="filter-date-start" class="toolbar-date" title="시작일">
+                        <input type="date" id="filter-date-end" class="toolbar-date" title="종료일">
+                        <select id="filter-status" class="toolbar-select">
+                            <option value="">전체 상태</option>
+                            <option value="new">신규</option>
+                            <option value="contacted">연락완료</option>
+                            <option value="converted">수임성사</option>
+                            <option value="closed">종료</option>
+                        </select>
+                        <select id="sort-select" class="toolbar-select">
+                            <option value="newest">최신순</option>
+                            <option value="oldest">오래된순</option>
+                            <option value="debt-high">채무 높은순</option>
+                            <option value="debt-low">채무 낮은순</option>
+                        </select>
+                    </div>
+                    <div class="toolbar-right">
+                        <button onclick="cleanupOldData()" class="cleanup-btn" style="background:#dc3545; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-size:0.85rem;">
+                            6개월 경과 데이터 정리
+                        </button>
+                        <button id="csv-export-btn" class="btn btn-accent"><i class="fas fa-file-csv"></i> CSV 내보내기</button>
+                        <button id="bulk-delete-btn" class="btn btn-danger" hidden><i class="fas fa-trash-alt"></i> 선택 삭제 (<span id="selected-count">0</span>)</button>
+                    </div>
+                </section>
+
+                <!-- 전체 선택 -->
+                <div class="select-all-bar" id="select-all-bar" hidden>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="select-all-checkbox">
+                        <span>전체 선택</span>
+                    </label>
+                </div>
+
+                <!-- 상담 목록 -->
+                <section id="consultation-list" class="consultation-list">
+                    <div class="loading-spinner" id="loading-spinner">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span>데이터를 불러오는 중...</span>
+                    </div>
+                </section>
+
+                <!-- 빈 상태 -->
+                <div id="empty-state" class="empty-state" hidden>
+                    <i class="fas fa-inbox"></i>
+                    <p>상담 데이터가 없습니다.</p>
+                </div>
+
+            </div>
+
+            <!-- ==================== 사건 관리 ==================== -->
+            <div class="page-content" data-page="cases" hidden>
+                <!-- 사건 목록 뷰 -->
+                <div id="cases-list-view">
+                    <div class="page-header">
+                        <h2>사건 관리</h2>
+                        <button id="new-case-btn" class="btn btn-primary"><i class="fas fa-plus"></i> 새 사건</button>
+                    </div>
+                    <!-- 상태별 카운트 -->
+                    <div class="case-status-summary" id="case-status-summary"></div>
+                    <!-- 필터/검색 -->
+                    <div class="case-toolbar">
+                        <input type="text" id="case-search" placeholder="의뢰인명 또는 사건번호 검색">
+                        <select id="case-status-filter">
+                            <option value="">전체 상태</option>
+                            <option value="접수">접수</option>
+                            <option value="서류준비">서류준비</option>
+                            <option value="신청완료">신청완료</option>
+                            <option value="개시결정">개시결정</option>
+                            <option value="변제중">변제중</option>
+                            <option value="면책">면책</option>
+                            <option value="종결">종결</option>
+                        </select>
+                    </div>
+                    <div id="cases-list" class="cases-list"></div>
+                </div>
+
+                <!-- 사건 상세 뷰 (초기에는 hidden) -->
+                <div id="case-detail-view" hidden>
+                    <div class="page-header">
+                        <button id="back-to-cases" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> 목록으로</button>
+                        <h2 id="case-detail-title">사건 상세</h2>
+                        <div class="case-detail-actions">
+                            <select id="case-status-select" class="status-select"></select>
+                            <button id="generate-docs-btn" class="btn btn-accent"><i class="fas fa-file-word"></i> 서류 생성</button>
+                        </div>
+                    </div>
+                    <!-- 탭 네비게이션 -->
+                    <div class="case-tabs">
+                        <button class="case-tab active" data-tab="personal">인적사항</button>
+                        <button class="case-tab" data-tab="family">가족관계</button>
+                        <button class="case-tab" data-tab="employment">소득/재직</button>
+                        <button class="case-tab" data-tab="debts">채무 정보</button>
+                        <button class="case-tab" data-tab="assets">재산 정보</button>
+                        <button class="case-tab" data-tab="income-expense">수입/지출</button>
+                        <button class="case-tab" data-tab="notes">메모/기일</button>
+                    </div>
+                    <!-- 탭 콘텐츠 -->
+                    <div class="case-tab-content" id="case-tab-content"></div>
                 </div>
             </div>
-        </section>
 
-        <!-- 툴바 -->
-        <section class="toolbar">
-            <div class="toolbar-left">
-                <div class="search-box">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="search-input" placeholder="이름 또는 연락처 검색">
+            <!-- ==================== 서류 생성 ==================== -->
+            <div class="page-content" data-page="documents" hidden>
+                <div class="page-header">
+                    <h2>서류 생성</h2>
                 </div>
-                <select id="filter-court" class="toolbar-select">
-                    <option value="">전체 관할 법원</option>
-                </select>
-                <input type="date" id="filter-date-start" class="toolbar-date" title="시작일">
-                <input type="date" id="filter-date-end" class="toolbar-date" title="종료일">
-                <select id="filter-status" class="toolbar-select">
-                    <option value="">전체 상태</option>
-                    <option value="new">신규</option>
-                    <option value="contacted">연락완료</option>
-                    <option value="converted">수임성사</option>
-                    <option value="closed">종료</option>
-                </select>
-                <select id="sort-select" class="toolbar-select">
-                    <option value="newest">최신순</option>
-                    <option value="oldest">오래된순</option>
-                    <option value="debt-high">채무 높은순</option>
-                    <option value="debt-low">채무 낮은순</option>
-                </select>
+                <div class="doc-gen-section">
+                    <label>사건 선택</label>
+                    <select id="doc-case-select"><option value="">사건을 선택하세요</option></select>
+                </div>
+                <div id="doc-case-summary" hidden></div>
+                <div class="doc-checklist" id="doc-checklist" hidden>
+                    <label><input type="checkbox" value="application" checked> 개인회생 신청서</label>
+                    <label><input type="checkbox" value="creditors" checked> 채권자 목록</label>
+                    <label><input type="checkbox" value="assets" checked> 재산 목록</label>
+                    <label><input type="checkbox" value="income-expense" checked> 수입 및 지출에 관한 목록</label>
+                    <label><input type="checkbox" value="repayment" checked> 변제계획안</label>
+                    <label><input type="checkbox" value="statement"> 진술서</label>
+                </div>
+                <div id="doc-actions" hidden>
+                    <button id="generate-selected-btn" class="btn btn-primary"><i class="fas fa-file-download"></i> 선택 서류 생성 (DOCX)</button>
+                    <button id="generate-all-zip-btn" class="btn btn-accent"><i class="fas fa-file-archive"></i> 전체 ZIP 다운로드</button>
+                </div>
+                <div id="doc-history"></div>
             </div>
-            <div class="toolbar-right">
-                <button onclick="cleanupOldData()" class="cleanup-btn" style="background:#dc3545; color:white; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-size:0.85rem;">
-                    6개월 경과 데이터 정리
-                </button>
-                <button id="csv-export-btn" class="btn btn-accent"><i class="fas fa-file-csv"></i> CSV 내보내기</button>
-                <button id="bulk-delete-btn" class="btn btn-danger" hidden><i class="fas fa-trash-alt"></i> 선택 삭제 (<span id="selected-count">0</span>)</button>
+
+            <!-- ==================== 설정 ==================== -->
+            <div class="page-content" data-page="settings" hidden>
+                <div class="page-header">
+                    <h2>설정</h2>
+                </div>
+                <div class="empty-state">
+                    <i class="fas fa-cog"></i>
+                    <p>설정 항목이 없습니다.</p>
+                </div>
             </div>
-        </section>
 
-        <!-- 전체 선택 -->
-        <div class="select-all-bar" id="select-all-bar" hidden>
-            <label class="checkbox-label">
-                <input type="checkbox" id="select-all-checkbox">
-                <span>전체 선택</span>
-            </label>
-        </div>
-
-        <!-- 상담 목록 -->
-        <section id="consultation-list" class="consultation-list">
-            <div class="loading-spinner" id="loading-spinner">
-                <i class="fas fa-spinner fa-spin"></i>
-                <span>데이터를 불러오는 중...</span>
-            </div>
-        </section>
-
-        <!-- 빈 상태 -->
-        <div id="empty-state" class="empty-state" hidden>
-            <i class="fas fa-inbox"></i>
-            <p>상담 데이터가 없습니다.</p>
-        </div>
+        </main>
 
     </div>
 
@@ -255,8 +373,82 @@
         </div>
     </div>
 
+    <!-- 새 사건 등록 모달 -->
+    <div id="new-case-modal" class="modal-overlay" hidden>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2><i class="fas fa-briefcase"></i> 새 사건 등록</h2>
+                <button class="modal-close" id="new-case-modal-close"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group"><label>의뢰인 이름</label><input type="text" id="nc-name" required></div>
+                <div class="form-group"><label>연락처</label><input type="tel" id="nc-phone" required></div>
+                <div class="form-group"><label>주민등록번호</label><input type="text" id="nc-ssn" placeholder="000000-0000000"></div>
+                <div class="form-group"><label>주소</label><input type="text" id="nc-address"></div>
+                <div class="form-group"><label>관할 법원</label>
+                    <select id="nc-court">
+                        <option value="">선택</option>
+                        <option>부산지방법원</option>
+                        <option>서울회생법원</option>
+                        <option>수원지방법원</option>
+                        <option>대구지방법원</option>
+                        <option>대전지방법원</option>
+                        <option>광주지방법원</option>
+                        <option>인천지방법원</option>
+                        <option>울산지방법원</option>
+                        <option>창원지방법원</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>사건번호 (선택)</label><input type="text" id="nc-case-number" placeholder="2026개회12345"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="nc-cancel">취소</button>
+                <button class="btn btn-primary" id="nc-save">등록</button>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // 사이드바 페이지 전환
         document.addEventListener('DOMContentLoaded', () => {
+            const sidebarItems = document.querySelectorAll('.sidebar-item');
+            const pages = document.querySelectorAll('.page-content');
+
+            sidebarItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const targetPage = item.dataset.page;
+
+                    // 사이드바 active 상태 전환
+                    sidebarItems.forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+
+                    // 페이지 전환
+                    pages.forEach(p => {
+                        p.hidden = p.dataset.page !== targetPage;
+                    });
+
+                    // 모바일: 사이드바 닫기
+                    document.getElementById('sidebar').classList.remove('open');
+                    document.getElementById('sidebar-overlay').classList.remove('open');
+                });
+            });
+
+            // 모바일 사이드바 토글
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebar-overlay');
+            const sidebarToggle = document.getElementById('sidebar-toggle');
+
+            sidebarToggle.addEventListener('click', () => {
+                sidebar.classList.toggle('open');
+                sidebarOverlay.classList.toggle('open');
+            });
+
+            sidebarOverlay.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                sidebarOverlay.classList.remove('open');
+            });
+
+            // 로그인 처리
             document.getElementById('login-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const pw = document.getElementById('login-password').value;
