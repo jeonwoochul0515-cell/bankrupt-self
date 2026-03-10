@@ -1335,7 +1335,8 @@ document.getElementById('doc-case-select')?.addEventListener('change', async (e)
 
 // ========== 서류 생성 (DOCX) ==========
 
-import { generateApplication, generateCreditorList, generateAssetList, generateIncomeExpenseList, generateRepaymentPlan, generateStatement, downloadDocx, downloadAllAsZip } from './doc-generators.js';
+// doc-generators.js는 일반 <script>로 로드되어 window.DocGenerators에 등록됨
+function getDocGen() { return window.DocGenerators; }
 
 async function getCaseDataForDoc(caseId) {
     const caseData = allCases.find(c => c.id === caseId) || {};
@@ -1363,17 +1364,18 @@ document.getElementById('generate-selected-btn')?.addEventListener('click', asyn
     if (checked.length === 0) { alert('생성할 서류를 선택하세요.'); return; }
     const { caseData, debts, assets, incomes, expenses } = await getCaseDataForDoc(caseId);
     const name = caseData.clientName || '의뢰인';
+    const G = getDocGen();
     for (const cb of checked) {
         let docObj, filename;
         switch (cb.value) {
-            case 'application': docObj = generateApplication(caseData); filename = `${name}_개인회생신청서.docx`; break;
-            case 'creditors': docObj = generateCreditorList(caseData, debts); filename = `${name}_채권자목록.docx`; break;
-            case 'assets': docObj = generateAssetList(caseData, assets); filename = `${name}_재산목록.docx`; break;
-            case 'income-expense': docObj = generateIncomeExpenseList(caseData, incomes, expenses); filename = `${name}_수입지출목록.docx`; break;
-            case 'repayment': docObj = generateRepaymentPlan(caseData, debts, incomes, expenses); filename = `${name}_변제계획안.docx`; break;
-            case 'statement': docObj = generateStatement(caseData); filename = `${name}_진술서.docx`; break;
+            case 'application': docObj = G.generateApplication(caseData); filename = `${name}_개인회생신청서.docx`; break;
+            case 'creditors': docObj = G.generateCreditorList(caseData, debts); filename = `${name}_채권자목록.docx`; break;
+            case 'assets': docObj = G.generateAssetList(caseData, assets); filename = `${name}_재산목록.docx`; break;
+            case 'income-expense': docObj = G.generateIncomeExpenseList(caseData, incomes, expenses); filename = `${name}_수입지출목록.docx`; break;
+            case 'repayment': docObj = G.generateRepaymentPlan(caseData, debts, incomes, expenses); filename = `${name}_변제계획안.docx`; break;
+            case 'statement': docObj = G.generateStatement(caseData); filename = `${name}_진술서.docx`; break;
         }
-        if (docObj) await downloadDocx(docObj, filename);
+        if (docObj) await G.downloadDocx(docObj, filename);
     }
 });
 
@@ -1382,15 +1384,16 @@ document.getElementById('generate-all-zip-btn')?.addEventListener('click', async
     if (!caseId) { alert('사건을 선택하세요.'); return; }
     const { caseData, debts, assets, incomes, expenses } = await getCaseDataForDoc(caseId);
     const name = caseData.clientName || '의뢰인';
+    const G = getDocGen();
     const documents = [
-        { doc: generateApplication(caseData), filename: `${name}_개인회생신청서.docx` },
-        { doc: generateCreditorList(caseData, debts), filename: `${name}_채권자목록.docx` },
-        { doc: generateAssetList(caseData, assets), filename: `${name}_재산목록.docx` },
-        { doc: generateIncomeExpenseList(caseData, incomes, expenses), filename: `${name}_수입지출목록.docx` },
-        { doc: generateRepaymentPlan(caseData, debts, incomes, expenses), filename: `${name}_변제계획안.docx` },
-        { doc: generateStatement(caseData), filename: `${name}_진술서.docx` },
+        { doc: G.generateApplication(caseData), filename: `${name}_개인회생신청서.docx` },
+        { doc: G.generateCreditorList(caseData, debts), filename: `${name}_채권자목록.docx` },
+        { doc: G.generateAssetList(caseData, assets), filename: `${name}_재산목록.docx` },
+        { doc: G.generateIncomeExpenseList(caseData, incomes, expenses), filename: `${name}_수입지출목록.docx` },
+        { doc: G.generateRepaymentPlan(caseData, debts, incomes, expenses), filename: `${name}_변제계획안.docx` },
+        { doc: G.generateStatement(caseData), filename: `${name}_진술서.docx` },
     ];
-    await downloadAllAsZip(documents, `${name}_개인회생서류_전체.zip`);
+    await G.downloadAllAsZip(documents, `${name}_개인회생서류_전체.zip`);
 });
 
 document.getElementById('generate-docs-btn')?.addEventListener('click', () => {

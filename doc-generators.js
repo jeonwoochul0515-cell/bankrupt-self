@@ -27,7 +27,7 @@ function createTitle(text) {
 }
 
 // ========== 1. 개인회생 신청서 ==========
-export function generateApplication(caseData) {
+function generateApplication(caseData) {
     const { Document, AlignmentType } = D();
     const d = new Document({
         sections: [{
@@ -72,7 +72,7 @@ export function generateApplication(caseData) {
 }
 
 // ========== 2. 채권자 목록 ==========
-export function generateCreditorList(caseData, debts) {
+function generateCreditorList(caseData, debts) {
     const { Document, Paragraph, TextRun, Table, TableRow, TableCell, AlignmentType, WidthType } = D();
     const rows = [
         new TableRow({
@@ -134,7 +134,7 @@ export function generateCreditorList(caseData, debts) {
 }
 
 // ========== 3. 재산 목록 ==========
-export function generateAssetList(caseData, assets) {
+function generateAssetList(caseData, assets) {
     const { Document, Paragraph, TextRun, Table, TableRow, TableCell, AlignmentType, WidthType } = D();
     const rows = [
         new TableRow({
@@ -194,7 +194,7 @@ export function generateAssetList(caseData, assets) {
 }
 
 // ========== 4. 수입 및 지출에 관한 목록 ==========
-export function generateIncomeExpenseList(caseData, incomes, expenses) {
+function generateIncomeExpenseList(caseData, incomes, expenses) {
     const { Document, Paragraph, TextRun, Table, TableRow, TableCell, AlignmentType, WidthType } = D();
 
     const incomeRows = [
@@ -277,7 +277,7 @@ export function generateIncomeExpenseList(caseData, incomes, expenses) {
 }
 
 // ========== 5. 변제계획안 ==========
-export function generateRepaymentPlan(caseData, debts, incomes, expenses) {
+function generateRepaymentPlan(caseData, debts, incomes, expenses) {
     const { Document, Paragraph, TextRun, Table, TableRow, TableCell, AlignmentType, WidthType } = D();
     const totalIncome = incomes.reduce((s, i) => s + (i.monthlyAmount || 0), 0);
     const totalExpense = expenses.reduce((s, e) => s + (e.monthlyAmount || 0), 0);
@@ -346,7 +346,7 @@ export function generateRepaymentPlan(caseData, debts, incomes, expenses) {
 }
 
 // ========== 6. 진술서 ==========
-export function generateStatement(caseData) {
+function generateStatement(caseData) {
     const { Document, AlignmentType } = D();
     return new Document({
         sections: [{
@@ -382,13 +382,13 @@ export function generateStatement(caseData) {
 }
 
 // ========== DOCX 다운로드 유틸 ==========
-export async function downloadDocx(document, filename) {
+async function downloadDocx(document, filename) {
     const { Packer } = D();
     const blob = await Packer.toBlob(document);
     saveAs(blob, filename);
 }
 
-export async function downloadAllAsZip(documents, zipFilename) {
+async function downloadAllAsZip(documents, zipFilename) {
     const { Packer } = D();
     const zip = new JSZip();
     for (const { doc, filename } of documents) {
@@ -398,3 +398,10 @@ export async function downloadAllAsZip(documents, zipFilename) {
     const zipBlob = await zip.generateAsync({ type: 'blob' });
     saveAs(zipBlob, zipFilename);
 }
+
+// window에 등록 (일반 스크립트로 로드되므로)
+window.DocGenerators = {
+    generateApplication, generateCreditorList, generateAssetList,
+    generateIncomeExpenseList, generateRepaymentPlan, generateStatement,
+    downloadDocx, downloadAllAsZip
+};
