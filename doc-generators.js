@@ -1,13 +1,14 @@
 // doc-generators.js
 // 개인회생 신청 서류 DOCX 생성 모듈
+// docx 라이브러리는 CDN <script>로 로드되므로 함수 호출 시점에 window.docx에서 가져옴
 
-const { Document, Packer, Paragraph, Table, TableRow, TableCell, TextRun, HeadingLevel, AlignmentType, WidthType, BorderStyle, PageBreak, Header, Footer, PageNumber, NumberFormat } = docx;
+function D() { return window.docx; }
 
-// ========== 공통 스타일 ==========
 const FONT = '맑은 고딕';
 const FONT_SIZE = 20; // half-points (10pt)
 
 function createParagraph(text, options = {}) {
+    const { Paragraph, TextRun, AlignmentType } = D();
     return new Paragraph({
         children: [new TextRun({ text, font: FONT, size: options.size || FONT_SIZE, bold: options.bold || false })],
         alignment: options.align || AlignmentType.LEFT,
@@ -17,6 +18,7 @@ function createParagraph(text, options = {}) {
 }
 
 function createTitle(text) {
+    const { Paragraph, TextRun, AlignmentType } = D();
     return new Paragraph({
         children: [new TextRun({ text, font: FONT, size: 32, bold: true })],
         alignment: AlignmentType.CENTER,
@@ -26,13 +28,13 @@ function createTitle(text) {
 
 // ========== 1. 개인회생 신청서 ==========
 export function generateApplication(caseData) {
-    const doc = new Document({
+    const { Document, AlignmentType } = D();
+    const d = new Document({
         sections: [{
             properties: { page: { margin: { top: 1440, bottom: 1440, left: 1440, right: 1440 } } },
             children: [
                 createTitle('개인회생절차 개시신청서'),
                 createParagraph(''),
-                // 신청인 정보
                 createParagraph('신 청 인', { bold: true, size: 24 }),
                 createParagraph(`성    명: ${caseData.clientName || ''}`),
                 createParagraph(`주민등록번호: ${caseData.clientIdNumber || ''}`),
@@ -40,22 +42,17 @@ export function generateApplication(caseData) {
                 createParagraph(`연 락 처: ${caseData.clientPhone || ''}`),
                 createParagraph(`직    업: ${caseData.employmentInfo?.status || ''} ${caseData.employmentInfo?.company ? '(' + caseData.employmentInfo.company + ')' : ''}`),
                 createParagraph(''),
-
-                // 채무 개요
                 createParagraph('신청 취지', { bold: true, size: 24 }),
                 createParagraph('채무자에 대하여 개인회생절차를 개시하여 주시기 바랍니다.'),
                 createParagraph(''),
-
                 createParagraph('신청 원인', { bold: true, size: 24 }),
                 createParagraph(`1. 채무자의 총 채무액은 ${(caseData.totalDebt || 0).toLocaleString()}원이며, 채무자의 월 평균 소득은 ${(caseData.monthlyIncome || 0).toLocaleString()}원입니다.`),
                 createParagraph(`2. 채무자의 월 평균 지출은 ${(caseData.monthlyExpense || 0).toLocaleString()}원이며, 월 가용소득은 ${((caseData.monthlyIncome || 0) - (caseData.monthlyExpense || 0)).toLocaleString()}원입니다.`),
                 createParagraph('3. 채무자는 현재 채무를 계속 변제하기 어려운 상태에 있으므로, 개인회생절차의 개시를 신청합니다.'),
                 createParagraph(''),
-
                 createParagraph('관할 법원', { bold: true, size: 24 }),
                 createParagraph(`${caseData.court || ''}`),
                 createParagraph(''),
-
                 createParagraph('첨부 서류', { bold: true, size: 24 }),
                 createParagraph('1. 채권자 목록 1부'),
                 createParagraph('2. 재산 목록 1부'),
@@ -63,8 +60,6 @@ export function generateApplication(caseData) {
                 createParagraph('4. 변제계획안 1부'),
                 createParagraph('5. 진술서 1부'),
                 createParagraph(''),
-
-                // 날짜 및 서명
                 createParagraph(new Date().toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' }), { align: AlignmentType.CENTER }),
                 createParagraph(''),
                 createParagraph(`신청인  ${caseData.clientName || ''}  (인)`, { align: AlignmentType.RIGHT }),
@@ -73,11 +68,12 @@ export function generateApplication(caseData) {
             ]
         }]
     });
-    return doc;
+    return d;
 }
 
 // ========== 2. 채권자 목록 ==========
 export function generateCreditorList(caseData, debts) {
+    const { Document, Paragraph, TextRun, Table, TableRow, TableCell, AlignmentType, WidthType } = D();
     const rows = [
         new TableRow({
             tableHeader: true,
@@ -100,23 +96,17 @@ export function generateCreditorList(caseData, debts) {
 
         rows.push(new TableRow({
             children: [
-                String(i + 1),
-                d.creditorName || '',
+                String(i + 1), d.creditorName || '',
                 `${d.creditorType || ''} (${d.debtType || ''})`,
-                (d.principal || 0).toLocaleString(),
-                (d.interest || 0).toLocaleString(),
-                (d.overdue || 0).toLocaleString(),
-                (d.totalAmount || 0).toLocaleString(),
+                (d.principal || 0).toLocaleString(), (d.interest || 0).toLocaleString(),
+                (d.overdue || 0).toLocaleString(), (d.totalAmount || 0).toLocaleString(),
                 d.hasCollateral ? '담보' : '무담보',
             ].map(text =>
-                new TableCell({
-                    children: [new Paragraph({ children: [new TextRun({ text, font: FONT, size: 18 })], alignment: AlignmentType.CENTER })],
-                })
+                new TableCell({ children: [new Paragraph({ children: [new TextRun({ text, font: FONT, size: 18 })], alignment: AlignmentType.CENTER })] })
             ),
         }));
     });
 
-    // 합계행
     rows.push(new TableRow({
         children: [
             new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: '합계', font: FONT, size: 18, bold: true })], alignment: AlignmentType.CENTER })], columnSpan: 3 }),
@@ -127,28 +117,25 @@ export function generateCreditorList(caseData, debts) {
         ],
     }));
 
-    const doc = new Document({
+    return new Document({
         sections: [{
             properties: { page: { margin: { top: 1440, bottom: 1440, left: 1080, right: 1080 } } },
             children: [
                 createTitle('채 권 자 목 록'),
                 createParagraph(`채무자: ${caseData.clientName || ''} (${caseData.clientIdNumber || ''})`),
                 createParagraph(''),
-                new Table({
-                    rows,
-                    width: { size: 100, type: WidthType.PERCENTAGE },
-                }),
+                new Table({ rows, width: { size: 100, type: WidthType.PERCENTAGE } }),
                 createParagraph(''),
                 createParagraph(`총 채권자 수: ${debts.length}명`),
                 createParagraph(`총 채무액: ${totalAmount.toLocaleString()}원`),
             ]
         }]
     });
-    return doc;
 }
 
 // ========== 3. 재산 목록 ==========
 export function generateAssetList(caseData, assets) {
+    const { Document, Paragraph, TextRun, Table, TableRow, TableCell, AlignmentType, WidthType } = D();
     const rows = [
         new TableRow({
             tableHeader: true,
@@ -171,12 +158,9 @@ export function generateAssetList(caseData, assets) {
 
         rows.push(new TableRow({
             children: [
-                String(i + 1),
-                a.assetType || '',
+                String(i + 1), a.assetType || '',
                 `${a.assetName || ''} ${a.detail ? '(' + a.detail + ')' : ''}`,
-                (a.appraisedValue || 0).toLocaleString(),
-                (a.lienAmount || 0).toLocaleString(),
-                net.toLocaleString(),
+                (a.appraisedValue || 0).toLocaleString(), (a.lienAmount || 0).toLocaleString(), net.toLocaleString(),
             ].map(text =>
                 new TableCell({ children: [new Paragraph({ children: [new TextRun({ text, font: FONT, size: 18 })], alignment: AlignmentType.CENTER })] })
             ),
@@ -192,7 +176,7 @@ export function generateAssetList(caseData, assets) {
         ],
     }));
 
-    const doc = new Document({
+    return new Document({
         sections: [{
             properties: { page: { margin: { top: 1440, bottom: 1440, left: 1080, right: 1080 } } },
             children: [
@@ -207,12 +191,12 @@ export function generateAssetList(caseData, assets) {
             ]
         }]
     });
-    return doc;
 }
 
 // ========== 4. 수입 및 지출에 관한 목록 ==========
 export function generateIncomeExpenseList(caseData, incomes, expenses) {
-    // 수입 테이블
+    const { Document, Paragraph, TextRun, Table, TableRow, TableCell, AlignmentType, WidthType } = D();
+
     const incomeRows = [
         new TableRow({
             tableHeader: true,
@@ -240,7 +224,6 @@ export function generateIncomeExpenseList(caseData, incomes, expenses) {
         ],
     }));
 
-    // 지출 테이블
     const expenseRows = [
         new TableRow({
             tableHeader: true,
@@ -270,7 +253,7 @@ export function generateIncomeExpenseList(caseData, incomes, expenses) {
 
     const disposable = totalIncome - totalExpense;
 
-    const doc = new Document({
+    return new Document({
         sections: [{
             properties: { page: { margin: { top: 1440, bottom: 1440, left: 1080, right: 1080 } } },
             children: [
@@ -291,11 +274,11 @@ export function generateIncomeExpenseList(caseData, incomes, expenses) {
             ]
         }]
     });
-    return doc;
 }
 
 // ========== 5. 변제계획안 ==========
 export function generateRepaymentPlan(caseData, debts, incomes, expenses) {
+    const { Document, Paragraph, TextRun, Table, TableRow, TableCell, AlignmentType, WidthType } = D();
     const totalIncome = incomes.reduce((s, i) => s + (i.monthlyAmount || 0), 0);
     const totalExpense = expenses.reduce((s, e) => s + (e.monthlyAmount || 0), 0);
     const disposable = totalIncome - totalExpense;
@@ -306,7 +289,6 @@ export function generateRepaymentPlan(caseData, debts, incomes, expenses) {
     const rate36 = totalDebt > 0 ? ((period36 / totalDebt) * 100).toFixed(1) : 0;
     const rate60 = totalDebt > 0 ? ((period60 / totalDebt) * 100).toFixed(1) : 0;
 
-    // 채권자별 배분표
     const distRows = [
         new TableRow({
             tableHeader: true,
@@ -323,8 +305,7 @@ export function generateRepaymentPlan(caseData, debts, incomes, expenses) {
         const ratio = totalDebt > 0 ? (d.totalAmount / totalDebt) : 0;
         distRows.push(new TableRow({
             children: [
-                d.creditorName || '',
-                (d.totalAmount || 0).toLocaleString() + '원',
+                d.creditorName || '', (d.totalAmount || 0).toLocaleString() + '원',
                 (ratio * 100).toFixed(1) + '%',
                 Math.round(period36 * ratio).toLocaleString() + '원',
                 Math.round(period60 * ratio).toLocaleString() + '원',
@@ -334,7 +315,7 @@ export function generateRepaymentPlan(caseData, debts, incomes, expenses) {
         }));
     });
 
-    const doc = new Document({
+    return new Document({
         sections: [{
             properties: { page: { margin: { top: 1440, bottom: 1440, left: 1080, right: 1080 } } },
             children: [
@@ -362,12 +343,12 @@ export function generateRepaymentPlan(caseData, debts, incomes, expenses) {
             ]
         }]
     });
-    return doc;
 }
 
 // ========== 6. 진술서 ==========
 export function generateStatement(caseData) {
-    const doc = new Document({
+    const { Document, AlignmentType } = D();
+    return new Document({
         sections: [{
             properties: { page: { margin: { top: 1440, bottom: 1440, left: 1440, right: 1440 } } },
             children: [
@@ -398,16 +379,17 @@ export function generateStatement(caseData) {
             ]
         }]
     });
-    return doc;
 }
 
 // ========== DOCX 다운로드 유틸 ==========
 export async function downloadDocx(document, filename) {
+    const { Packer } = D();
     const blob = await Packer.toBlob(document);
     saveAs(blob, filename);
 }
 
 export async function downloadAllAsZip(documents, zipFilename) {
+    const { Packer } = D();
     const zip = new JSZip();
     for (const { doc, filename } of documents) {
         const blob = await Packer.toBlob(doc);
