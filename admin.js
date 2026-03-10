@@ -1,6 +1,6 @@
 import { db } from './firebase-config.js';
 import { collection, getDocs, orderBy, query, doc, deleteDoc, updateDoc, where } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 function showError(message) {
     let banner = document.getElementById('error-banner');
@@ -81,6 +81,16 @@ let selectedIds = new Set();
 
 window.__loadData = loadData;
 
+// Firebase Auth 상태 감지 - 이미 로그인된 경우 자동 데이터 로드
+const auth = getAuth();
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        document.getElementById('login-overlay').hidden = true;
+        document.getElementById('admin-content').hidden = false;
+        loadData();
+    }
+});
+
 // ========== 데이터 로드 ==========
 
 async function loadData() {
@@ -89,14 +99,6 @@ async function loadData() {
     document.getElementById('empty-state').hidden = true;
 
     try {
-        // Firebase 인증 확인
-        const auth = getAuth();
-        if (!auth.currentUser) {
-            const pw = sessionStorage.getItem('admin_pw');
-            if (pw) {
-                await signInWithEmailAndPassword(auth, 'jeonwoochul0515@gmail.com', pw);
-            }
-        }
 
         const [consultSnap, analyticsSnap] = await Promise.all([
             getDocs(query(collection(db, 'consultations'), orderBy('createdAt', 'desc'))),

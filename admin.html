@@ -256,35 +256,18 @@
     </div>
 
     <script>
-        function showApp() {
-            document.getElementById('login-overlay').hidden = true;
-            document.getElementById('admin-content').hidden = false;
-        }
-
-        // 이미 인증된 경우
-        if (sessionStorage.getItem('admin_auth') === 'true') {
-            document.addEventListener('DOMContentLoaded', () => {
-                showApp();
-                if (window.__loadData) window.__loadData();
-            });
-        }
-
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('login-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const pw = document.getElementById('login-password').value;
                 const errorEl = document.getElementById('login-error');
 
-                // Firebase Auth로 직접 로그인 시도
                 try {
                     const { getAuth, signInWithEmailAndPassword } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
                     const auth = getAuth();
                     await signInWithEmailAndPassword(auth, 'jeonwoochul0515@gmail.com', pw);
-                    sessionStorage.setItem('admin_auth', 'true');
-                    sessionStorage.setItem('admin_pw', pw);
                     errorEl.hidden = true;
-                    showApp();
-                    if (window.__loadData) window.__loadData();
+                    // onAuthStateChanged in admin.js handles showApp + loadData
                 } catch (err) {
                     console.error('로그인 실패:', err);
                     errorEl.hidden = false;
@@ -294,8 +277,6 @@
             document.getElementById('logout-btn').addEventListener('click', async () => {
                 const { getAuth, signOut } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
                 await signOut(getAuth());
-                sessionStorage.removeItem('admin_auth');
-                sessionStorage.removeItem('admin_pw');
                 location.reload();
             });
         });
