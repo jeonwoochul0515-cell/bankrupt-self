@@ -1,6 +1,40 @@
 import { db } from './firebase-config.js';
-import { collection, getDocs, orderBy, query, doc, deleteDoc, updateDoc, addDoc, getDoc, setDoc, where, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { collection, getDocs, orderBy, query, doc, deleteDoc, updateDoc, where, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+// ========== 탭/페이지 전환 ==========
+
+function initNavigation() {
+    const sidebarItems = document.querySelectorAll('.sidebar-item');
+    const pages = document.querySelectorAll('.page-content');
+
+    sidebarItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const page = item.dataset.page;
+            sidebarItems.forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            pages.forEach(p => {
+                p.hidden = p.dataset.page !== page;
+            });
+            if (page === 'cases') loadCases();
+            if (page === 'documents') loadDocCaseSelect();
+
+            document.querySelector('.sidebar')?.classList.remove('open');
+            document.querySelector('.sidebar-overlay')?.classList.remove('active');
+        });
+    });
+
+    document.querySelector('.sidebar-toggle')?.addEventListener('click', () => {
+        document.querySelector('.sidebar').classList.toggle('open');
+        document.querySelector('.sidebar-overlay').classList.toggle('active');
+    });
+    document.querySelector('.sidebar-overlay')?.addEventListener('click', () => {
+        document.querySelector('.sidebar').classList.remove('open');
+        document.querySelector('.sidebar-overlay').classList.remove('active');
+    });
+}
+
+// ========== 유틸리티 ==========
 
 function showError(message) {
     let banner = document.getElementById('error-banner');
@@ -71,22 +105,32 @@ function formatMoney(manwon) {
     return manwon.toLocaleString() + '만원';
 }
 
+function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
 // ========== 상태 ==========
 
 let allConsultations = [];
 let allAnalytics = [];
 let selectedIds = new Set();
+let allCases = [];
+let currentCaseId = null;
 
 // ========== 데이터 로드 트리거 ==========
 
 window.__loadData = loadData;
 
-// Firebase Auth 상태 감지 - 이미 로그인된 경우 자동 데이터 로드
+// Firebase Auth 상태 감지
 const auth = getAuth();
 onAuthStateChanged(auth, (user) => {
     if (user) {
         document.getElementById('login-overlay').hidden = true;
         document.getElementById('admin-content').hidden = false;
+        initNavigation();
+        initNewCase();
         loadData();
     }
 });
@@ -99,7 +143,6 @@ async function loadData() {
     document.getElementById('empty-state').hidden = true;
 
     try {
-
         const [consultSnap, analyticsSnap] = await Promise.all([
             getDocs(query(collection(db, 'consultations'), orderBy('createdAt', 'desc'))),
             getDocs(query(collection(db, 'analytics'), orderBy('createdAt', 'desc')))
@@ -122,7 +165,6 @@ async function loadData() {
     updateReferrerStats();
     renderList();
     document.getElementById('select-all-bar').hidden = allConsultations.length === 0;
-    loadCases();
 }
 
 // ========== 통계 ==========
@@ -132,9 +174,7 @@ function updateStats() {
     document.getElementById('stat-total').textContent = data.length;
     document.getElementById('stat-today').textContent = data.filter(c => isToday(c.createdAt)).length;
 
-    const debts = data.map(c => {
-        return parseDebt(getDebtValue(c));
-    }).filter(v => v > 0);
+    const debts = data.map(c => parseDebt(getDebtValue(c))).filter(v => v > 0);
     const avgDebt = debts.length > 0 ? Math.round(debts.reduce((a, b) => a + b, 0) / debts.length) : 0;
     document.getElementById('stat-avg-debt').textContent = avgDebt > 0 ? formatMoney(avgDebt) : '-';
 
@@ -158,7 +198,6 @@ function updateAnalyticsStats() {
     document.getElementById('stat-views-today').textContent = todayViews.length;
     document.getElementById('stat-lawyer-clicks').textContent = lawyerClicks.length;
 
-    // 전환율 = 상담 신청 / 방문자
     const rate = pageviews.length > 0
         ? ((allConsultations.length / pageviews.length) * 100).toFixed(1) + '%'
         : '-';
@@ -171,7 +210,6 @@ function updateDailyStats() {
     const pageviews = allAnalytics.filter(a => a.type === 'pageview');
     const container = document.getElementById('daily-stats-body');
 
-    // 최근 7일 날짜 생성
     const days = [];
     const dayLabels = ['일', '월', '화', '수', '목', '금', '토'];
     for (let i = 6; i >= 0; i--) {
@@ -181,7 +219,6 @@ function updateDailyStats() {
         days.push(d);
     }
 
-    // 일별 방문자 수 집계
     const dailyCounts = days.map(day => {
         const nextDay = new Date(day);
         nextDay.setDate(nextDay.getDate() + 1);
@@ -195,7 +232,6 @@ function updateDailyStats() {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // 평균 계산
     const totalVisits = dailyCounts.reduce((a, b) => a + b, 0);
     const avgVisits = (totalVisits / 7).toFixed(1);
 
@@ -203,11 +239,11 @@ function updateDailyStats() {
     days.forEach((day, i) => {
         const count = dailyCounts[i];
         const heightPercent = maxCount > 0 ? (count / maxCount) * 100 : 0;
-        const isToday = day.getTime() === today.getTime();
+        const isTodayBar = day.getTime() === today.getTime();
         const label = `${day.getMonth() + 1}/${day.getDate()}(${dayLabels[day.getDay()]})`;
 
         chartHtml += `
-            <div class="daily-bar-wrapper${isToday ? ' daily-bar-today' : ''}">
+            <div class="daily-bar-wrapper${isTodayBar ? ' daily-bar-today' : ''}">
                 <span class="daily-bar-count">${count}</span>
                 <div class="daily-bar" style="height:${Math.max(heightPercent, 3)}%"></div>
                 <span class="daily-bar-label">${label}</span>
@@ -229,17 +265,11 @@ function updateFunnelAnalysis() {
     const funnelEvents = allAnalytics.filter(a => a.type === 'funnel_step');
 
     const stepLabels = [
-        '페이지 방문',
-        '시뮬레이션 시작',
-        'Q1 응답',
-        'Q2 응답',
-        'Q3 응답',
-        'Q4 응답',
-        'Q5 응답',
+        '페이지 방문', '시뮬레이션 시작',
+        'Q1 응답', 'Q2 응답', 'Q3 응답', 'Q4 응답', 'Q5 응답',
         '상담 신청 완료'
     ];
 
-    // 각 단계별 도달 수 집계
     const stepCounts = new Array(8).fill(0);
     funnelEvents.forEach(a => {
         const step = a.step ?? a.funnelStep;
@@ -248,7 +278,6 @@ function updateFunnelAnalysis() {
         }
     });
 
-    // 퍼널 이벤트가 없으면 pageview/consultation 기반 기본 퍼널 생성
     const totalPageviews = allAnalytics.filter(a => a.type === 'pageview').length;
     const totalConsultations = allConsultations.length;
     if (stepCounts.every(c => c === 0) && totalPageviews > 0) {
@@ -274,7 +303,6 @@ function updateFunnelAnalysis() {
     chartHtml += '</div>';
     container.innerHTML = chartHtml;
 
-    // 가장 이탈률이 높은 단계 찾기
     let maxDropRate = 0;
     let maxDropStep = -1;
     for (let i = 0; i < stepCounts.length - 1; i++) {
@@ -300,43 +328,17 @@ function updateReferrerStats() {
     const container = document.getElementById('referrer-stats');
     const pageviews = allAnalytics.filter(a => a.type === 'pageview');
 
-    const channels = {
-        '네이버': 0,
-        '구글': 0,
-        '카카오': 0,
-        '직접 방문': 0,
-        '기타': 0
-    };
-
-    const channelIcons = {
-        '네이버': 'fas fa-leaf',
-        '구글': 'fab fa-google',
-        '카카오': 'fas fa-comment',
-        '직접 방문': 'fas fa-desktop',
-        '기타': 'fas fa-globe'
-    };
-
-    const channelColors = {
-        '네이버': '#03C75A',
-        '구글': '#4285F4',
-        '카카오': '#FEE500',
-        '직접 방문': '#6c5ce7',
-        '기타': '#636e72'
-    };
+    const channels = { '네이버': 0, '구글': 0, '카카오': 0, '직접 방문': 0, '기타': 0 };
+    const channelIcons = { '네이버': 'fas fa-leaf', '구글': 'fab fa-google', '카카오': 'fas fa-comment', '직접 방문': 'fas fa-desktop', '기타': 'fas fa-globe' };
+    const channelColors = { '네이버': '#03C75A', '구글': '#4285F4', '카카오': '#FEE500', '직접 방문': '#6c5ce7', '기타': '#636e72' };
 
     pageviews.forEach(a => {
         const ref = (a.referrer || '').toLowerCase();
-        if (!ref || ref === '' || ref === 'direct') {
-            channels['직접 방문']++;
-        } else if (ref.includes('naver')) {
-            channels['네이버']++;
-        } else if (ref.includes('google')) {
-            channels['구글']++;
-        } else if (ref.includes('kakao')) {
-            channels['카카오']++;
-        } else {
-            channels['기타']++;
-        }
+        if (!ref || ref === '' || ref === 'direct') channels['직접 방문']++;
+        else if (ref.includes('naver')) channels['네이버']++;
+        else if (ref.includes('google')) channels['구글']++;
+        else if (ref.includes('kakao')) channels['카카오']++;
+        else channels['기타']++;
     });
 
     const totalViews = pageviews.length || 1;
@@ -361,7 +363,6 @@ function updateReferrerStats() {
         `;
     });
     html += '</div>';
-
     container.innerHTML = html;
 }
 
@@ -377,7 +378,6 @@ const STATUS_CONFIG = {
 async function updateConsultationStatus(docId, newStatus) {
     try {
         await updateDoc(doc(db, 'consultations', docId), { status: newStatus });
-        // 로컬 데이터도 업데이트
         const item = allConsultations.find(c => c.id === docId);
         if (item) item.status = newStatus;
     } catch (err) {
@@ -395,7 +395,6 @@ function populateCourtFilter() {
         const court = c.simulationResults?.['관할 법원'];
         if (court) courts.add(court);
     });
-    // 기존 옵션 제거 (첫 번째 "전체" 제외)
     while (select.options.length > 1) select.remove(1);
     [...courts].sort().forEach(court => {
         const opt = document.createElement('option');
@@ -410,7 +409,6 @@ function populateCourtFilter() {
 function getFilteredData() {
     let data = [...allConsultations];
 
-    // 검색
     const searchText = document.getElementById('search-input').value.trim().toLowerCase();
     if (searchText) {
         data = data.filter(c => {
@@ -420,19 +418,12 @@ function getFilteredData() {
         });
     }
 
-    // 관할 법원 필터
     const courtFilter = document.getElementById('filter-court').value;
-    if (courtFilter) {
-        data = data.filter(c => c.simulationResults?.['관할 법원'] === courtFilter);
-    }
+    if (courtFilter) data = data.filter(c => c.simulationResults?.['관할 법원'] === courtFilter);
 
-    // 상태 필터
     const statusFilter = document.getElementById('filter-status').value;
-    if (statusFilter) {
-        data = data.filter(c => (c.status || 'new') === statusFilter);
-    }
+    if (statusFilter) data = data.filter(c => (c.status || 'new') === statusFilter);
 
-    // 날짜 필터
     const startDate = document.getElementById('filter-date-start').value;
     const endDate = document.getElementById('filter-date-end').value;
     if (startDate) {
@@ -452,7 +443,6 @@ function getFilteredData() {
         });
     }
 
-    // 정렬
     const sortVal = document.getElementById('sort-select').value;
     data.sort((a, b) => {
         switch (sortVal) {
@@ -466,10 +456,8 @@ function getFilteredData() {
                 const db2 = b.createdAt?.toDate ? b.createdAt.toDate() : new Date(b.createdAt || 0);
                 return da - db2;
             }
-            case 'debt-high':
-                return parseDebt(getDebtValue(b)) - parseDebt(getDebtValue(a));
-            case 'debt-low':
-                return parseDebt(getDebtValue(a)) - parseDebt(getDebtValue(b));
+            case 'debt-high': return parseDebt(getDebtValue(b)) - parseDebt(getDebtValue(a));
+            case 'debt-low': return parseDebt(getDebtValue(a)) - parseDebt(getDebtValue(b));
             default: return 0;
         }
     });
@@ -530,7 +518,6 @@ function renderList() {
             </div>
         `;
 
-        // 카드 클릭 → 상세보기 (체크박스/삭제 버튼/상태 셀렉트 제외)
         card.addEventListener('click', (e) => {
             if (e.target.closest('.card-checkbox') || e.target.closest('.delete-btn') || e.target.closest('.status-select')) return;
             showDetail(c);
@@ -539,46 +526,33 @@ function renderList() {
         container.appendChild(card);
     });
 
-    // 체크박스 이벤트
     container.querySelectorAll('.card-checkbox').forEach(cb => {
         cb.addEventListener('change', (e) => {
             e.stopPropagation();
-            const id = cb.dataset.id;
-            if (cb.checked) selectedIds.add(id);
-            else selectedIds.delete(id);
+            if (cb.checked) selectedIds.add(cb.dataset.id);
+            else selectedIds.delete(cb.dataset.id);
             updateBulkUI();
         });
     });
 
-    // 상태 변경 이벤트
     container.querySelectorAll('.status-select').forEach(sel => {
         sel.addEventListener('click', (e) => e.stopPropagation());
         sel.addEventListener('change', async (e) => {
             e.stopPropagation();
-            const docId = sel.dataset.id;
-            const newStatus = sel.value;
-            await updateConsultationStatus(docId, newStatus);
-            // 배지 업데이트
+            await updateConsultationStatus(sel.dataset.id, sel.value);
             const badge = sel.parentElement.querySelector('.status-badge');
-            const info = STATUS_CONFIG[newStatus] || STATUS_CONFIG['new'];
+            const info = STATUS_CONFIG[sel.value] || STATUS_CONFIG['new'];
             badge.style.background = info.color;
             badge.textContent = info.label;
         });
     });
 
-    // 개별 삭제 이벤트
     container.querySelectorAll('.delete-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             e.stopPropagation();
             confirmDelete([btn.dataset.id]);
         });
     });
-}
-
-function escapeHtml(str) {
-    const div = document.createElement('div');
-    div.textContent = str;
-    return div.innerHTML;
 }
 
 // ========== 체크박스/일괄 삭제 UI ==========
@@ -592,14 +566,9 @@ function updateBulkUI() {
     } else {
         bulkBtn.hidden = true;
     }
-    // 전체 선택 체크박스 상태 동기화
     const allCheckboxes = document.querySelectorAll('.card-checkbox');
     const selectAllCb = document.getElementById('select-all-checkbox');
-    if (allCheckboxes.length > 0 && selectedIds.size === allCheckboxes.length) {
-        selectAllCb.checked = true;
-    } else {
-        selectAllCb.checked = false;
-    }
+    selectAllCb.checked = allCheckboxes.length > 0 && selectedIds.size === allCheckboxes.length;
 }
 
 document.getElementById('select-all-checkbox').addEventListener('change', (e) => {
@@ -654,22 +623,21 @@ document.getElementById('confirm-ok').addEventListener('click', async () => {
 
 function showDetail(c) {
     const body = document.getElementById('modal-body');
+    document.querySelector('#detail-modal .modal-header h2').innerHTML = '<i class="fas fa-info-circle"></i> 상담 상세';
     const name = c.requesterInfo?.name || '-';
     const phone = c.requesterInfo?.phone || '-';
     const date = formatDate(c.createdAt);
 
     let answersHtml = '';
     if (c.simulationAnswers) {
-        const entries = Object.entries(c.simulationAnswers);
-        answersHtml = entries.map(([key, val]) =>
+        answersHtml = Object.entries(c.simulationAnswers).map(([key, val]) =>
             `<div class="detail-item"><span class="label">${escapeHtml(key)}</span><span class="value">${escapeHtml(String(val))}</span></div>`
         ).join('');
     }
 
     let resultsHtml = '';
     if (c.simulationResults) {
-        const entries = Object.entries(c.simulationResults);
-        resultsHtml = entries.map(([key, val]) => {
+        resultsHtml = Object.entries(c.simulationResults).map(([key, val]) => {
             const isLong = String(val).length > 50;
             return `<div class="detail-item${isLong ? ' full-width' : ''}"><span class="label">${escapeHtml(key)}</span><span class="value">${escapeHtml(String(val))}</span></div>`;
         }).join('');
@@ -692,9 +660,36 @@ function showDetail(c) {
             <h3><i class="fas fa-chart-bar"></i> 진단 결과</h3>
             <div class="detail-grid">${resultsHtml || '<p>결과 데이터 없음</p>'}</div>
         </div>
+        <div class="detail-section" style="text-align:center;padding-top:1rem;border-top:2px solid var(--accent-color)">
+            <button id="convert-to-case-btn" class="btn btn-primary"><i class="fas fa-briefcase"></i> 수임 전환 (사건 등록)</button>
+        </div>
     `;
 
     document.getElementById('detail-modal').hidden = false;
+
+    document.getElementById('convert-to-case-btn')?.addEventListener('click', async () => {
+        try {
+            const newCase = {
+                clientName: c.requesterInfo?.name || '',
+                clientPhone: c.requesterInfo?.phone || '',
+                court: c.simulationResults?.['관할 법원'] || '',
+                status: '접수',
+                consultationId: c.id,
+                totalDebt: 0,
+                totalAsset: 0,
+                createdAt: serverTimestamp(),
+                updatedAt: serverTimestamp()
+            };
+            await addDoc(collection(db, 'cases'), newCase);
+            await updateDoc(doc(db, 'consultations', c.id), { status: 'converted' });
+            c.status = 'converted';
+            document.getElementById('detail-modal').hidden = true;
+            alert('사건이 등록되었습니다. 사건 관리에서 확인하세요.');
+            renderList();
+        } catch (err) {
+            alert('수임 전환 실패: ' + err.message);
+        }
+    });
 }
 
 document.getElementById('modal-close').addEventListener('click', () => {
@@ -702,9 +697,7 @@ document.getElementById('modal-close').addEventListener('click', () => {
 });
 
 document.getElementById('detail-modal').addEventListener('click', (e) => {
-    if (e.target === e.currentTarget) {
-        document.getElementById('detail-modal').hidden = true;
-    }
+    if (e.target === e.currentTarget) document.getElementById('detail-modal').hidden = true;
 });
 
 document.getElementById('confirm-modal').addEventListener('click', (e) => {
@@ -718,12 +711,8 @@ document.getElementById('confirm-modal').addEventListener('click', (e) => {
 
 document.getElementById('csv-export-btn').addEventListener('click', () => {
     const filtered = getFilteredData();
-    if (filtered.length === 0) {
-        alert('내보낼 데이터가 없습니다.');
-        return;
-    }
+    if (filtered.length === 0) { alert('내보낼 데이터가 없습니다.'); return; }
 
-    // 모든 답변/결과 키 수집
     const answerKeys = new Set();
     const resultKeys = new Set();
     filtered.forEach(c => {
@@ -733,11 +722,7 @@ document.getElementById('csv-export-btn').addEventListener('click', () => {
 
     const headers = ['이름', '연락처', '신청일시', ...answerKeys, ...resultKeys];
     const rows = filtered.map(c => {
-        const row = [
-            c.requesterInfo?.name || '',
-            maskPhone(c.requesterInfo?.phone),
-            formatDate(c.createdAt),
-        ];
+        const row = [c.requesterInfo?.name || '', maskPhone(c.requesterInfo?.phone), formatDate(c.createdAt)];
         answerKeys.forEach(k => row.push(String(c.simulationAnswers?.[k] ?? '')));
         resultKeys.forEach(k => row.push(String(c.simulationResults?.[k] ?? '')));
         return row;
@@ -747,14 +732,12 @@ document.getElementById('csv-export-btn').addEventListener('click', () => {
         .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
         .join('\n');
 
-    // BOM for Excel 한글 호환
     const bom = '\uFEFF';
     const blob = new Blob([bom + csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    const today = new Date().toISOString().slice(0, 10);
-    a.download = `consultations_${today}.csv`;
+    a.download = `consultations_${new Date().toISOString().slice(0, 10)}.csv`;
     a.click();
     URL.revokeObjectURL(url);
 });
@@ -774,6 +757,8 @@ document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         document.getElementById('detail-modal').hidden = true;
         document.getElementById('confirm-modal').hidden = true;
+        const ncModal = document.getElementById('new-case-modal');
+        if (ncModal) ncModal.hidden = true;
         pendingDeleteIds = [];
     }
 });
@@ -785,96 +770,109 @@ async function cleanupOldData() {
     sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
     const snapshot = await getDocs(
-        query(collection(db, 'consultations'),
-              where('createdAt', '<', sixMonthsAgo))
+        query(collection(db, 'consultations'), where('createdAt', '<', sixMonthsAgo))
     );
 
-    if (snapshot.empty) {
-        alert('삭제할 오래된 데이터가 없습니다.');
-        return;
-    }
-
+    if (snapshot.empty) { alert('삭제할 오래된 데이터가 없습니다.'); return; }
     if (!confirm(`${snapshot.size}건의 6개월 경과 데이터를 삭제하시겠습니까?`)) return;
 
     let deleted = 0;
-    for (const doc of snapshot.docs) {
-        await deleteDoc(doc.ref);
+    for (const d of snapshot.docs) {
+        await deleteDoc(d.ref);
         deleted++;
     }
     alert(`${deleted}건의 데이터가 삭제되었습니다.`);
-    loadData(); // 데이터 새로고침
+    loadData();
 }
 
 window.cleanupOldData = cleanupOldData;
 
-// ========== 사건 관리 ==========
-
-import { generateApplication, generateCreditorList, generateAssetList, generateIncomeExpenseList, generateRepaymentPlan, generateStatement, downloadDocx, downloadAllAsZip } from './doc-generators.js';
-
-let allCases = [];
-let currentCaseId = null;
-let currentCaseData = null;
-
-const CASE_STATUSES = ['접수', '서류준비', '신청완료', '개시결정', '변제중', '면책', '종결'];
-const CASE_STATUS_COLORS = {
-    '접수': '#3498db', '서류준비': '#f39c12', '신청완료': '#9b59b6',
-    '개시결정': '#27ae60', '변제중': '#e67e22', '면책': '#2ecc71', '종결': '#95a5a6'
-};
+// ================================================================
+// ========== 사건 관리 (Cases) ==========
+// ================================================================
 
 async function loadCases() {
     try {
+        const authInstance = getAuth();
+        if (!authInstance.currentUser) return;
+
         const snap = await getDocs(query(collection(db, 'cases'), orderBy('createdAt', 'desc')));
         allCases = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderCaseStatusSummary();
+        renderCasesList();
     } catch (err) {
         console.error('사건 로드 실패:', err);
-        allCases = [];
     }
-    renderCasesList();
-    renderCaseStatusSummary();
-    populateDocCaseSelect();
 }
 
 function renderCaseStatusSummary() {
     const container = document.getElementById('case-status-summary');
     if (!container) return;
+    const statusConfig = {
+        '접수': { color: '#3498db' }, '서류준비': { color: '#f39c12' },
+        '신청완료': { color: '#00b894' }, '개시결정': { color: '#6c5ce7' },
+        '변제중': { color: '#00cec9' }, '면책': { color: '#fdcb6e' },
+        '종결': { color: '#636e72' }
+    };
     const counts = {};
-    CASE_STATUSES.forEach(s => counts[s] = 0);
-    allCases.forEach(c => { counts[c.status || '접수'] = (counts[c.status || '접수'] || 0) + 1; });
+    allCases.forEach(c => { counts[c.status] = (counts[c.status] || 0) + 1; });
 
-    container.innerHTML = CASE_STATUSES.map(s =>
-        `<span class="case-status-badge" style="background:${CASE_STATUS_COLORS[s]}20;color:${CASE_STATUS_COLORS[s]}">${s} (${counts[s]})</span>`
-    ).join('');
+    let html = `<span class="case-status-badge" style="background:#e9ecef;color:#333" data-status="">전체 ${allCases.length}</span>`;
+    Object.entries(statusConfig).forEach(([status, config]) => {
+        const count = counts[status] || 0;
+        if (count > 0) {
+            html += `<span class="case-status-badge" style="background:${config.color};color:#fff" data-status="${status}">${status} ${count}</span>`;
+        }
+    });
+    container.innerHTML = html;
+
+    container.querySelectorAll('.case-status-badge').forEach(badge => {
+        badge.addEventListener('click', () => {
+            const filterEl = document.getElementById('case-status-filter');
+            if (filterEl) filterEl.value = badge.dataset.status;
+            renderCasesList();
+        });
+    });
 }
 
 function renderCasesList() {
     const container = document.getElementById('cases-list');
     if (!container) return;
 
-    const searchText = (document.getElementById('case-search')?.value || '').toLowerCase();
+    let filtered = [...allCases];
+    const search = document.getElementById('case-search')?.value?.toLowerCase() || '';
     const statusFilter = document.getElementById('case-status-filter')?.value || '';
 
-    let filtered = allCases.filter(c => {
-        if (searchText && !(c.clientName || '').toLowerCase().includes(searchText) && !(c.caseNumber || '').toLowerCase().includes(searchText)) return false;
-        if (statusFilter && (c.status || '접수') !== statusFilter) return false;
-        return true;
-    });
+    if (search) {
+        filtered = filtered.filter(c =>
+            (c.clientName || '').toLowerCase().includes(search) ||
+            (c.caseNumber || '').toLowerCase().includes(search)
+        );
+    }
+    if (statusFilter) filtered = filtered.filter(c => c.status === statusFilter);
 
     if (filtered.length === 0) {
-        container.innerHTML = '<div class="empty-state"><i class="fas fa-briefcase"></i><p>등록된 사건이 없습니다.</p></div>';
+        container.innerHTML = '<div class="empty-state"><i class="fas fa-briefcase"></i><p>사건이 없습니다.</p></div>';
         return;
     }
 
+    const statusColors = { '접수':'#3498db', '서류준비':'#f39c12', '신청완료':'#00b894', '개시결정':'#6c5ce7', '변제중':'#00cec9', '면책':'#fdcb6e', '종결':'#636e72' };
+
     container.innerHTML = filtered.map(c => {
-        const status = c.status || '접수';
-        const color = CASE_STATUS_COLORS[status] || '#95a5a6';
-        const date = c.createdAt?.toDate ? c.createdAt.toDate().toLocaleDateString('ko-KR') : '-';
+        const debt = c.totalDebt ? formatMoney(c.totalDebt / 10000) : '-';
+        const date = formatDateShort(c.createdAt);
         return `
             <div class="case-card" data-id="${c.id}">
                 <div class="case-card-info">
                     <div class="case-card-name">${escapeHtml(c.clientName || '이름 없음')}</div>
-                    <div class="case-card-meta">${escapeHtml(c.caseNumber || '사건번호 미정')} | ${c.court || '-'} | ${date}</div>
+                    <div class="case-card-meta">
+                        <span class="status-badge" style="background:${statusColors[c.status] || '#999'}">${c.status || '접수'}</span>
+                        ${c.caseNumber ? ' ' + escapeHtml(c.caseNumber) : ''} | ${c.court || '-'} | ${date}
+                    </div>
                 </div>
-                <span class="status-badge" style="background:${color}">${status}</span>
+                <div class="case-card-amounts">
+                    <div class="case-card-amount"><div class="label">채무총액</div><div class="value">${debt}</div></div>
+                </div>
             </div>
         `;
     }).join('');
@@ -884,481 +882,435 @@ function renderCasesList() {
     });
 }
 
-// 사건 상세 열기
+// ========== 사건 상세 보기 ==========
+
 async function openCaseDetail(caseId) {
     currentCaseId = caseId;
     document.getElementById('cases-list-view').hidden = true;
     document.getElementById('case-detail-view').hidden = false;
 
-    const caseDoc = await getDoc(doc(db, 'cases', caseId));
-    if (!caseDoc.exists()) { alert('사건을 찾을 수 없습니다.'); return; }
-    currentCaseData = { id: caseDoc.id, ...caseDoc.data() };
+    const caseData = allCases.find(c => c.id === caseId);
+    if (!caseData) return;
 
-    document.getElementById('case-detail-title').textContent = `${currentCaseData.clientName || '이름 없음'} - 사건 상세`;
+    document.getElementById('case-detail-title').textContent =
+        (caseData.clientName || '이름 없음') + (caseData.caseNumber ? ' - ' + caseData.caseNumber : '');
 
-    // 상태 셀렉트
     const statusSelect = document.getElementById('case-status-select');
-    statusSelect.innerHTML = CASE_STATUSES.map(s =>
-        `<option value="${s}" ${(currentCaseData.status || '접수') === s ? 'selected' : ''}>${s}</option>`
+    const statuses = ['접수','서류준비','신청완료','개시결정','변제중','면책','종결'];
+    statusSelect.innerHTML = statuses.map(s =>
+        `<option value="${s}" ${caseData.status === s ? 'selected' : ''}>${s}</option>`
     ).join('');
 
-    // 첫 탭 로드
-    document.querySelectorAll('.case-tab').forEach(t => t.classList.remove('active'));
-    document.querySelector('.case-tab[data-tab="personal"]').classList.add('active');
-    renderCaseTab('personal');
+    const tabs = document.querySelectorAll('.case-tab');
+    tabs.forEach(tab => {
+        const newTab = tab.cloneNode(true);
+        tab.parentNode.replaceChild(newTab, tab);
+        newTab.addEventListener('click', () => {
+            document.querySelectorAll('.case-tab').forEach(t => t.classList.remove('active'));
+            newTab.classList.add('active');
+            renderCaseTab(newTab.dataset.tab, caseData);
+        });
+    });
+
+    renderCaseTab('personal', caseData);
 }
 
-// 탭 렌더링
-async function renderCaseTab(tabName) {
+function renderCaseTab(tabName, caseData) {
     const container = document.getElementById('case-tab-content');
-    const d = currentCaseData;
-
-    switch (tabName) {
-        case 'personal':
-            container.innerHTML = `
-                <div class="form-row"><div class="form-group"><label>이름</label><input type="text" id="ct-name" value="${escapeHtml(d.clientName || '')}"></div>
-                <div class="form-group"><label>주민등록번호</label><input type="text" id="ct-ssn" value="${escapeHtml(d.clientIdNumber || '')}"></div></div>
-                <div class="form-row"><div class="form-group"><label>연락처</label><input type="tel" id="ct-phone" value="${escapeHtml(d.clientPhone || '')}"></div>
-                <div class="form-group"><label>이메일</label><input type="email" id="ct-email" value="${escapeHtml(d.clientEmail || '')}"></div></div>
-                <div class="form-group"><label>주소</label><input type="text" id="ct-address" value="${escapeHtml(d.clientAddress || '')}"></div>
-                <div class="form-row"><div class="form-group"><label>관할 법원</label><input type="text" id="ct-court" value="${escapeHtml(d.court || '')}"></div>
-                <div class="form-group"><label>사건번호</label><input type="text" id="ct-casenum" value="${escapeHtml(d.caseNumber || '')}"></div></div>
-                <button class="btn btn-primary" id="save-personal-btn"><i class="fas fa-save"></i> 저장</button>
-            `;
-            document.getElementById('save-personal-btn').addEventListener('click', async () => {
-                await updateDoc(doc(db, 'cases', currentCaseId), {
-                    clientName: document.getElementById('ct-name').value,
-                    clientIdNumber: document.getElementById('ct-ssn').value,
-                    clientPhone: document.getElementById('ct-phone').value,
-                    clientEmail: document.getElementById('ct-email').value,
-                    clientAddress: document.getElementById('ct-address').value,
-                    court: document.getElementById('ct-court').value,
-                    caseNumber: document.getElementById('ct-casenum').value,
-                    updatedAt: serverTimestamp()
-                });
-                currentCaseData.clientName = document.getElementById('ct-name').value;
-                currentCaseData.clientIdNumber = document.getElementById('ct-ssn').value;
-                currentCaseData.clientPhone = document.getElementById('ct-phone').value;
-                currentCaseData.clientEmail = document.getElementById('ct-email').value;
-                currentCaseData.clientAddress = document.getElementById('ct-address').value;
-                currentCaseData.court = document.getElementById('ct-court').value;
-                currentCaseData.caseNumber = document.getElementById('ct-casenum').value;
-                alert('저장되었습니다.');
-            });
-            break;
-
-        case 'family':
-            container.innerHTML = `
-                <div class="form-row"><div class="form-group"><label>혼인 여부</label>
-                <select id="ct-marital"><option value="">선택</option><option value="미혼" ${d.familyInfo?.maritalStatus==='미혼'?'selected':''}>미혼</option><option value="기혼" ${d.familyInfo?.maritalStatus==='기혼'?'selected':''}>기혼</option><option value="이혼" ${d.familyInfo?.maritalStatus==='이혼'?'selected':''}>이혼</option><option value="사별" ${d.familyInfo?.maritalStatus==='사별'?'selected':''}>사별</option></select></div>
-                <div class="form-group"><label>부양가족 수 (본인 포함)</label><input type="number" id="ct-family-count" value="${d.familyCount || 1}" min="1"></div></div>
-                <div class="form-group"><label>배우자 이름</label><input type="text" id="ct-spouse" value="${escapeHtml(d.familyInfo?.spouseName || '')}"></div>
-                <div class="form-group"><label>부양가족 상세</label><textarea id="ct-family-detail" rows="3">${escapeHtml(d.familyInfo?.detail || '')}</textarea></div>
-                <button class="btn btn-primary" id="save-family-btn"><i class="fas fa-save"></i> 저장</button>
-            `;
-            document.getElementById('save-family-btn').addEventListener('click', async () => {
-                await updateDoc(doc(db, 'cases', currentCaseId), {
-                    familyInfo: {
-                        maritalStatus: document.getElementById('ct-marital').value,
-                        spouseName: document.getElementById('ct-spouse').value,
-                        detail: document.getElementById('ct-family-detail').value
-                    },
-                    familyCount: parseInt(document.getElementById('ct-family-count').value) || 1,
-                    updatedAt: serverTimestamp()
-                });
-                alert('저장되었습니다.');
-            });
-            break;
-
-        case 'employment':
-            container.innerHTML = `
-                <div class="form-row"><div class="form-group"><label>재직 상태</label>
-                <select id="ct-emp-status"><option value="">선택</option><option value="재직중" ${d.employmentInfo?.status==='재직중'?'selected':''}>재직중</option><option value="휴직중" ${d.employmentInfo?.status==='휴직중'?'selected':''}>휴직중</option><option value="무직" ${d.employmentInfo?.status==='무직'?'selected':''}>무직</option><option value="자영업" ${d.employmentInfo?.status==='자영업'?'selected':''}>자영업</option><option value="일용직" ${d.employmentInfo?.status==='일용직'?'selected':''}>일용직</option></select></div>
-                <div class="form-group"><label>직장명</label><input type="text" id="ct-company" value="${escapeHtml(d.employmentInfo?.company || '')}"></div></div>
-                <div class="form-row"><div class="form-group"><label>직위/직종</label><input type="text" id="ct-position" value="${escapeHtml(d.employmentInfo?.position || '')}"></div>
-                <div class="form-group"><label>근속 기간</label><input type="text" id="ct-tenure" value="${escapeHtml(d.employmentInfo?.tenure || '')}"></div></div>
-                <div class="form-group"><label>월 급여 (원)</label><input type="number" id="ct-salary" value="${d.employmentInfo?.salary || 0}"></div>
-                <button class="btn btn-primary" id="save-emp-btn"><i class="fas fa-save"></i> 저장</button>
-            `;
-            document.getElementById('save-emp-btn').addEventListener('click', async () => {
-                await updateDoc(doc(db, 'cases', currentCaseId), {
-                    employmentInfo: {
-                        status: document.getElementById('ct-emp-status').value,
-                        company: document.getElementById('ct-company').value,
-                        position: document.getElementById('ct-position').value,
-                        tenure: document.getElementById('ct-tenure').value,
-                        salary: parseInt(document.getElementById('ct-salary').value) || 0
-                    },
-                    updatedAt: serverTimestamp()
-                });
-                alert('저장되었습니다.');
-            });
-            break;
-
-        case 'debts':
-            await renderSubCollectionTab('debts', container);
-            break;
-
-        case 'assets':
-            await renderSubCollectionTab('assets', container);
-            break;
-
-        case 'income-expense':
-            await renderIncomeExpenseTab(container);
-            break;
-
-        case 'notes':
-            await renderNotesTab(container);
-            break;
+    switch(tabName) {
+        case 'personal': renderPersonalTab(container, caseData); break;
+        case 'family': renderFamilyTab(container, caseData); break;
+        case 'employment': renderEmploymentTab(container, caseData); break;
+        case 'debts': renderDebtsTab(container, caseData); break;
+        case 'assets': renderAssetsTab(container, caseData); break;
+        case 'income-expense': renderIncomeExpenseTab(container, caseData); break;
+        case 'notes': renderNotesTab(container, caseData); break;
     }
 }
 
-// 채무/재산 서브컬렉션 탭
-async function renderSubCollectionTab(type, container) {
-    const colRef = collection(db, 'cases', currentCaseId, type);
-    const snap = await getDocs(colRef);
-    const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-
-    if (type === 'debts') {
-        container.innerHTML = `
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-                <h3>채무 목록 (${items.length}건)</h3>
-                <button class="btn btn-primary btn-sm" id="add-debt-btn"><i class="fas fa-plus"></i> 채무 추가</button>
+function renderPersonalTab(container, caseData) {
+    container.innerHTML = `
+        <form id="personal-form">
+            <div class="form-row">
+                <div class="form-group"><label>이름</label><input type="text" name="clientName" value="${escapeHtml(caseData.clientName || '')}"></div>
+                <div class="form-group"><label>연락처</label><input type="tel" name="clientPhone" value="${escapeHtml(caseData.clientPhone || '')}"></div>
             </div>
-            <table class="data-table"><thead><tr><th>채권자</th><th>유형</th><th>원금</th><th>이자</th><th>연체금</th><th>합계</th><th>담보</th><th>작업</th></tr></thead>
-            <tbody id="debts-tbody"></tbody></table>
-            <div class="data-table-footer"><span>총 채무: ${items.reduce((s,d) => s+(d.totalAmount||0), 0).toLocaleString()}원</span></div>
-            <div id="debt-form-area" hidden></div>
-        `;
-        const tbody = document.getElementById('debts-tbody');
-        items.forEach(d => {
-            tbody.innerHTML += `<tr>
-                <td>${escapeHtml(d.creditorName||'')}</td>
-                <td>${escapeHtml(d.creditorType||'')} ${d.debtType?'('+escapeHtml(d.debtType)+')':''}</td>
-                <td>${(d.principal||0).toLocaleString()}</td>
-                <td>${(d.interest||0).toLocaleString()}</td>
-                <td>${(d.overdue||0).toLocaleString()}</td>
-                <td>${(d.totalAmount||0).toLocaleString()}</td>
-                <td>${d.hasCollateral?'담보':'무담보'}</td>
-                <td class="data-table-actions">
-                    <button class="btn btn-danger btn-sm del-debt" data-id="${d.id}"><i class="fas fa-trash"></i></button>
-                </td>
-            </tr>`;
-        });
-        tbody.querySelectorAll('.del-debt').forEach(btn => {
+            <div class="form-row">
+                <div class="form-group"><label>주민등록번호</label><input type="text" name="clientIdNumber" value="${escapeHtml(caseData.clientIdNumber || '')}" placeholder="000000-0000000"></div>
+                <div class="form-group"><label>생년월일</label><input type="text" name="clientBirth" value="${escapeHtml(caseData.clientBirth || '')}"></div>
+            </div>
+            <div class="form-group"><label>주소</label><input type="text" name="clientAddress" value="${escapeHtml(caseData.clientAddress || '')}"></div>
+            <div class="form-row">
+                <div class="form-group"><label>관할 법원</label><input type="text" name="court" value="${escapeHtml(caseData.court || '')}"></div>
+                <div class="form-group"><label>사건번호</label><input type="text" name="caseNumber" value="${escapeHtml(caseData.caseNumber || '')}" placeholder="2026개회12345"></div>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> 저장</button>
+        </form>
+    `;
+    container.querySelector('#personal-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const updates = { updatedAt: serverTimestamp() };
+        for (const [key, val] of formData.entries()) updates[key] = val;
+        try {
+            await updateDoc(doc(db, 'cases', currentCaseId), updates);
+            const cs = allCases.find(x => x.id === currentCaseId);
+            if (cs) Object.assign(cs, updates);
+            alert('저장되었습니다.');
+        } catch (err) { alert('저장 실패: ' + err.message); }
+    });
+}
+
+function renderFamilyTab(container, caseData) {
+    const family = caseData.familyInfo || {};
+    container.innerHTML = `
+        <form id="family-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>혼인 여부</label>
+                    <select name="maritalStatus">
+                        <option value="">선택</option>
+                        <option value="미혼" ${family.maritalStatus === '미혼' ? 'selected' : ''}>미혼</option>
+                        <option value="기혼" ${family.maritalStatus === '기혼' ? 'selected' : ''}>기혼</option>
+                        <option value="이혼" ${family.maritalStatus === '이혼' ? 'selected' : ''}>이혼</option>
+                        <option value="사별" ${family.maritalStatus === '사별' ? 'selected' : ''}>사별</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>부양가족 수</label><input type="number" name="familyCount" value="${caseData.familyCount || 0}" min="0"></div>
+            </div>
+            <div class="form-row">
+                <div class="form-group"><label>배우자 이름</label><input type="text" name="spouseName" value="${escapeHtml(family.spouseName || '')}"></div>
+                <div class="form-group"><label>배우자 주민번호</label><input type="text" name="spouseSsn" value="${escapeHtml(family.spouseSsn || '')}"></div>
+            </div>
+            <h3 style="margin:1rem 0 0.5rem;font-size:0.95rem;color:var(--primary-color)">부양가족 목록</h3>
+            <div id="dependents-list"></div>
+            <button type="button" id="add-dependent" class="btn btn-secondary btn-sm" style="margin:0.5rem 0"><i class="fas fa-plus"></i> 부양가족 추가</button>
+            <br><button type="submit" class="btn btn-primary" style="margin-top:1rem"><i class="fas fa-save"></i> 저장</button>
+        </form>
+    `;
+    container.querySelector('#family-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const updates = {
+            familyInfo: { maritalStatus: fd.get('maritalStatus'), spouseName: fd.get('spouseName'), spouseSsn: fd.get('spouseSsn') },
+            familyCount: parseInt(fd.get('familyCount')) || 0,
+            updatedAt: serverTimestamp()
+        };
+        try {
+            await updateDoc(doc(db, 'cases', currentCaseId), updates);
+            const cs = allCases.find(x => x.id === currentCaseId);
+            if (cs) Object.assign(cs, updates);
+            alert('저장되었습니다.');
+        } catch (err) { alert('저장 실패: ' + err.message); }
+    });
+}
+
+function renderEmploymentTab(container, caseData) {
+    const emp = caseData.employmentInfo || {};
+    container.innerHTML = `
+        <form id="employment-form">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>재직 상태</label>
+                    <select name="employmentStatus">
+                        <option value="">선택</option>
+                        <option value="재직" ${emp.status === '재직' ? 'selected' : ''}>재직</option>
+                        <option value="휴직" ${emp.status === '휴직' ? 'selected' : ''}>휴직</option>
+                        <option value="퇴직" ${emp.status === '퇴직' ? 'selected' : ''}>퇴직</option>
+                        <option value="자영업" ${emp.status === '자영업' ? 'selected' : ''}>자영업</option>
+                        <option value="무직" ${emp.status === '무직' ? 'selected' : ''}>무직</option>
+                    </select>
+                </div>
+                <div class="form-group"><label>직장명</label><input type="text" name="company" value="${escapeHtml(emp.company || '')}"></div>
+            </div>
+            <div class="form-group"><label>직장 주소</label><input type="text" name="companyAddress" value="${escapeHtml(emp.companyAddress || '')}"></div>
+            <div class="form-row-3">
+                <div class="form-group"><label>입사일</label><input type="date" name="startDate" value="${emp.startDate || ''}"></div>
+                <div class="form-group"><label>월 급여(세전, 만원)</label><input type="number" name="salaryGross" value="${emp.salaryGross || ''}"></div>
+                <div class="form-group"><label>월 급여(세후, 만원)</label><input type="number" name="salaryNet" value="${emp.salaryNet || ''}"></div>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> 저장</button>
+        </form>
+    `;
+    container.querySelector('#employment-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const updates = {
+            employmentInfo: { status: fd.get('employmentStatus'), company: fd.get('company'), companyAddress: fd.get('companyAddress'), startDate: fd.get('startDate'), salaryGross: parseInt(fd.get('salaryGross')) || 0, salaryNet: parseInt(fd.get('salaryNet')) || 0 },
+            updatedAt: serverTimestamp()
+        };
+        try {
+            await updateDoc(doc(db, 'cases', currentCaseId), updates);
+            const cs = allCases.find(x => x.id === currentCaseId);
+            if (cs) Object.assign(cs, updates);
+            alert('저장되었습니다.');
+        } catch (err) { alert('저장 실패: ' + err.message); }
+    });
+}
+
+async function renderDebtsTab(container, caseData) {
+    container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> 로딩 중...</div>';
+    try {
+        const snap = await getDocs(query(collection(db, 'cases', currentCaseId, 'debts'), orderBy('createdAt', 'desc')));
+        const debts = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        let totalDebt = debts.reduce((sum, d) => sum + (d.totalAmount || 0), 0);
+
+        let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+                <h3 style="color:var(--primary-color)">채무 목록 (${debts.length}건)</h3>
+                <button id="add-debt-btn" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> 채무 추가</button>
+            </div>`;
+
+        if (debts.length > 0) {
+            html += `<table class="data-table"><thead><tr><th>채권자</th><th>유형</th><th>원금</th><th>이자</th><th>합계</th><th>연체</th><th></th></tr></thead><tbody>`;
+            debts.forEach(d => {
+                html += `<tr><td>${escapeHtml(d.creditorName || '')}</td><td>${escapeHtml(d.creditorType || '')}</td><td>${(d.principal || 0).toLocaleString()}원</td><td>${(d.interest || 0).toLocaleString()}원</td><td><strong>${(d.totalAmount || 0).toLocaleString()}원</strong></td><td>${d.isOverdue ? '<span style="color:red">연체</span>' : '-'}</td><td class="data-table-actions"><button class="btn btn-danger btn-sm delete-debt" data-id="${d.id}"><i class="fas fa-trash"></i></button></td></tr>`;
+            });
+            html += `</tbody></table><div class="data-table-footer"><span>총 채무액</span><span style="font-size:1.2rem;color:var(--primary-color)">${totalDebt.toLocaleString()}원</span></div>`;
+        } else {
+            html += '<p style="color:var(--text-secondary);text-align:center;padding:2rem">등록된 채무가 없습니다.</p>';
+        }
+        container.innerHTML = html;
+
+        container.querySelector('#add-debt-btn')?.addEventListener('click', () => showAddDebtModal());
+        container.querySelectorAll('.delete-debt').forEach(btn => {
             btn.addEventListener('click', async () => {
                 if (!confirm('이 채무를 삭제하시겠습니까?')) return;
                 await deleteDoc(doc(db, 'cases', currentCaseId, 'debts', btn.dataset.id));
-                renderCaseTab('debts');
+                renderDebtsTab(container, caseData);
             });
         });
-        document.getElementById('add-debt-btn').addEventListener('click', () => showDebtForm());
-    } else {
-        container.innerHTML = `
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
-                <h3>재산 목록 (${items.length}건)</h3>
-                <button class="btn btn-primary btn-sm" id="add-asset-btn"><i class="fas fa-plus"></i> 재산 추가</button>
-            </div>
-            <table class="data-table"><thead><tr><th>유형</th><th>명칭</th><th>평가액</th><th>담보액</th><th>순가치</th><th>작업</th></tr></thead>
-            <tbody id="assets-tbody"></tbody></table>
-            <div class="data-table-footer"><span>총 재산: ${items.reduce((s,a) => s+(a.appraisedValue||0), 0).toLocaleString()}원</span></div>
-            <div id="asset-form-area" hidden></div>
-        `;
-        const tbody = document.getElementById('assets-tbody');
-        items.forEach(a => {
-            const net = (a.appraisedValue||0) - (a.lienAmount||0);
-            tbody.innerHTML += `<tr>
-                <td>${escapeHtml(a.assetType||'')}</td>
-                <td>${escapeHtml(a.assetName||'')}</td>
-                <td>${(a.appraisedValue||0).toLocaleString()}</td>
-                <td>${(a.lienAmount||0).toLocaleString()}</td>
-                <td>${net.toLocaleString()}</td>
-                <td class="data-table-actions">
-                    <button class="btn btn-danger btn-sm del-asset" data-id="${a.id}"><i class="fas fa-trash"></i></button>
-                </td>
-            </tr>`;
-        });
-        tbody.querySelectorAll('.del-asset').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                if (!confirm('이 재산을 삭제하시겠습니까?')) return;
-                await deleteDoc(doc(db, 'cases', currentCaseId, 'assets', btn.dataset.id));
-                renderCaseTab('assets');
-            });
-        });
-        document.getElementById('add-asset-btn').addEventListener('click', () => showAssetForm());
+    } catch (err) {
+        container.innerHTML = '<p style="color:red">채무 데이터 로드 실패: ' + err.message + '</p>';
     }
 }
 
-function showDebtForm() {
-    const area = document.getElementById('debt-form-area');
-    area.hidden = false;
-    area.innerHTML = `
-        <div style="background:#f8f9fa;padding:1.2rem;border-radius:8px;margin-top:1rem">
-            <h4 style="margin-bottom:1rem">채무 추가</h4>
-            <div class="form-row"><div class="form-group"><label>채권자명</label><input type="text" id="df-name"></div>
-            <div class="form-group"><label>채권자 유형</label><select id="df-type"><option>금융기관</option><option>대부업체</option><option>개인</option><option>공공기관</option><option>기타</option></select></div></div>
-            <div class="form-row"><div class="form-group"><label>채무 유형</label><select id="df-debt-type"><option>신용대출</option><option>카드론</option><option>카드매출</option><option>주택담보대출</option><option>자동차대출</option><option>학자금대출</option><option>보증채무</option><option>기타</option></select></div>
-            <div class="form-group"><label>담보 여부</label><select id="df-collateral"><option value="false">무담보</option><option value="true">담보</option></select></div></div>
-            <div class="form-row-3"><div class="form-group"><label>원금 (원)</label><input type="number" id="df-principal" value="0"></div>
-            <div class="form-group"><label>이자 (원)</label><input type="number" id="df-interest" value="0"></div>
-            <div class="form-group"><label>연체금 (원)</label><input type="number" id="df-overdue" value="0"></div></div>
-            <div style="display:flex;gap:0.5rem;margin-top:0.5rem">
-                <button class="btn btn-primary" id="df-save"><i class="fas fa-check"></i> 추가</button>
-                <button class="btn btn-secondary" id="df-cancel">취소</button>
+function showAddDebtModal() {
+    const modal = document.getElementById('detail-modal');
+    const body = document.getElementById('modal-body');
+    document.querySelector('#detail-modal .modal-header h2').innerHTML = '<i class="fas fa-plus-circle"></i> 채무 추가';
+    body.innerHTML = `
+        <form id="add-debt-form">
+            <div class="form-row">
+                <div class="form-group"><label>채권자명</label><input type="text" name="creditorName" required placeholder="예: 국민은행"></div>
+                <div class="form-group"><label>채권자 구분</label><select name="creditorType"><option value="은행">은행</option><option value="카드">카드</option><option value="캐피탈">캐피탈</option><option value="저축은행">저축은행</option><option value="대부업">대부업</option><option value="사채">사채</option><option value="공공기관">공공기관</option><option value="개인">개인</option><option value="기타">기타</option></select></div>
             </div>
-        </div>
-    `;
-    document.getElementById('df-cancel').addEventListener('click', () => { area.hidden = true; });
-    document.getElementById('df-save').addEventListener('click', async () => {
-        const principal = parseInt(document.getElementById('df-principal').value) || 0;
-        const interest = parseInt(document.getElementById('df-interest').value) || 0;
-        const overdue = parseInt(document.getElementById('df-overdue').value) || 0;
-        await addDoc(collection(db, 'cases', currentCaseId, 'debts'), {
-            creditorName: document.getElementById('df-name').value,
-            creditorType: document.getElementById('df-type').value,
-            debtType: document.getElementById('df-debt-type').value,
-            hasCollateral: document.getElementById('df-collateral').value === 'true',
-            principal, interest, overdue,
-            totalAmount: principal + interest + overdue,
-            createdAt: serverTimestamp()
-        });
-        renderCaseTab('debts');
-    });
-}
-
-function showAssetForm() {
-    const area = document.getElementById('asset-form-area');
-    area.hidden = false;
-    area.innerHTML = `
-        <div style="background:#f8f9fa;padding:1.2rem;border-radius:8px;margin-top:1rem">
-            <h4 style="margin-bottom:1rem">재산 추가</h4>
-            <div class="form-row"><div class="form-group"><label>재산 유형</label><select id="af-type"><option>부동산</option><option>차량</option><option>예금</option><option>보험(해약환급금)</option><option>퇴직금</option><option>임차보증금</option><option>기타</option></select></div>
-            <div class="form-group"><label>명칭</label><input type="text" id="af-name"></div></div>
-            <div class="form-group"><label>상세</label><input type="text" id="af-detail" placeholder="예: 서울시 강남구 아파트 84㎡"></div>
-            <div class="form-row"><div class="form-group"><label>평가액 (원)</label><input type="number" id="af-value" value="0"></div>
-            <div class="form-group"><label>담보설정액 (원)</label><input type="number" id="af-lien" value="0"></div></div>
-            <div style="display:flex;gap:0.5rem;margin-top:0.5rem">
-                <button class="btn btn-primary" id="af-save"><i class="fas fa-check"></i> 추가</button>
-                <button class="btn btn-secondary" id="af-cancel">취소</button>
+            <div class="form-group"><label>채무 유형</label><select name="debtType"><option value="대출">대출</option><option value="카드론">카드론</option><option value="현금서비스">현금서비스</option><option value="할부">할부</option><option value="보증채무">보증채무</option><option value="세금">세금</option><option value="기타">기타</option></select></div>
+            <div class="form-row-3">
+                <div class="form-group"><label>원금 (원)</label><input type="number" name="principal" required></div>
+                <div class="form-group"><label>이자 (원)</label><input type="number" name="interest" value="0"></div>
+                <div class="form-group"><label>연체금 (원)</label><input type="number" name="overdue" value="0"></div>
             </div>
-        </div>
+            <div class="form-row">
+                <div class="form-group"><label>연체 여부</label><select name="isOverdue"><option value="false">아니오</option><option value="true">예</option></select></div>
+                <div class="form-group"><label>담보 여부</label><select name="hasCollateral"><option value="false">무담보</option><option value="true">담보</option></select></div>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> 추가</button>
+        </form>
     `;
-    document.getElementById('af-cancel').addEventListener('click', () => { area.hidden = true; });
-    document.getElementById('af-save').addEventListener('click', async () => {
-        await addDoc(collection(db, 'cases', currentCaseId, 'assets'), {
-            assetType: document.getElementById('af-type').value,
-            assetName: document.getElementById('af-name').value,
-            detail: document.getElementById('af-detail').value,
-            appraisedValue: parseInt(document.getElementById('af-value').value) || 0,
-            lienAmount: parseInt(document.getElementById('af-lien').value) || 0,
-            createdAt: serverTimestamp()
-        });
-        renderCaseTab('assets');
+    modal.hidden = false;
+    body.querySelector('#add-debt-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const principal = parseInt(fd.get('principal')) || 0;
+        const interest = parseInt(fd.get('interest')) || 0;
+        const overdueAmt = parseInt(fd.get('overdue')) || 0;
+        const debtData = { creditorName: fd.get('creditorName'), creditorType: fd.get('creditorType'), debtType: fd.get('debtType'), principal, interest, overdue: overdueAmt, totalAmount: principal + interest + overdueAmt, isOverdue: fd.get('isOverdue') === 'true', hasCollateral: fd.get('hasCollateral') === 'true', createdAt: serverTimestamp(), updatedAt: serverTimestamp() };
+        try {
+            await addDoc(collection(db, 'cases', currentCaseId, 'debts'), debtData);
+            modal.hidden = true;
+            const snap = await getDocs(collection(db, 'cases', currentCaseId, 'debts'));
+            const totalDebt = snap.docs.reduce((sum, d) => sum + (d.data().totalAmount || 0), 0);
+            await updateDoc(doc(db, 'cases', currentCaseId), { totalDebt, updatedAt: serverTimestamp() });
+            const cd = allCases.find(c => c.id === currentCaseId);
+            if (cd) cd.totalDebt = totalDebt;
+            renderDebtsTab(document.getElementById('case-tab-content'), cd);
+        } catch (err) { alert('채무 추가 실패: ' + err.message); }
     });
 }
 
-// 수입/지출 탭
-async function renderIncomeExpenseTab(container) {
-    const [incSnap, expSnap] = await Promise.all([
-        getDocs(collection(db, 'cases', currentCaseId, 'income')),
-        getDocs(collection(db, 'cases', currentCaseId, 'expenses'))
-    ]);
-    const incomes = incSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    const expenses = expSnap.docs.map(d => ({ id: d.id, ...d.data() }));
-    const totalInc = incomes.reduce((s, i) => s + (i.monthlyAmount || 0), 0);
-    const totalExp = expenses.reduce((s, e) => s + (e.monthlyAmount || 0), 0);
+async function renderAssetsTab(container, caseData) {
+    container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> 로딩 중...</div>';
+    try {
+        const snap = await getDocs(query(collection(db, 'cases', currentCaseId, 'assets'), orderBy('createdAt', 'desc')));
+        const assets = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        let totalAsset = assets.reduce((sum, a) => sum + (a.appraisedValue || 0), 0);
 
-    container.innerHTML = `
-        <h3>수입 (월 합계: ${totalInc.toLocaleString()}원)</h3>
-        <table class="data-table"><thead><tr><th>유형</th><th>지급처</th><th>월 금액</th><th>작업</th></tr></thead>
-        <tbody id="income-tbody">${incomes.map(i => `<tr><td>${escapeHtml(i.incomeType||'')}</td><td>${escapeHtml(i.source||'')}</td><td>${(i.monthlyAmount||0).toLocaleString()}</td>
-        <td class="data-table-actions"><button class="btn btn-danger btn-sm del-inc" data-id="${i.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('')}</tbody></table>
-        <button class="btn btn-primary btn-sm" id="add-income-btn" style="margin:0.8rem 0"><i class="fas fa-plus"></i> 수입 추가</button>
-        <div id="income-form-area" hidden></div>
-        <hr style="margin:1.5rem 0">
-        <h3>지출 (월 합계: ${totalExp.toLocaleString()}원)</h3>
-        <table class="data-table"><thead><tr><th>유형</th><th>월 금액</th><th>작업</th></tr></thead>
-        <tbody id="expense-tbody">${expenses.map(e => `<tr><td>${escapeHtml(e.expenseType||'')}</td><td>${(e.monthlyAmount||0).toLocaleString()}</td>
-        <td class="data-table-actions"><button class="btn btn-danger btn-sm del-exp" data-id="${e.id}"><i class="fas fa-trash"></i></button></td></tr>`).join('')}</tbody></table>
-        <button class="btn btn-primary btn-sm" id="add-expense-btn" style="margin:0.8rem 0"><i class="fas fa-plus"></i> 지출 추가</button>
-        <div id="expense-form-area" hidden></div>
-        <div class="data-table-footer" style="font-size:1.1rem;color:var(--primary-color)">
-            <span>월 가용소득: ${(totalInc - totalExp).toLocaleString()}원</span>
-        </div>
-    `;
-
-    container.querySelectorAll('.del-inc').forEach(btn => {
-        btn.addEventListener('click', async () => {
-            if (!confirm('삭제하시겠습니까?')) return;
-            await deleteDoc(doc(db, 'cases', currentCaseId, 'income', btn.dataset.id));
-            renderCaseTab('income-expense');
-        });
-    });
-    container.querySelectorAll('.del-exp').forEach(btn => {
-        btn.addEventListener('click', async () => {
-            if (!confirm('삭제하시겠습니까?')) return;
-            await deleteDoc(doc(db, 'cases', currentCaseId, 'expenses', btn.dataset.id));
-            renderCaseTab('income-expense');
-        });
-    });
-
-    document.getElementById('add-income-btn').addEventListener('click', () => {
-        const area = document.getElementById('income-form-area');
-        area.hidden = false;
-        area.innerHTML = `
-            <div style="background:#f8f9fa;padding:1rem;border-radius:8px">
-            <div class="form-row-3"><div class="form-group"><label>유형</label><select id="if-type"><option>급여</option><option>사업소득</option><option>연금</option><option>임대소득</option><option>기타</option></select></div>
-            <div class="form-group"><label>지급처</label><input type="text" id="if-source"></div>
-            <div class="form-group"><label>월 금액 (원)</label><input type="number" id="if-amount" value="0"></div></div>
-            <div style="display:flex;gap:0.5rem"><button class="btn btn-primary" id="if-save">추가</button><button class="btn btn-secondary" id="if-cancel">취소</button></div></div>
-        `;
-        document.getElementById('if-cancel').addEventListener('click', () => { area.hidden = true; });
-        document.getElementById('if-save').addEventListener('click', async () => {
-            await addDoc(collection(db, 'cases', currentCaseId, 'income'), {
-                incomeType: document.getElementById('if-type').value,
-                source: document.getElementById('if-source').value,
-                monthlyAmount: parseInt(document.getElementById('if-amount').value) || 0,
-                createdAt: serverTimestamp()
+        let html = `<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem"><h3 style="color:var(--primary-color)">재산 목록 (${assets.length}건)</h3><button id="add-asset-btn" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> 재산 추가</button></div>`;
+        if (assets.length > 0) {
+            html += `<table class="data-table"><thead><tr><th>유형</th><th>명칭</th><th>평가액</th><th>담보액</th><th>순가치</th><th></th></tr></thead><tbody>`;
+            assets.forEach(a => {
+                const net = (a.appraisedValue || 0) - (a.lienAmount || 0);
+                html += `<tr><td>${escapeHtml(a.assetType || '')}</td><td>${escapeHtml(a.assetName || '')}</td><td>${(a.appraisedValue || 0).toLocaleString()}원</td><td>${(a.lienAmount || 0).toLocaleString()}원</td><td><strong>${net.toLocaleString()}원</strong></td><td><button class="btn btn-danger btn-sm delete-asset" data-id="${a.id}"><i class="fas fa-trash"></i></button></td></tr>`;
             });
-            renderCaseTab('income-expense');
-        });
-    });
-
-    document.getElementById('add-expense-btn').addEventListener('click', () => {
-        const area = document.getElementById('expense-form-area');
-        area.hidden = false;
-        area.innerHTML = `
-            <div style="background:#f8f9fa;padding:1rem;border-radius:8px">
-            <div class="form-row"><div class="form-group"><label>유형</label><select id="ef-type"><option>주거비</option><option>식비</option><option>교통비</option><option>통신비</option><option>교육비</option><option>의료비</option><option>보험료</option><option>공과금</option><option>기타</option></select></div>
-            <div class="form-group"><label>월 금액 (원)</label><input type="number" id="ef-amount" value="0"></div></div>
-            <div style="display:flex;gap:0.5rem"><button class="btn btn-primary" id="ef-save">추가</button><button class="btn btn-secondary" id="ef-cancel">취소</button></div></div>
-        `;
-        document.getElementById('ef-cancel').addEventListener('click', () => { area.hidden = true; });
-        document.getElementById('ef-save').addEventListener('click', async () => {
-            await addDoc(collection(db, 'cases', currentCaseId, 'expenses'), {
-                expenseType: document.getElementById('ef-type').value,
-                monthlyAmount: parseInt(document.getElementById('ef-amount').value) || 0,
-                createdAt: serverTimestamp()
+            html += `</tbody></table><div class="data-table-footer"><span>총 재산 평가액</span><span style="font-size:1.2rem;color:var(--primary-color)">${totalAsset.toLocaleString()}원</span></div>`;
+        } else {
+            html += '<p style="color:var(--text-secondary);text-align:center;padding:2rem">등록된 재산이 없습니다.</p>';
+        }
+        container.innerHTML = html;
+        container.querySelector('#add-asset-btn')?.addEventListener('click', () => showAddAssetModal(caseData));
+        container.querySelectorAll('.delete-asset').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                if (!confirm('삭제하시겠습니까?')) return;
+                await deleteDoc(doc(db, 'cases', currentCaseId, 'assets', btn.dataset.id));
+                renderAssetsTab(container, caseData);
             });
-            renderCaseTab('income-expense');
         });
-    });
+    } catch (err) {
+        container.innerHTML = '<p style="color:red">재산 데이터 로드 실패: ' + err.message + '</p>';
+    }
 }
 
-// 메모 탭
-async function renderNotesTab(container) {
-    const snap = await getDocs(query(collection(db, 'cases', currentCaseId, 'notes'), orderBy('createdAt', 'desc')));
-    const notes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-
-    container.innerHTML = `
-        <div class="note-input">
-            <textarea id="note-text" placeholder="메모를 입력하세요..."></textarea>
-            <button class="btn btn-primary" id="add-note-btn"><i class="fas fa-plus"></i></button>
-        </div>
-        <div class="notes-list" id="notes-list">
-            ${notes.map(n => `
-                <div class="note-card">
-                    <div class="note-meta">${n.createdAt?.toDate ? n.createdAt.toDate().toLocaleString('ko-KR') : '-'}
-                        <button class="btn btn-danger btn-sm del-note" data-id="${n.id}" style="float:right"><i class="fas fa-trash"></i></button>
-                    </div>
-                    <div class="note-content">${escapeHtml(n.content || '')}</div>
-                </div>
-            `).join('')}
-        </div>
+function showAddAssetModal(caseData) {
+    const modal = document.getElementById('detail-modal');
+    const body = document.getElementById('modal-body');
+    document.querySelector('#detail-modal .modal-header h2').innerHTML = '<i class="fas fa-plus-circle"></i> 재산 추가';
+    body.innerHTML = `
+        <form id="add-asset-form">
+            <div class="form-row">
+                <div class="form-group"><label>재산 유형</label><select name="assetType"><option value="부동산">부동산</option><option value="자동차">자동차</option><option value="예금">예금</option><option value="보험">보험</option><option value="퇴직금">퇴직금</option><option value="주식">주식</option><option value="전세보증금">전세보증금</option><option value="기타">기타</option></select></div>
+                <div class="form-group"><label>명칭</label><input type="text" name="assetName" required placeholder="예: 국민은행 정기예금"></div>
+            </div>
+            <div class="form-group"><label>상세 정보</label><input type="text" name="detail" placeholder="주소, 차량번호 등"></div>
+            <div class="form-row">
+                <div class="form-group"><label>평가액 (원)</label><input type="number" name="appraisedValue" required></div>
+                <div class="form-group"><label>담보권 설정액 (원)</label><input type="number" name="lienAmount" value="0"></div>
+            </div>
+            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> 추가</button>
+        </form>
     `;
-
-    document.getElementById('add-note-btn').addEventListener('click', async () => {
-        const text = document.getElementById('note-text').value.trim();
-        if (!text) return;
-        await addDoc(collection(db, 'cases', currentCaseId, 'notes'), {
-            content: text,
-            createdAt: serverTimestamp()
-        });
-        renderCaseTab('notes');
-    });
-
-    container.querySelectorAll('.del-note').forEach(btn => {
-        btn.addEventListener('click', async () => {
-            if (!confirm('메모를 삭제하시겠습니까?')) return;
-            await deleteDoc(doc(db, 'cases', currentCaseId, 'notes', btn.dataset.id));
-            renderCaseTab('notes');
-        });
+    modal.hidden = false;
+    body.querySelector('#add-asset-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const fd = new FormData(e.target);
+        const data = { assetType: fd.get('assetType'), assetName: fd.get('assetName'), detail: fd.get('detail'), appraisedValue: parseInt(fd.get('appraisedValue')) || 0, lienAmount: parseInt(fd.get('lienAmount')) || 0, createdAt: serverTimestamp(), updatedAt: serverTimestamp() };
+        data.netValue = data.appraisedValue - data.lienAmount;
+        try {
+            await addDoc(collection(db, 'cases', currentCaseId, 'assets'), data);
+            modal.hidden = true;
+            const snap = await getDocs(collection(db, 'cases', currentCaseId, 'assets'));
+            const totalAsset = snap.docs.reduce((sum, d) => sum + (d.data().appraisedValue || 0), 0);
+            await updateDoc(doc(db, 'cases', currentCaseId), { totalAsset, updatedAt: serverTimestamp() });
+            if (caseData) caseData.totalAsset = totalAsset;
+            renderAssetsTab(document.getElementById('case-tab-content'), caseData);
+        } catch (err) { alert('재산 추가 실패: ' + err.message); }
     });
 }
 
-// 사건 목록으로 돌아가기
+async function renderIncomeExpenseTab(container, caseData) {
+    container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> 로딩 중...</div>';
+    try {
+        const [incSnap, expSnap] = await Promise.all([
+            getDocs(collection(db, 'cases', currentCaseId, 'income')),
+            getDocs(collection(db, 'cases', currentCaseId, 'expenses'))
+        ]);
+        const incomes = incSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const expenses = expSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const totalIncome = incomes.reduce((s, i) => s + (i.monthlyAmount || 0), 0);
+        const totalExpense = expenses.reduce((s, e) => s + (e.monthlyAmount || 0), 0);
+        const disposable = totalIncome - totalExpense;
+
+        let html = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem"><div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem"><h3 style="color:var(--primary-color)">월 수입</h3><button id="add-income-btn" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i></button></div><table class="data-table"><thead><tr><th>유형</th><th>지급처</th><th>월액</th><th></th></tr></thead><tbody>`;
+        incomes.forEach(i => {
+            html += `<tr><td>${escapeHtml(i.incomeType||'')}</td><td>${escapeHtml(i.source||'')}</td><td>${(i.monthlyAmount||0).toLocaleString()}원</td><td><button class="btn btn-danger btn-sm del-income" data-id="${i.id}"><i class="fas fa-trash"></i></button></td></tr>`;
+        });
+        html += `</tbody></table><div class="data-table-footer"><span>합계</span><span>${totalIncome.toLocaleString()}원</span></div></div><div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem"><h3 style="color:var(--primary-color)">월 지출</h3><button id="add-expense-btn" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i></button></div><table class="data-table"><thead><tr><th>유형</th><th>월액</th><th></th></tr></thead><tbody>`;
+        expenses.forEach(e => {
+            html += `<tr><td>${escapeHtml(e.expenseType||'')}</td><td>${(e.monthlyAmount||0).toLocaleString()}원</td><td><button class="btn btn-danger btn-sm del-expense" data-id="${e.id}"><i class="fas fa-trash"></i></button></td></tr>`;
+        });
+        html += `</tbody></table><div class="data-table-footer"><span>합계</span><span>${totalExpense.toLocaleString()}원</span></div></div></div>`;
+        html += `<div style="background:var(--surface-color);border-radius:12px;padding:1.5rem;margin-top:1rem;box-shadow:0 2px 8px var(--shadow-color);text-align:center"><div style="font-size:0.9rem;color:var(--text-secondary)">월 가용소득 (수입 - 지출)</div><div style="font-size:1.8rem;font-weight:800;color:${disposable >= 0 ? 'var(--primary-color)' : 'var(--danger-color)'}">${disposable.toLocaleString()}원</div><div style="font-size:0.85rem;color:var(--text-secondary);margin-top:0.5rem">3년 변제 시 총 변제금: ${(disposable * 36).toLocaleString()}원 | 5년 변제 시 총 변제금: ${(disposable * 60).toLocaleString()}원</div></div>`;
+        container.innerHTML = html;
+
+        container.querySelector('#add-income-btn')?.addEventListener('click', () => {
+            const type = prompt('수입 유형 (급여/사업소득/연금/임대소득/기타):');
+            const source = prompt('지급처:');
+            const amount = parseInt(prompt('월 금액 (원):'));
+            if (type && amount) addDoc(collection(db, 'cases', currentCaseId, 'income'), { incomeType: type, source: source || '', monthlyAmount: amount, createdAt: serverTimestamp(), updatedAt: serverTimestamp() }).then(() => renderIncomeExpenseTab(container, caseData));
+        });
+        container.querySelector('#add-expense-btn')?.addEventListener('click', () => {
+            const type = prompt('지출 유형 (주거비/식비/교통비/통신비/교육비/의료비/보험료/기타):');
+            const amount = parseInt(prompt('월 금액 (원):'));
+            if (type && amount) addDoc(collection(db, 'cases', currentCaseId, 'expenses'), { expenseType: type, monthlyAmount: amount, createdAt: serverTimestamp(), updatedAt: serverTimestamp() }).then(() => renderIncomeExpenseTab(container, caseData));
+        });
+        container.querySelectorAll('.del-income').forEach(btn => { btn.addEventListener('click', async () => { await deleteDoc(doc(db, 'cases', currentCaseId, 'income', btn.dataset.id)); renderIncomeExpenseTab(container, caseData); }); });
+        container.querySelectorAll('.del-expense').forEach(btn => { btn.addEventListener('click', async () => { await deleteDoc(doc(db, 'cases', currentCaseId, 'expenses', btn.dataset.id)); renderIncomeExpenseTab(container, caseData); }); });
+    } catch (err) {
+        container.innerHTML = '<p style="color:red">수입/지출 데이터 로드 실패: ' + err.message + '</p>';
+    }
+}
+
+async function renderNotesTab(container, caseData) {
+    container.innerHTML = '<div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i> 로딩 중...</div>';
+    try {
+        const snap = await getDocs(query(collection(db, 'cases', currentCaseId, 'notes'), orderBy('createdAt', 'desc')));
+        const notes = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        let html = `<div class="note-input"><textarea id="note-text" placeholder="메모 입력..."></textarea><button id="add-note-btn" class="btn btn-primary"><i class="fas fa-plus"></i></button></div><div class="notes-list">`;
+        notes.forEach(n => {
+            html += `<div class="note-card${n.isPinned ? ' pinned' : ''}"><div class="note-meta">${formatDate(n.createdAt)} | ${escapeHtml(n.noteType || '일반메모')}<button class="btn btn-danger btn-sm del-note" data-id="${n.id}" style="float:right"><i class="fas fa-trash"></i></button></div><div class="note-content">${escapeHtml(n.content || '')}</div></div>`;
+        });
+        html += '</div>';
+        container.innerHTML = html;
+        container.querySelector('#add-note-btn')?.addEventListener('click', async () => {
+            const text = document.getElementById('note-text').value.trim();
+            if (!text) return;
+            await addDoc(collection(db, 'cases', currentCaseId, 'notes'), { noteType: '일반메모', content: text, authorUid: getAuth().currentUser?.uid || '', createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+            renderNotesTab(container, caseData);
+        });
+        container.querySelectorAll('.del-note').forEach(btn => { btn.addEventListener('click', async () => { await deleteDoc(doc(db, 'cases', currentCaseId, 'notes', btn.dataset.id)); renderNotesTab(container, caseData); }); });
+    } catch (err) {
+        container.innerHTML = '<p style="color:red">메모 로드 실패: ' + err.message + '</p>';
+    }
+}
+
+// ========== 새 사건 생성 ==========
+
+function initNewCase() {
+    document.getElementById('new-case-btn')?.addEventListener('click', () => { document.getElementById('new-case-modal').hidden = false; });
+    document.getElementById('new-case-modal-close')?.addEventListener('click', () => { document.getElementById('new-case-modal').hidden = true; });
+    document.getElementById('nc-cancel')?.addEventListener('click', () => { document.getElementById('new-case-modal').hidden = true; });
+    document.getElementById('nc-save')?.addEventListener('click', async () => {
+        const name = document.getElementById('nc-name').value.trim();
+        const phone = document.getElementById('nc-phone').value.trim();
+        if (!name || !phone) { alert('이름과 연락처는 필수입니다.'); return; }
+        try {
+            await addDoc(collection(db, 'cases'), { clientName: name, clientPhone: phone, clientIdNumber: document.getElementById('nc-ssn').value.trim(), clientAddress: document.getElementById('nc-address').value.trim(), court: document.getElementById('nc-court').value, caseNumber: document.getElementById('nc-case-number').value.trim(), status: '접수', totalDebt: 0, totalAsset: 0, createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+            document.getElementById('new-case-modal').hidden = true;
+            ['nc-name','nc-phone','nc-ssn','nc-address','nc-case-number'].forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+            loadCases();
+        } catch (err) { alert('사건 등록 실패: ' + err.message); }
+    });
+}
+
 document.getElementById('back-to-cases')?.addEventListener('click', () => {
     document.getElementById('case-detail-view').hidden = true;
     document.getElementById('cases-list-view').hidden = false;
-    currentCaseId = null;
-    currentCaseData = null;
     loadCases();
 });
 
-// 탭 전환
-document.querySelectorAll('.case-tab').forEach(tab => {
-    tab.addEventListener('click', () => {
-        document.querySelectorAll('.case-tab').forEach(t => t.classList.remove('active'));
-        tab.classList.add('active');
-        renderCaseTab(tab.dataset.tab);
-    });
-});
-
-// 사건 상태 변경
 document.getElementById('case-status-select')?.addEventListener('change', async (e) => {
     if (!currentCaseId) return;
-    await updateDoc(doc(db, 'cases', currentCaseId), { status: e.target.value, updatedAt: serverTimestamp() });
-    if (currentCaseData) currentCaseData.status = e.target.value;
+    try {
+        await updateDoc(doc(db, 'cases', currentCaseId), { status: e.target.value, updatedAt: serverTimestamp() });
+        const cs = allCases.find(x => x.id === currentCaseId);
+        if (cs) cs.status = e.target.value;
+    } catch (err) { alert('상태 변경 실패: ' + err.message); }
 });
 
-// 새 사건 등록
-document.getElementById('new-case-btn')?.addEventListener('click', () => {
-    document.getElementById('new-case-modal').hidden = false;
-});
-document.getElementById('new-case-modal-close')?.addEventListener('click', () => {
-    document.getElementById('new-case-modal').hidden = true;
-});
-document.getElementById('nc-cancel')?.addEventListener('click', () => {
-    document.getElementById('new-case-modal').hidden = true;
-});
-document.getElementById('nc-save')?.addEventListener('click', async () => {
-    const name = document.getElementById('nc-name').value.trim();
-    if (!name) { alert('이름을 입력하세요.'); return; }
-    await addDoc(collection(db, 'cases'), {
-        clientName: name,
-        clientPhone: document.getElementById('nc-phone').value,
-        clientIdNumber: document.getElementById('nc-ssn').value,
-        clientAddress: document.getElementById('nc-address').value,
-        court: document.getElementById('nc-court').value,
-        caseNumber: document.getElementById('nc-case-number').value,
-        status: '접수',
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp()
-    });
-    document.getElementById('new-case-modal').hidden = true;
-    // 폼 리셋
-    ['nc-name','nc-phone','nc-ssn','nc-address','nc-case-number'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('nc-court').selectedIndex = 0;
-    loadCases();
-});
-
-// 사건 검색/필터
 document.getElementById('case-search')?.addEventListener('input', renderCasesList);
 document.getElementById('case-status-filter')?.addEventListener('change', renderCasesList);
 
+// ================================================================
 // ========== 서류 생성 페이지 ==========
+// ================================================================
 
-function populateDocCaseSelect() {
-    const select = document.getElementById('doc-case-select');
-    if (!select) return;
-    // 첫 번째 옵션 유지
-    while (select.options.length > 1) select.remove(1);
-    allCases.forEach(c => {
-        const opt = document.createElement('option');
-        opt.value = c.id;
-        opt.textContent = `${c.clientName || '이름 없음'} (${c.caseNumber || '번호 미정'})`;
-        select.appendChild(opt);
-    });
+async function loadDocCaseSelect() {
+    try {
+        if (allCases.length === 0) await loadCases();
+        const select = document.getElementById('doc-case-select');
+        if (!select) return;
+        select.innerHTML = '<option value="">사건을 선택하세요</option>';
+        allCases.forEach(c => { select.innerHTML += `<option value="${c.id}">${escapeHtml(c.clientName || '이름없음')} ${c.caseNumber ? '(' + c.caseNumber + ')' : ''}</option>`; });
+    } catch(err) { console.error(err); }
 }
 
 document.getElementById('doc-case-select')?.addEventListener('change', async (e) => {
@@ -1366,120 +1318,70 @@ document.getElementById('doc-case-select')?.addEventListener('change', async (e)
     const summary = document.getElementById('doc-case-summary');
     const checklist = document.getElementById('doc-checklist');
     const actions = document.getElementById('doc-actions');
-
     if (!caseId) {
-        summary.hidden = true;
-        checklist.hidden = true;
-        actions.hidden = true;
+        summary && (summary.hidden = true);
+        checklist && (checklist.hidden = true);
+        actions && (actions.hidden = true);
         return;
     }
-
-    const caseDoc = await getDoc(doc(db, 'cases', caseId));
-    if (!caseDoc.exists()) return;
-    const d = caseDoc.data();
-
-    summary.hidden = false;
-    checklist.hidden = false;
-    actions.hidden = false;
-    summary.innerHTML = `
-        <div style="background:var(--surface-color);padding:1.2rem;border-radius:8px;margin:0 2rem;box-shadow:0 1px 4px var(--shadow-color)">
-            <strong>${escapeHtml(d.clientName || '')}</strong> | ${escapeHtml(d.court || '-')} | 상태: ${d.status || '접수'}
-        </div>
-    `;
+    const caseData = allCases.find(c => c.id === caseId);
+    if (summary && caseData) {
+        summary.innerHTML = `<div style="padding:1rem 2rem;background:var(--surface-color);border-radius:8px;margin:0 2rem"><strong>${escapeHtml(caseData.clientName)}</strong> | ${caseData.court || '-'} | 채무: ${caseData.totalDebt ? (caseData.totalDebt).toLocaleString() + '원' : '-'} | 재산: ${caseData.totalAsset ? (caseData.totalAsset).toLocaleString() + '원' : '-'}</div>`;
+        summary.hidden = false;
+    }
+    checklist && (checklist.hidden = false);
+    actions && (actions.hidden = false);
 });
 
-document.getElementById('generate-selected-btn')?.addEventListener('click', async () => {
-    const caseId = document.getElementById('doc-case-select').value;
-    if (!caseId) { alert('사건을 선택하세요.'); return; }
-    await generateSelectedDocs(caseId);
-});
+// ========== 서류 생성 (DOCX) ==========
 
-document.getElementById('generate-all-zip-btn')?.addEventListener('click', async () => {
-    const caseId = document.getElementById('doc-case-select').value;
-    if (!caseId) { alert('사건을 선택하세요.'); return; }
-    await generateAllDocsZip(caseId);
-});
-
-// 사건 상세에서 서류 생성 버튼
-document.getElementById('generate-docs-btn')?.addEventListener('click', async () => {
-    if (!currentCaseId) return;
-    // 서류 생성 페이지로 이동하고 사건 선택
-    const sidebarItems = document.querySelectorAll('.sidebar-item');
-    const pages = document.querySelectorAll('.page-content');
-    sidebarItems.forEach(i => i.classList.remove('active'));
-    document.querySelector('.sidebar-item[data-page="documents"]').classList.add('active');
-    pages.forEach(p => { p.hidden = p.dataset.page !== 'documents'; });
-    document.getElementById('doc-case-select').value = currentCaseId;
-    document.getElementById('doc-case-select').dispatchEvent(new Event('change'));
-});
+import { generateApplication, generateCreditorList, generateAssetList, generateIncomeExpenseList, generateRepaymentPlan, generateStatement, downloadDocx, downloadAllAsZip } from './doc-generators.js';
 
 async function getCaseDataForDoc(caseId) {
-    const caseDoc = await getDoc(doc(db, 'cases', caseId));
-    const caseData = caseDoc.data();
-
+    const caseData = allCases.find(c => c.id === caseId) || {};
     const [debtsSnap, assetsSnap, incomeSnap, expensesSnap] = await Promise.all([
         getDocs(collection(db, 'cases', caseId, 'debts')),
         getDocs(collection(db, 'cases', caseId, 'assets')),
         getDocs(collection(db, 'cases', caseId, 'income')),
         getDocs(collection(db, 'cases', caseId, 'expenses'))
     ]);
-
     const debts = debtsSnap.docs.map(d => d.data());
     const assets = assetsSnap.docs.map(d => d.data());
     const incomes = incomeSnap.docs.map(d => d.data());
     const expenses = expensesSnap.docs.map(d => d.data());
-
     caseData.totalDebt = debts.reduce((s, d) => s + (d.totalAmount || 0), 0);
     caseData.totalAsset = assets.reduce((s, a) => s + (a.appraisedValue || 0) - (a.lienAmount || 0), 0);
     caseData.monthlyIncome = incomes.reduce((s, i) => s + (i.monthlyAmount || 0), 0);
     caseData.monthlyExpense = expenses.reduce((s, e) => s + (e.monthlyAmount || 0), 0);
-
     return { caseData, debts, assets, incomes, expenses };
 }
 
-async function generateSelectedDocs(caseId) {
+document.getElementById('generate-selected-btn')?.addEventListener('click', async () => {
+    const caseId = document.getElementById('doc-case-select').value;
+    if (!caseId) { alert('사건을 선택하세요.'); return; }
     const checked = document.querySelectorAll('#doc-checklist input[type="checkbox"]:checked');
     if (checked.length === 0) { alert('생성할 서류를 선택하세요.'); return; }
-
     const { caseData, debts, assets, incomes, expenses } = await getCaseDataForDoc(caseId);
     const name = caseData.clientName || '의뢰인';
-
     for (const cb of checked) {
         let docObj, filename;
         switch (cb.value) {
-            case 'application':
-                docObj = generateApplication(caseData);
-                filename = `${name}_개인회생신청서.docx`;
-                break;
-            case 'creditors':
-                docObj = generateCreditorList(caseData, debts);
-                filename = `${name}_채권자목록.docx`;
-                break;
-            case 'assets':
-                docObj = generateAssetList(caseData, assets);
-                filename = `${name}_재산목록.docx`;
-                break;
-            case 'income-expense':
-                docObj = generateIncomeExpenseList(caseData, incomes, expenses);
-                filename = `${name}_수입지출목록.docx`;
-                break;
-            case 'repayment':
-                docObj = generateRepaymentPlan(caseData, debts, incomes, expenses);
-                filename = `${name}_변제계획안.docx`;
-                break;
-            case 'statement':
-                docObj = generateStatement(caseData);
-                filename = `${name}_진술서.docx`;
-                break;
+            case 'application': docObj = generateApplication(caseData); filename = `${name}_개인회생신청서.docx`; break;
+            case 'creditors': docObj = generateCreditorList(caseData, debts); filename = `${name}_채권자목록.docx`; break;
+            case 'assets': docObj = generateAssetList(caseData, assets); filename = `${name}_재산목록.docx`; break;
+            case 'income-expense': docObj = generateIncomeExpenseList(caseData, incomes, expenses); filename = `${name}_수입지출목록.docx`; break;
+            case 'repayment': docObj = generateRepaymentPlan(caseData, debts, incomes, expenses); filename = `${name}_변제계획안.docx`; break;
+            case 'statement': docObj = generateStatement(caseData); filename = `${name}_진술서.docx`; break;
         }
         if (docObj) await downloadDocx(docObj, filename);
     }
-}
+});
 
-async function generateAllDocsZip(caseId) {
+document.getElementById('generate-all-zip-btn')?.addEventListener('click', async () => {
+    const caseId = document.getElementById('doc-case-select').value;
+    if (!caseId) { alert('사건을 선택하세요.'); return; }
     const { caseData, debts, assets, incomes, expenses } = await getCaseDataForDoc(caseId);
     const name = caseData.clientName || '의뢰인';
-
     const documents = [
         { doc: generateApplication(caseData), filename: `${name}_개인회생신청서.docx` },
         { doc: generateCreditorList(caseData, debts), filename: `${name}_채권자목록.docx` },
@@ -1488,15 +1390,21 @@ async function generateAllDocsZip(caseId) {
         { doc: generateRepaymentPlan(caseData, debts, incomes, expenses), filename: `${name}_변제계획안.docx` },
         { doc: generateStatement(caseData), filename: `${name}_진술서.docx` },
     ];
-
     await downloadAllAsZip(documents, `${name}_개인회생서류_전체.zip`);
-}
+});
 
-// 새 사건 모달 클릭 바깥 닫기
-document.getElementById('new-case-modal')?.addEventListener('click', (e) => {
-    if (e.target === e.currentTarget) e.target.hidden = true;
+document.getElementById('generate-docs-btn')?.addEventListener('click', () => {
+    if (!currentCaseId) return;
+    const sidebarItems = document.querySelectorAll('.sidebar-item');
+    const pages = document.querySelectorAll('.page-content');
+    sidebarItems.forEach(i => i.classList.remove('active'));
+    document.querySelector('.sidebar-item[data-page="documents"]').classList.add('active');
+    pages.forEach(p => { p.hidden = p.dataset.page !== 'documents'; });
+    loadDocCaseSelect().then(() => {
+        document.getElementById('doc-case-select').value = currentCaseId;
+        document.getElementById('doc-case-select').dispatchEvent(new Event('change'));
+    });
 });
 
 // ========== 초기화 ==========
 // Firebase Auth의 onAuthStateChanged가 인증 상태를 자동으로 관리합니다.
-// loadCases는 loadData와 함께 호출

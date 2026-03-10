@@ -409,46 +409,8 @@
     </div>
 
     <script>
-        // 사이드바 페이지 전환
+        // 로그인/로그아웃 처리 (사이드바 네비게이션은 admin.js initNavigation()에서 처리)
         document.addEventListener('DOMContentLoaded', () => {
-            const sidebarItems = document.querySelectorAll('.sidebar-item');
-            const pages = document.querySelectorAll('.page-content');
-
-            sidebarItems.forEach(item => {
-                item.addEventListener('click', () => {
-                    const targetPage = item.dataset.page;
-
-                    // 사이드바 active 상태 전환
-                    sidebarItems.forEach(i => i.classList.remove('active'));
-                    item.classList.add('active');
-
-                    // 페이지 전환
-                    pages.forEach(p => {
-                        p.hidden = p.dataset.page !== targetPage;
-                    });
-
-                    // 모바일: 사이드바 닫기
-                    document.getElementById('sidebar').classList.remove('open');
-                    document.getElementById('sidebar-overlay').classList.remove('open');
-                });
-            });
-
-            // 모바일 사이드바 토글
-            const sidebar = document.getElementById('sidebar');
-            const sidebarOverlay = document.getElementById('sidebar-overlay');
-            const sidebarToggle = document.getElementById('sidebar-toggle');
-
-            sidebarToggle.addEventListener('click', () => {
-                sidebar.classList.toggle('open');
-                sidebarOverlay.classList.toggle('open');
-            });
-
-            sidebarOverlay.addEventListener('click', () => {
-                sidebar.classList.remove('open');
-                sidebarOverlay.classList.remove('open');
-            });
-
-            // 로그인 처리
             document.getElementById('login-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const pw = document.getElementById('login-password').value;
@@ -459,7 +421,6 @@
                     const auth = getAuth();
                     await signInWithEmailAndPassword(auth, 'jeonwoochul0515@gmail.com', pw);
                     errorEl.hidden = true;
-                    // onAuthStateChanged in admin.js handles showApp + loadData
                 } catch (err) {
                     console.error('로그인 실패:', err);
                     errorEl.hidden = false;

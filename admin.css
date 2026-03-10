@@ -1093,7 +1093,7 @@ body { font-family: var(--font-family); background-color: var(--background-color
         transform: translateX(0);
     }
     .sidebar-toggle { display: block; }
-    .sidebar-overlay.open { display: block; }
+    .sidebar-overlay.active { display: block; }
     .main-content { margin-left: 0; }
     .page-header { padding: 1rem; }
     .case-tabs { padding: 0 1rem; }
