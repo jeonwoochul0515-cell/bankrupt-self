@@ -40,9 +40,7 @@
                     <input type="password" id="login-password" placeholder="비밀번호를 입력하세요" autocomplete="off" required>
                 </div>
                 <p id="login-error" class="login-error" hidden>비밀번호가 올바르지 않습니다.</p>
-                <p id="login-success" class="login-success" hidden></p>
                 <button type="submit" class="login-btn">로그인</button>
-                <button type="button" id="reset-password-btn" class="login-reset-btn">비밀번호를 잊으셨나요?</button>
             </form>
         </div>
     </div>
@@ -413,46 +411,32 @@
 
     <script>
         // 로그인/로그아웃 처리 (사이드바 네비게이션은 admin.js initNavigation()에서 처리)
+        const ADMIN_PASSWORD_HASH = '0b4dfe8635672f7029a4a9e2f4bc60cbbdaf785b3a18350b2a300aa9cb4383a7';
+
+        async function hashPassword(password) {
+            const data = new TextEncoder().encode(password);
+            const hash = await crypto.subtle.digest('SHA-256', data);
+            return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('login-form').addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const pw = document.getElementById('login-password').value;
                 const errorEl = document.getElementById('login-error');
-                document.getElementById('login-success').hidden = true;
 
-                try {
-                    const { getAuth, signInWithEmailAndPassword } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
-                    const auth = getAuth();
-                    await signInWithEmailAndPassword(auth, 'jeonwoochul0515@gmail.com', pw);
+                if (await hashPassword(pw) === ADMIN_PASSWORD_HASH) {
+                    sessionStorage.setItem('admin_auth', 'true');
                     errorEl.hidden = true;
-                } catch (err) {
-                    console.error('로그인 실패:', err);
+                    window.__showAdminApp ? window.__showAdminApp() : location.reload();
+                } else {
                     errorEl.textContent = '비밀번호가 올바르지 않습니다.';
                     errorEl.hidden = false;
                 }
             });
 
-            document.getElementById('reset-password-btn').addEventListener('click', async () => {
-                const errorEl = document.getElementById('login-error');
-                const successEl = document.getElementById('login-success');
-                errorEl.hidden = true;
-                successEl.hidden = true;
-
-                try {
-                    const { getAuth, sendPasswordResetEmail } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
-                    await sendPasswordResetEmail(getAuth(), 'jeonwoochul0515@gmail.com');
-                    successEl.textContent = '비밀번호 재설정 메일을 jeonwoochul0515@gmail.com 으로 보냈습니다. 메일함을 확인하세요.';
-                    successEl.hidden = false;
-                } catch (err) {
-                    console.error('재설정 메일 발송 실패:', err);
-                    errorEl.textContent = '재설정 메일 발송에 실패했습니다. 잠시 후 다시 시도하세요.';
-                    errorEl.hidden = false;
-                }
-            });
-
-            document.getElementById('logout-btn').addEventListener('click', async () => {
-                const { getAuth, signOut } = await import("https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js");
-                await signOut(getAuth());
+            document.getElementById('logout-btn').addEventListener('click', () => {
+                sessionStorage.removeItem('admin_auth');
                 location.reload();
             });
         });

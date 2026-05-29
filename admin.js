@@ -1,6 +1,5 @@
 import { db } from './firebase-config.js';
 import { collection, getDocs, orderBy, query, doc, deleteDoc, updateDoc, where, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 // ========== 탭/페이지 전환 ==========
 
@@ -123,17 +122,19 @@ let currentCaseId = null;
 
 window.__loadData = loadData;
 
-// Firebase Auth 상태 감지
-const auth = getAuth();
-onAuthStateChanged(auth, (user) => {
-    if (user) {
-        document.getElementById('login-overlay').hidden = true;
-        document.getElementById('admin-content').hidden = false;
-        initNavigation();
-        initNewCase();
-        loadData();
-    }
-});
+// 세션 기반 인증 (해시 로그인). 로그인 성공 시 admin.html 인라인 스크립트가 __showAdminApp 호출.
+function showAdminApp() {
+    document.getElementById('login-overlay').hidden = true;
+    document.getElementById('admin-content').hidden = false;
+    initNavigation();
+    initNewCase();
+    loadData();
+}
+window.__showAdminApp = showAdminApp;
+
+if (sessionStorage.getItem('admin_auth') === 'true') {
+    showAdminApp();
+}
 
 // ========== 데이터 로드 ==========
 
@@ -793,9 +794,6 @@ window.cleanupOldData = cleanupOldData;
 
 async function loadCases() {
     try {
-        const authInstance = getAuth();
-        if (!authInstance.currentUser) return;
-
         const snap = await getDocs(query(collection(db, 'cases'), orderBy('createdAt', 'desc')));
         allCases = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         renderCaseStatusSummary();
@@ -1253,7 +1251,7 @@ async function renderNotesTab(container, caseData) {
         container.querySelector('#add-note-btn')?.addEventListener('click', async () => {
             const text = document.getElementById('note-text').value.trim();
             if (!text) return;
-            await addDoc(collection(db, 'cases', currentCaseId, 'notes'), { noteType: '일반메모', content: text, authorUid: getAuth().currentUser?.uid || '', createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
+            await addDoc(collection(db, 'cases', currentCaseId, 'notes'), { noteType: '일반메모', content: text, authorUid: '', createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
             renderNotesTab(container, caseData);
         });
         container.querySelectorAll('.del-note').forEach(btn => { btn.addEventListener('click', async () => { await deleteDoc(doc(db, 'cases', currentCaseId, 'notes', btn.dataset.id)); renderNotesTab(container, caseData); }); });
@@ -1410,4 +1408,4 @@ document.getElementById('generate-docs-btn')?.addEventListener('click', () => {
 });
 
 // ========== 초기화 ==========
-// Firebase Auth의 onAuthStateChanged가 인증 상태를 자동으로 관리합니다.
+// 인증은 sessionStorage('admin_auth') 기반 해시 로그인으로 관리합니다 (showAdminApp 참고).

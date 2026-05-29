@@ -65,11 +65,6 @@ body { font-family: var(--font-family); background-color: var(--background-color
     font-size: 0.875rem;
     margin-bottom: 0.5rem;
 }
-.login-success {
-    color: var(--success-color, #2e7d32);
-    font-size: 0.875rem;
-    margin-bottom: 0.5rem;
-}
 .login-btn {
     width: 100%; padding: 0.9rem;
     background: var(--primary-color);
@@ -81,18 +76,6 @@ body { font-family: var(--font-family); background-color: var(--background-color
     transition: background 0.3s;
 }
 .login-btn:hover { background: #15305a; }
-.login-reset-btn {
-    width: 100%;
-    margin-top: 0.75rem;
-    background: none;
-    border: none;
-    color: var(--primary-color);
-    font-size: 0.875rem;
-    font-family: var(--font-family);
-    cursor: pointer;
-    text-decoration: underline;
-}
-.login-reset-btn:hover { color: #15305a; }
 
 /* ========== 헤더 ========== */
 .admin-header {
