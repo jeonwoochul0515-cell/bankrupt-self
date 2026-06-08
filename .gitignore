@@ -1,4 +1,6 @@
 node_modules/
 firebase-debug.log
 image copy.png
+image copy*.png
 android/.gradle/
+.vercel
