@@ -34,20 +34,25 @@ function getDeviceInfo() {
 // 4. 쿠키 동의 확인 후에만 추적 (개인정보보호법 준수)
 const hasConsent = localStorage.getItem('cookie_consent') === 'accepted';
 
-// 5. 페이지뷰 기록 (세션당 1회, 동의 시에만)
-if (hasConsent && !sessionStorage.getItem('tracked')) {
+// 5. 페이지뷰 기록 (세션당 1회)
+// 방문수 자체는 개인 식별정보 없이 항상 집계하고,
+// referrer/UTM/디바이스/UA 등 식별 가능 정보는 동의 시에만 수집한다.
+if (!sessionStorage.getItem('tracked')) {
     sessionStorage.setItem('tracked', '1');
-    const utm = getUTMParams();
-    addDoc(collection(db, 'analytics'), {
+    const base = {
         type: 'pageview',
         page: location.pathname,
-        referrer: document.referrer || '',
         sessionId: getSessionId(),
-        ...utm,
-        ...getDeviceInfo(),
-        userAgent: navigator.userAgent,
+        consent: hasConsent,
         createdAt: serverTimestamp()
-    }).catch(() => {});
+    };
+    const identifiable = hasConsent ? {
+        referrer: document.referrer || '',
+        ...getUTMParams(),
+        ...getDeviceInfo(),
+        userAgent: navigator.userAgent
+    } : {};
+    addDoc(collection(db, 'analytics'), { ...base, ...identifiable }).catch(() => {});
 }
 
 // 6. 범용 이벤트 추적 함수 (전역에 노출)
