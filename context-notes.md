@@ -24,6 +24,14 @@
 - `SOLAPI_SENDER` — 솔라피에 사전 등록·인증된 발신번호 ('-' 없이)
 - `ADMIN_PHONE` — 알림 받을 관리자 휴대폰 번호 ('-' 없이)
 
+## 죽은 코드 정리 완료 (2026-06-08)
+- `tracker.js`: 존재하지 않는 `/api/track`으로 보내던 sendBeacon 제거 (form_abandon은 Firebase로만 추적)
+- `google-apps-script.js` 삭제: 클라이언트에서 호출되지 않던 구버전 구글시트 연동 잔재
+
+## 아직 남은 미완 (당장 문제 없음, 필요 시 처리)
+- `firestore.indexes.json`의 복합 인덱스 4개는 현재 admin이 클라이언트 측 `.filter()`로 처리하여 미사용
+- `.firebaserc`가 비어 있어 `firebase deploy`로 룰/인덱스 자동 배포 불가 (콘솔 수동 의존)
+
 ## 발견했지만 범위 밖 (수정 보류, 사용자 확인 필요)
 - `api/og.js` 109행: OG 이미지 하단 도메인이 옛 주소 `bankrupt-self.vercel.app`로 하드코딩됨 → 현재는 `busan-hoiseng.pro`가 맞음.
 - `index.html` og:image는 unsplash 외부 이미지 사용, manifest 로고는 `/api/og` 사용 → 출처 불일치.
