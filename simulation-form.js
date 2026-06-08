@@ -820,6 +820,19 @@ class SimulationForm extends HTMLElement {
             await addDoc(collection(db, "consultations"), consultationData);
             this._submitted = true;
             localStorage.setItem('consultation_submitted', 'true');
+
+            // 관리자에게 SMS 알림 (실패해도 상담 접수에는 영향 없음)
+            const monthly = this.formData.result_monthly_repayment;
+            fetch('/api/notify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name,
+                    phone,
+                    jurisdiction: this.formData.result_jurisdiction || '-',
+                    monthlyRepayment: typeof monthly === 'number' ? monthly.toLocaleString() + '원' : '-'
+                })
+            }).catch(() => {});
             if (window.__trackEvent) {
                 window.__trackEvent('consultation_submit', { source: 'simulation_result' });
             }
