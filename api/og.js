@@ -106,7 +106,7 @@ export default function handler() {
                                     type: 'span',
                                     props: {
                                         style: { color: '#64748b', fontSize: '20px' },
-                                        children: 'bankrupt-self.vercel.app',
+                                        children: 'busan-hoiseng.pro',
                                     },
                                 },
                             ],

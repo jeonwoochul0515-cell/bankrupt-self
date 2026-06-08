@@ -33,5 +33,5 @@
 - `.firebaserc`가 비어 있어 `firebase deploy`로 룰/인덱스 자동 배포 불가 (콘솔 수동 의존)
 
 ## 발견했지만 범위 밖 (수정 보류, 사용자 확인 필요)
-- `api/og.js` 109행: OG 이미지 하단 도메인이 옛 주소 `bankrupt-self.vercel.app`로 하드코딩됨 → 현재는 `busan-hoiseng.pro`가 맞음.
+- ~~`api/og.js` OG 이미지 하단 도메인 옛 주소~~ → 2026-06-08 `busan-hoiseng.pro`로 수정 완료.
 - `index.html` og:image는 unsplash 외부 이미지 사용, manifest 로고는 `/api/og` 사용 → 출처 불일치.
