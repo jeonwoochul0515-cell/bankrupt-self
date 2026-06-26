@@ -348,7 +348,7 @@ class SimulationForm extends HTMLElement {
             }
         });
 
-        this.updateFormView();
+        this.updateFormView(false); // 최초 마운트 시 페이지가 폼 위치로 스크롤되지 않도록
         this.populateFormFromData();
 
         // Zeigarnik effect: warn on page close during form
@@ -370,7 +370,7 @@ class SimulationForm extends HTMLElement {
         modal.addEventListener('click', (e) => { if (e.target === modal) { modal.style.display = 'none'; } });
     }
 
-    updateFormView() {
+    updateFormView(shouldScroll = true) {
         // 단계별 체류 시간 측정
         if (this._stepStartTime && this._prevStep !== undefined) {
             const timeSpent = Date.now() - this._stepStartTime;
@@ -420,9 +420,11 @@ class SimulationForm extends HTMLElement {
             });
         }
 
-        // 스텝 전환 시 폼 상단으로 스크롤
-        this.shadowRoot.querySelector('.simulation-form-wrapper')
-            ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        // 스텝 전환 시에만 폼 상단으로 스크롤 (최초 마운트 제외)
+        if (shouldScroll) {
+            this.shadowRoot.querySelector('.simulation-form-wrapper')
+                ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
     }
 
     updateShorteningCheck() {
@@ -690,7 +692,7 @@ class SimulationForm extends HTMLElement {
                 <div class="immunity-section">
                     <div class="immunity-item">
                         <p class="immunity-q">Q. 상담 비용이 부담되지 않을까?</p>
-                        <p class="immunity-a">자가진단도, 전문가 상담도 완전 무료입니다. 상담 완료 시 제휴 법률사무소 수임료 20만원 할인 쿠폰이 제공됩니다.</p>
+                        <p class="immunity-a">자가진단도, 전문가 상담도 완전 무료입니다. 진단 결과를 법률 전문가가 직접 검토하고 방향을 안내해 드립니다.</p>
                     </div>
                     <div class="immunity-item">
                         <p class="immunity-q">Q. 개인정보가 안전할까?</p>
