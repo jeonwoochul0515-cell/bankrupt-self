@@ -20,4 +20,17 @@ Allow: /
 User-agent: Bingbot
 Allow: /
 
+# AI 검색/응답 크롤러 허용 (생성형 AI 인용 노출)
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
 Sitemap: https://busan-hoiseng.pro/sitemap.xml
