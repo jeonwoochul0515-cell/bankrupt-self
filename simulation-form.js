@@ -126,6 +126,14 @@ class SimulationForm extends HTMLElement {
             .commitment-section h4 { margin: 0 0 0.75rem; font-size: 1.1rem; color: #0f5b54; font-weight: 700; }
             .commitment-section p { font-size: 0.9rem; color: #495057; margin: 0.5rem 0; line-height: 1.6; }
             .commitment-section .highlight-text { font-weight: 700; color: #0f5b54; font-size: 1rem; }
+            /* 개인화 안심 가이드 */
+            .guide-section { margin-top: 1.5rem; padding: 1.5rem 1.6rem; background: #eef4f3; border: 1px solid #cfe0dc; border-radius: 14px; }
+            .guide-section h4 { margin: 0 0 1.1rem; font-size: 1.1rem; color: #17191d; font-weight: 700; text-align: left; }
+            .guide-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.85rem; }
+            .guide-list li { display: flex; align-items: flex-start; gap: 0.65rem; font-size: 0.92rem; color: #2a2c30; line-height: 1.6; text-align: left; }
+            .guide-check { color: #0f5b54; flex-shrink: 0; margin-top: 1px; display: flex; }
+            .guide-check svg { width: 19px; height: 19px; }
+            .guide-foot { margin: 1.2rem 0 0; font-size: 0.9rem; color: #0f5b54; font-weight: 600; text-align: center; }
             /* Consultation success */
             .consultation-complete { padding: 2rem; text-align: center; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; }
             .consultation-complete h4 { margin: 0 0 0.5rem; font-size: 1.2rem; color: #166534; font-weight: 700; }
@@ -670,6 +678,34 @@ class SimulationForm extends HTMLElement {
         if (addHousingCost > 0) livingCostBreakdown += `\n+ 추가 주거비: ${addHousingCost.toLocaleString()}원`;
         livingCostBreakdown += `\n= 총 인정 생계비: ${Math.round(finalLivingCost).toLocaleString()}원`;
 
+        // ── 개인화 안심 가이드: 입력 신호에 따라 맞춤 포인트 동적 생성 (규제 준수: 단정·승률 표현 배제) ──
+        const guidePoints = [];
+        if (duration === 24 && shortReasons.length) {
+            guidePoints.push(`<strong>${shortReasons.join(', ')}</strong>에 해당하여 변제기간이 <strong>24개월로 단축</strong>될 수 있습니다. 일반(36개월)보다 1년 빨리 마칠 수 있습니다.`);
+        }
+        if (reliefRate >= 30) {
+            guidePoints.push(`예상 탕감률이 약 <strong>${reliefRate.toFixed(0)}%</strong>로, 원금의 상당 부분을 면책받을 가능성이 있습니다.`);
+        }
+        if (isBusan) {
+            guidePoints.push(`<strong>부산회생법원</strong>은 배우자 재산 미반영·투자손실 제외 등 채무자에게 유리한 실무준칙을 운영합니다.`);
+        } else if (isSpecializedCourt) {
+            guidePoints.push(`회생전문법원 관할로, 일반 지방법원보다 단축 특례 등이 적극 적용되는 편입니다.`);
+        }
+        if (gamblingLoss > 0) {
+            guidePoints.push(`도박·사행성 채무가 포함되어 변제기간·단축에 영향이 있을 수 있습니다. 이 부분은 전문가 검토가 특히 중요합니다.`);
+        }
+        guidePoints.push(`지금 보신 수치는 <strong>예상값</strong>입니다. 전문가가 실제 서류를 기준으로 정확히 검토해 드립니다 — <strong>비용은 없습니다.</strong>`);
+
+        const guideCheck = `<span class="guide-check"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg></span>`;
+        const guideHTML = `
+            <div class="guide-section">
+                <h4>회원님 상황에서 가능한 길</h4>
+                <ul class="guide-list">
+                    ${guidePoints.map(p => `<li>${guideCheck}<span>${p}</span></li>`).join('')}
+                </ul>
+                <p class="guide-foot">매년 10만 명 이상이 개인회생으로 새 출발을 합니다. 늦지 않았습니다.</p>
+            </div>`;
+
         const resultsHTML = `
             <h3 style="text-align:center; margin-bottom: 2rem;">진단 결과</h3>
             <div style="background:#FFF8E1; border:1px solid #FFE082; border-radius:8px; padding:12px 16px; margin-bottom:20px; font-size:0.82rem; color:#5D4037; line-height:1.6;">
@@ -685,6 +721,7 @@ class SimulationForm extends HTMLElement {
                 <div class="result-item full-width"><h4>인정 생계비 내역</h4><p style="font-size:1rem; text-align:left;">${livingCostBreakdown}</p></div>
                 <div class="result-item full-width"><h4>청산가치 (재산가치)</h4><p style="font-size:1.2rem;">${Math.round(liquidationValue).toLocaleString()}원${!isSpecializedCourt && spouseAssets > 0 ? ' (배우자 재산 50% 포함)' : ''}</p></div>
             </div>
+            ${guideHTML}
         `;
         this.displayResult("회생 요건 충족 가능성 있음 (참고용)", resultsHTML, true);
     }
