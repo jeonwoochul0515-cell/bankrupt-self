@@ -53,6 +53,13 @@
 - 원인: `simulation-form.js` `connectedCallback()` → 초기 `updateFormView()` 호출 끝에 `scrollIntoView`가 있어 최초 마운트 때도 폼으로 스크롤.
 - 수정: `updateFormView(shouldScroll = true)`로 변경, 스텝 전환 호출은 그대로 스크롤·**최초 마운트(line 351)만 `false`**로 호출해 스크롤 억제.
 
+## IndexNow + sitemap 확장 (2026-06-27)
+- **IndexNow 키**: `8d7ac7e6a1809880beac894ad5d1888e` (루트 `/8d7ac7e6a1809880beac894ad5d1888e.txt`, text/plain). 네이버·빙 즉시 색인 통지용.
+- 새 글/변경 시 통지 방법(POST): `host/key/keyLocation/urlList` JSON을 `https://searchadvisor.naver.com/indexnow` 및 `https://www.bing.com/indexnow`로. 200/202=정상.
+- sitemap.xml에 `/privacy`, `/terms` 추가(총 4 URL), lastmod 2026-06-27.
+- ⚠️ **아직 안 된 운영 작업(사용자 직접)**: 구글 GSC·네이버 Search Advisor 사이트 등록·사이트맵 제출·수집요청. 인증 메타는 이미 head에 있음(구글 1, 네이버 2). 등록 후 `site:busan-hoiseng.pro`로 색인 확인.
+- 노출 핵심(미착수): 네이버 스마트플레이스(법률사무소 청송) 등록, 구글 비즈니스 프로필, 블로그 OSMU.
+
 ## 죽은 코드 정리 완료 (2026-06-08)
 - `tracker.js`: 존재하지 않는 `/api/track`으로 보내던 sendBeacon 제거 (form_abandon은 Firebase로만 추적)
 - `google-apps-script.js` 삭제: 클라이언트에서 호출되지 않던 구버전 구글시트 연동 잔재
