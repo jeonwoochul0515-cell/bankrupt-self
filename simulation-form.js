@@ -793,7 +793,7 @@ class SimulationForm extends HTMLElement {
                 </div>
                 <div class="result-actions">
                     <button id="submit-consultation-btn" class="action-btn">무료 상담 신청하기</button>
-                    <a href="https://pf.kakao.com/_zkzIX/chat" target="_blank" rel="noopener" class="action-btn" style="background:#FEE500; color:#191600; display:flex; align-items:center; justify-content:center; gap:8px;">
+                    <a href="https://pf.kakao.com/_zkzIX/chat" target="_blank" rel="noopener" onclick="window.__trackEvent && window.__trackEvent('kakao_consult_click', {location:'result'})" class="action-btn" style="background:#FEE500; color:#191600; display:flex; align-items:center; justify-content:center; gap:8px;">
                         <svg viewBox="0 0 24 24" fill="currentColor" style="width:20px;height:20px;"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.9 5.3 4.7 6.7-.2.7-.7 2.6-.8 3-.1.5.2.5.4.4.3-.2 2.6-1.8 3.6-2.5.7.1 1.4.2 2.1.2 5.5 0 10-3.6 10-8S17.5 3 12 3z"/></svg>
                         전화 대신 카카오톡으로 상담
                     </a>

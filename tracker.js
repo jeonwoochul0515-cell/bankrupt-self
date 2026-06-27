@@ -122,6 +122,14 @@ document.addEventListener('click', (e) => {
                       cta.closest('footer') ? 'footer' : 'body'
         });
     }
+    // 카카오톡 상담 클릭 추적 (전환 경로)
+    const kakao = e.target.closest('a[href*="pf.kakao.com"]');
+    if (kakao && window.__trackEvent) {
+        window.__trackEvent('kakao_consult_click', {
+            location: kakao.closest('header') ? 'header' :
+                      kakao.closest('footer') ? 'footer' : 'hero'
+        });
+    }
 }, { passive: true });
 
 // 11. 유효성 검사 실패 추적 함수 (전역 노출 - simulation-form.js에서 호출)
