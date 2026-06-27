@@ -756,12 +756,19 @@ class SimulationForm extends HTMLElement {
                 </div>
                 <div style="background:#f8f9fa; border-radius:10px; padding:1rem; text-align:center;">
                     <div style="margin-bottom:0.4rem; color:#0f5b54; display:flex; justify-content:center;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg></div>
-                    <p style="font-size:0.8rem; color:#555; margin:0;">전문 변호사 직접 상담</p>
+                    <p style="font-size:0.8rem; color:#555; margin:0;">김창희 변호사 직접 상담</p>
                 </div>
             </div>
             <div class="consultation-form" id="consultation-form-section">
                 <h4>전문가 무료 상담 신청 (선택)</h4>
                 <p class="form-desc">상담을 원하시면 아래 정보를 입력해주세요. 입력하지 않아도 진단 결과는 유지됩니다.</p>
+                <div style="display:flex; align-items:center; gap:0.8rem; padding:0.9rem 1rem; background:#fff; border:1px solid #cfe0dc; border-radius:10px; margin-bottom:1.25rem; text-align:left;">
+                    <span style="display:flex; flex-shrink:0; color:#0f5b54;"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg></span>
+                    <div>
+                        <p style="font-weight:700; color:#17191d; font-size:0.92rem; margin:0;">담당 김창희 변호사 <span style="font-weight:500; color:#0f5b54;">· 법률사무소 청송 대표</span></p>
+                        <p style="font-size:0.78rem; color:#666; margin:3px 0 0; line-height:1.4;">부산지방변호사회 재무이사 · 동아대 법전원 겸임교수 · 회생·파산 전문</p>
+                    </div>
+                </div>
                 <div style="position:absolute;left:-9999px;"><input type="text" id="website_url" tabindex="-1" autocomplete="off"></div>
                 <p class="question-title" style="font-size:1rem; margin-top:0;">이름</p>
                 <div class="input-group"><input type="text" id="consult_name" placeholder="이름을 입력해주세요"></div>
@@ -786,6 +793,10 @@ class SimulationForm extends HTMLElement {
                 </div>
                 <div class="result-actions">
                     <button id="submit-consultation-btn" class="action-btn">무료 상담 신청하기</button>
+                    <a href="https://pf.kakao.com/_zkzIX/chat" target="_blank" rel="noopener" class="action-btn" style="background:#FEE500; color:#191600; display:flex; align-items:center; justify-content:center; gap:8px;">
+                        <svg viewBox="0 0 24 24" fill="currentColor" style="width:20px;height:20px;"><path d="M12 3C6.5 3 2 6.6 2 11c0 2.8 1.9 5.3 4.7 6.7-.2.7-.7 2.6-.8 3-.1.5.2.5.4.4.3-.2 2.6-1.8 3.6-2.5.7.1 1.4.2 2.1.2 5.5 0 10-3.6 10-8S17.5 3 12 3z"/></svg>
+                        전화 대신 카카오톡으로 상담
+                    </a>
                 </div>
             </div>
             <div class="delete-section">
