@@ -53,7 +53,7 @@ class SimulationForm extends HTMLElement {
             :host { display: block; width: 100%; max-width: 800px; margin: 0 auto; font-family: 'Pretendard', sans-serif; }
             .simulation-form-wrapper { background-color: #fff; border-radius: 16px; padding: 2.5rem; box-shadow: 0 10px 40px rgba(0,0,0,0.08); position: relative; }
             #progress-bar-container { width: 100%; background-color: #e9ecef; border-radius: 10px; margin-bottom: 0.75rem; height: 14px; overflow: hidden; box-shadow: inset 0 1px 3px rgba(0,0,0,0.1); }
-            #progress-bar { width: 0; height: 100%; background: linear-gradient(90deg, #1A3A6D, #137fec); transition: width 0.4s ease-in-out; border-radius: 10px; }
+            #progress-bar { width: 0; height: 100%; background: linear-gradient(90deg, #0f5b54, #0f5b54); transition: width 0.4s ease-in-out; border-radius: 10px; }
             .form-step { display: none; animation: fadeIn 0.5s; }
             .form-step.active { display: block; }
             @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -61,27 +61,26 @@ class SimulationForm extends HTMLElement {
             .question-desc { font-size: 0.9rem; color: #6c757d; margin: -0.5rem 0 1rem 0; }
             .option-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
             .option-btn { padding: 1rem; border: 2px solid #dee2e6; border-radius: 8px; font-size: 1rem; font-weight: 500; cursor: pointer; transition: all 0.2s ease; background-color: #fff; text-align: center; }
-            .option-btn.selected { background-color: #e8f1ff; border-color: #1A3A6D; font-weight: 600; color: #1A3A6D; }
+            .option-btn.selected { background-color: #dfeae7; border-color: #0f5b54; font-weight: 600; color: #0f5b54; }
             .navigation-btns { margin-top: 2rem; display: flex; justify-content: space-between; align-items: center; }
             .nav-btn { padding: 1rem 2rem; min-height: 48px; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: all 0.3s; }
-            #next-btn { background-color: #1A3A6D; color: white; box-shadow: 0 4px 15px rgba(26, 58, 109, 0.2); }
+            #next-btn { background-color: #0f5b54; color: white; box-shadow: 0 4px 15px rgba(15, 91, 84, 0.2); }
             #prev-btn { background-color: #f1f3f5; color: #495057; }
             .input-group { display: flex; flex-wrap: nowrap; align-items: center; border: 2px solid #dee2e6; border-radius: 8px; padding-right: 1rem; transition: border-color 0.3s; margin-bottom: 1rem; }
-            .input-group:focus-within { border-color: #1A3A6D; }
+            .input-group:focus-within { border-color: #0f5b54; }
             input[type="number"], input[type="text"] { flex: 1; min-width: 0; padding: 1rem; border: none; border-radius: 8px; font-size: 1.1rem; outline: none; }
             .input-group span { color: #868e96; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
+            .unit-preview { font-size: 0.85rem; color: #0f5b54; font-weight: 600; margin: -0.6rem 0 1rem; padding-left: 0.25rem; }
             /* Trust signals */
             .trust-signals { display: flex; flex-direction: column; gap: 1rem; margin: 1.5rem 0; }
             .trust-item { display: flex; align-items: flex-start; gap: 1rem; padding: 1rem 1.2rem; background: #f8f9fa; border-radius: 10px; border: 1px solid #e9ecef; }
-            .trust-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; font-weight: 700; color: white; flex-shrink: 0; }
-            .trust-icon.shield { background: linear-gradient(135deg, #1A3A6D, #2a5298); }
-            .trust-icon.free { background: linear-gradient(135deg, #00b894, #55efc4); color: #065f46; }
-            .trust-icon.choice { background: linear-gradient(135deg, #6c5ce7, #a29bfe); }
+            .trust-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #dfeae7; color: #0f5b54; flex-shrink: 0; }
+            .trust-icon svg { width: 20px; height: 20px; }
             .trust-title { font-weight: 700; font-size: 0.95rem; color: #343a40; margin: 0 0 0.25rem; }
             .trust-desc { font-size: 0.85rem; color: #6c757d; margin: 0; line-height: 1.5; }
             /* Shortening check */
-            .shortening-box { background: #f0f7ff; border: 1px solid #d0e3ff; border-radius: 12px; padding: 1.2rem; margin-bottom: 1.5rem; }
-            .shortening-title { font-weight: 700; font-size: 0.95rem; color: #1A3A6D; margin: 0 0 0.75rem; }
+            .shortening-box { background: #eaf3f1; border: 1px solid #cfe0dc; border-radius: 12px; padding: 1.2rem; margin-bottom: 1.5rem; }
+            .shortening-title { font-weight: 700; font-size: 0.95rem; color: #0f5b54; margin: 0 0 0.75rem; }
             .shortening-item { display: flex; align-items: center; gap: 0.75rem; padding: 0.5rem 0; font-size: 0.9rem; color: #495057; }
             .check-icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; flex-shrink: 0; }
             .check-yes { background: #22c55e; color: white; }
@@ -90,21 +89,21 @@ class SimulationForm extends HTMLElement {
             .result-grid, .consultation-form { text-align: center; }
             .result-item { background: #f8f9fa; padding: 1.5rem; border-radius: 12px; margin-bottom: 1rem; }
             .result-item h4 { margin: 0 0 0.5rem; font-size: 1rem; color: #495057; font-weight: 500; }
-            .result-item p { margin: 0; font-size: 1.8rem; font-weight: 700; color: #1A3A6D; }
+            .result-item p { margin: 0; font-size: 1.8rem; font-weight: 700; color: #0f5b54; }
             #result-write-off { font-size: 2.2rem; color: #E8A95A; }
-            .result-item.full-width { background-color: #e8f1ff; border: 1px solid #1A3A6D; }
-            .result-item.full-width p { font-size: 1.1rem; font-weight: 500; color: #1A3A6D; white-space: pre-wrap; line-height: 1.7; }
+            .result-item.full-width { background-color: #dfeae7; border: 1px solid #0f5b54; }
+            .result-item.full-width p { font-size: 1.1rem; font-weight: 500; color: #0f5b54; white-space: pre-wrap; line-height: 1.7; }
             .result-item.highlight { background-color: #fff3cd; border: 1px solid #E8A95A; }
             .result-item.highlight p { color: #856404; font-size: 1.1rem; font-weight: 600; }
-            .consultation-form { margin-top: 2.5rem; padding: 2rem; border: 2px solid #1A3A6D; border-radius: 12px; background: #f0f4ff; }
-            .consultation-form h4 { margin: 0 0 0.5rem; font-size: 1.1rem; font-weight: 700; color: #1A3A6D; }
+            .consultation-form { margin-top: 2.5rem; padding: 2rem; border: 2px solid #0f5b54; border-radius: 12px; background: #eef4f3; }
+            .consultation-form h4 { margin: 0 0 0.5rem; font-size: 1.1rem; font-weight: 700; color: #0f5b54; }
             .consultation-form .form-desc { font-size: 0.9rem; color: #6c757d; margin-bottom: 1.5rem; }
             .privacy-policy { margin: 1rem 0; font-size: 0.9rem; color: #6c757d; }
-            .privacy-policy-link { text-decoration: underline; cursor: pointer; color: #1A3A6D; }
+            .privacy-policy-link { text-decoration: underline; cursor: pointer; color: #0f5b54; }
             .result-actions { margin-top: 1.5rem; display: flex; flex-direction: column; gap: 1rem; }
             .action-btn { padding: 1rem; border-radius: 8px; font-size: 1.1rem; font-weight: 600; text-align: center; text-decoration: none; cursor: pointer; transition: all 0.3s; }
-            #submit-consultation-btn { background-color: #137fec; color: white; border: none; box-shadow: 0 4px 15px rgba(19, 127, 236, 0.3); }
-            #submit-consultation-btn:hover { background-color: #0e5eb0; }
+            #submit-consultation-btn { background-color: #0f5b54; color: white; border: none; box-shadow: 0 4px 15px rgba(15, 91, 84, 0.3); }
+            #submit-consultation-btn:hover { background-color: #0a433e; }
             #submit-consultation-btn:disabled { background-color: #adb5bd; cursor: not-allowed; box-shadow: none; }
             #delete-data-btn { background-color: #f6f7f8; color: #6c757d; border: 1px solid #dee2e6; }
             #delete-data-btn:hover { background-color: #e9ecef; }
@@ -114,19 +113,19 @@ class SimulationForm extends HTMLElement {
             .close-btn { position: absolute; top: 1rem; right: 1rem; font-size: 1.5rem; cursor: pointer; border: none; background: none; color: #868e96; }
             /* Step Info */
             .step-info { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding: 0 0.25rem; }
-            .step-counter { font-size: 0.85rem; font-weight: 600; color: #1A3A6D; }
-            .step-message { font-size: 0.85rem; color: #137fec; font-weight: 500; }
+            .step-counter { font-size: 0.85rem; font-weight: 600; color: #0f5b54; }
+            .step-message { font-size: 0.85rem; color: #0f5b54; font-weight: 500; }
             /* Immunity Section */
-            .immunity-section { margin-top: 1rem; padding: 1rem 1.2rem; background: #f0f7ff; border-radius: 12px; border: 1px solid #d0e3ff; }
-            .immunity-item { margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid #e0edff; }
+            .immunity-section { margin-top: 1rem; padding: 1rem 1.2rem; background: #eaf3f1; border-radius: 12px; border: 1px solid #cfe0dc; }
+            .immunity-item { margin-bottom: 0.75rem; padding-bottom: 0.75rem; border-bottom: 1px solid #d9e7e4; }
             .immunity-item:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
             .immunity-q { font-weight: 600; color: #495057; font-size: 0.9rem; margin: 0 0 0.25rem; }
-            .immunity-a { color: #137fec; font-size: 0.85rem; margin: 0; line-height: 1.5; }
+            .immunity-a { color: #0f5b54; font-size: 0.85rem; margin: 0; line-height: 1.5; }
             /* Commitment Section */
-            .commitment-section { margin-top: 1.5rem; padding: 1.5rem; background: linear-gradient(135deg, #f0f4ff, #e8f1ff); border-radius: 12px; border: 1px solid #c5d9f8; text-align: center; }
-            .commitment-section h4 { margin: 0 0 0.75rem; font-size: 1.1rem; color: #1A3A6D; font-weight: 700; }
+            .commitment-section { margin-top: 1.5rem; padding: 1.5rem; background: linear-gradient(135deg, #eef4f3, #dfeae7); border-radius: 12px; border: 1px solid #cfe0dc; text-align: center; }
+            .commitment-section h4 { margin: 0 0 0.75rem; font-size: 1.1rem; color: #0f5b54; font-weight: 700; }
             .commitment-section p { font-size: 0.9rem; color: #495057; margin: 0.5rem 0; line-height: 1.6; }
-            .commitment-section .highlight-text { font-weight: 700; color: #1A3A6D; font-size: 1rem; }
+            .commitment-section .highlight-text { font-weight: 700; color: #0f5b54; font-size: 1rem; }
             /* Consultation success */
             .consultation-complete { padding: 2rem; text-align: center; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; }
             .consultation-complete h4 { margin: 0 0 0.5rem; font-size: 1.2rem; color: #166534; font-weight: 700; }
@@ -135,9 +134,9 @@ class SimulationForm extends HTMLElement {
             /* Delete section */
             .delete-section { margin-top: 1rem; padding: 1.5rem; border: 1px solid #e9ecef; border-radius: 12px; background: #fff; }
             /* Focus-visible styles */
-            .option-btn:focus-visible { outline: 2px solid #137fec; outline-offset: 2px; }
-            .nav-btn:focus-visible { outline: 2px solid #137fec; outline-offset: 2px; }
-            input:focus-visible { outline: 2px solid #137fec; outline-offset: 2px; }
+            .option-btn:focus-visible { outline: 2px solid #0f5b54; outline-offset: 2px; }
+            .nav-btn:focus-visible { outline: 2px solid #0f5b54; outline-offset: 2px; }
+            input:focus-visible { outline: 2px solid #0f5b54; outline-offset: 2px; }
         `;
 
         const template = `
@@ -151,21 +150,21 @@ class SimulationForm extends HTMLElement {
                         <p class="question-desc" style="text-align:center; margin-bottom: 1.5rem;">1분이면 내 예상 변제금과 탕감률을 확인할 수 있습니다.</p>
                         <div class="trust-signals">
                             <div class="trust-item">
-                                <div class="trust-icon shield">P</div>
+                                <div class="trust-icon shield"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
                                 <div>
                                     <p class="trust-title">개인정보 입력 없이 바로 진단</p>
                                     <p class="trust-desc">이름/연락처 없이 결과를 먼저 확인하세요. 상담 신청은 결과 확인 후 원할 때만 선택할 수 있습니다.</p>
                                 </div>
                             </div>
                             <div class="trust-item">
-                                <div class="trust-icon free">0</div>
+                                <div class="trust-icon free"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg></div>
                                 <div>
                                     <p class="trust-title">완전 무료, 비용 부담 제로</p>
                                     <p class="trust-desc">자가진단 비용은 없습니다. 전문가 상담도 완전 무료입니다.</p>
                                 </div>
                             </div>
                             <div class="trust-item">
-                                <div class="trust-icon choice">V</div>
+                                <div class="trust-icon choice"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M10.68 13.31a16 16 0 0 0 3.41 2.6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7 2 2 0 0 1 1.72 2v3a2 2 0 0 1-2.18 2A19 19 0 0 1 3.49 8.84 2 2 0 0 1 5.5 6.66h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11z"/><line x1="22" x2="2" y1="2" y2="22"/></svg></div>
                                 <div>
                                     <p class="trust-title">영업 전화 없음</p>
                                     <p class="trust-desc">먼저 연락드리지 않습니다. 상담을 원하실 때만 직접 신청하시면 됩니다.</p>
@@ -204,7 +203,7 @@ class SimulationForm extends HTMLElement {
                             <button type="button" class="option-btn" data-value="none">무소득</button>
                         </div>
                         <p class="question-title">Q5. 월 평균 소득(세후)은 얼마인가요?</p>
-                        <div class="input-group"><input type="text" inputmode="numeric" pattern="[0-9]*" data-question="monthly_income" placeholder="3000000"><span>원</span></div>
+                        <div class="input-group"><input type="text" inputmode="numeric" pattern="[0-9]*" data-question="monthly_income" placeholder="320"><span>만원</span></div>
                     </div>
 
                     <!-- Step 3: Debt + Assets -->
@@ -350,6 +349,7 @@ class SimulationForm extends HTMLElement {
 
         this.updateFormView(false); // 최초 마운트 시 페이지가 폼 위치로 스크롤되지 않도록
         this.populateFormFromData();
+        this.attachNumberFormatting(); // 천단위 콤마 + 만원→원 환산 프리뷰
 
         // Zeigarnik effect: warn on page close during form
         this._beforeUnloadHandler = (e) => {
@@ -444,11 +444,36 @@ class SimulationForm extends HTMLElement {
         setIcon('multi-child', minorChildren >= 2);
     }
 
+    // 숫자 입력칸에 천단위 콤마 + (만원 입력 → 원 환산) 프리뷰 부착
+    attachNumberFormatting() {
+        const moneyFields = ['monthly_income', 'total_debt', 'my_assets', 'spouse_assets', 'invest_loss', 'gambling_loss'];
+        this.shadowRoot.querySelectorAll('input[data-question]').forEach(input => {
+            const q = input.dataset.question;
+            if (q === 'age') return; // 나이는 콤마/프리뷰 제외
+            const isMoney = moneyFields.includes(q);
+            const fmt = () => {
+                const d = input.value.replace(/[^0-9]/g, '');
+                input.value = d ? Number(d).toLocaleString() : '';
+                if (isMoney) {
+                    let pv = input.parentElement.nextElementSibling;
+                    if (!pv || !pv.classList.contains('unit-preview')) {
+                        pv = document.createElement('p');
+                        pv.className = 'unit-preview';
+                        input.parentElement.after(pv);
+                    }
+                    pv.textContent = d ? `= ${(Number(d) * 10000).toLocaleString()}원` : '';
+                }
+            };
+            input.addEventListener('input', fmt);
+            fmt(); // 복원값 초기 포맷
+        });
+    }
+
     collectInputData() {
         this.shadowRoot.querySelectorAll('input[type="number"], input[type="text"]').forEach(input => {
             if (input.dataset.question) {
-                // 빈 칸은 빈 값으로 저장 (계산은 parseFloat||0으로 처리). '0' 강제 금지 → 입력칸에 0이 되살아나지 않음
-                this.formData[input.dataset.question] = input.value.trim();
+                // 콤마 제거 후 숫자만 저장. 빈 칸은 빈 값(계산은 parseFloat||0). '0' 강제 금지
+                this.formData[input.dataset.question] = input.value.replace(/[^0-9]/g, '');
             }
         });
         this.saveToLocalStorage();
@@ -518,7 +543,7 @@ class SimulationForm extends HTMLElement {
     calculateAndShowResults() {
         const location = this.formData.location || "OTHER";
         const age = parseInt(this.formData.age) || 0;
-        const income = parseFloat(this.formData.monthly_income) || 0;
+        const income = (parseFloat(this.formData.monthly_income) || 0) * 10000; // 만원 단위 입력 → 원으로 환산
         const totalDebt = (parseFloat(this.formData.total_debt) || 0) * 10000;
         const myAssets = (parseFloat(this.formData.my_assets) || 0) * 10000;
         const spouseAssets = (parseFloat(this.formData.spouse_assets) || 0) * 10000;
@@ -685,15 +710,15 @@ class SimulationForm extends HTMLElement {
             </div>
             <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-bottom:1.5rem;">
                 <div style="background:#f8f9fa; border-radius:10px; padding:1rem; text-align:center;">
-                    <div style="font-size:1.5rem; margin-bottom:0.25rem;">🔒</div>
+                    <div style="margin-bottom:0.4rem; color:#0f5b54; display:flex; justify-content:center;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
                     <p style="font-size:0.8rem; color:#555; margin:0;">개인정보 암호화 보호</p>
                 </div>
                 <div style="background:#f8f9fa; border-radius:10px; padding:1rem; text-align:center;">
-                    <div style="font-size:1.5rem; margin-bottom:0.25rem;">💰</div>
+                    <div style="margin-bottom:0.4rem; color:#0f5b54; display:flex; justify-content:center;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8"/><path d="M12 18V6"/></svg></div>
                     <p style="font-size:0.8rem; color:#555; margin:0;">상담료 완전 무료</p>
                 </div>
                 <div style="background:#f8f9fa; border-radius:10px; padding:1rem; text-align:center;">
-                    <div style="font-size:1.5rem; margin-bottom:0.25rem;">⚖️</div>
+                    <div style="margin-bottom:0.4rem; color:#0f5b54; display:flex; justify-content:center;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg></div>
                     <p style="font-size:0.8rem; color:#555; margin:0;">전문 변호사 직접 상담</p>
                 </div>
             </div>
@@ -705,7 +730,7 @@ class SimulationForm extends HTMLElement {
                 <div class="input-group"><input type="text" id="consult_name" placeholder="이름을 입력해주세요"></div>
                 <p class="question-title" style="font-size:1rem;">연락처</p>
                 <div class="input-group"><input type="text" id="consult_phone" placeholder="연락처 ('-' 없이)"></div>
-                <div class="privacy-policy" style="padding: 0.75rem; background: #e8f1ff; border-radius: 8px;">
+                <div class="privacy-policy" style="padding: 0.75rem; background: #dfeae7; border-radius: 8px;">
                     <label><input type="checkbox" id="privacy-agree"> <span class="privacy-policy-link" id="privacy-policy-link">개인정보처리방침</span>에 동의합니다.</label>
                 </div>
                 <div class="immunity-section">
@@ -873,10 +898,10 @@ class SimulationForm extends HTMLElement {
             section.innerHTML = `
                 <div style="text-align:center; padding:2rem 1rem;">
                     <div style="font-size:3rem; margin-bottom:1rem;">✓</div>
-                    <h4 style="font-size:1.3rem; color:#0a1f33; margin-bottom:0.5rem;">신청이 완료되었습니다!</h4>
+                    <h4 style="font-size:1.3rem; color:#17191d; margin-bottom:0.5rem;">신청이 완료되었습니다!</h4>
                     <p style="color:#666; margin-bottom:1.5rem;">일반적으로 <strong>30분~2시간 이내</strong>에 전문가가 연락을 드립니다.</p>
-                    <div style="background:#f0f7ff; border-radius:12px; padding:1.25rem; text-align:left; margin-bottom:1rem;">
-                        <p style="font-weight:700; color:#0a1f33; margin-bottom:0.75rem;">상담 전 이렇게 준비하세요</p>
+                    <div style="background:#eaf3f1; border-radius:12px; padding:1.25rem; text-align:left; margin-bottom:1rem;">
+                        <p style="font-weight:700; color:#17191d; margin-bottom:0.75rem;">상담 전 이렇게 준비하세요</p>
                         <ul style="list-style:none; padding:0; margin:0; font-size:0.9rem; color:#555;">
                             <li style="margin-bottom:0.5rem;">📱 휴대폰 수신 가능 상태 확인</li>
                             <li style="margin-bottom:0.5rem;">📄 채무 관련 서류 준비 (독촉장, 대출 내역 등)</li>
@@ -933,7 +958,7 @@ class SimulationForm extends HTMLElement {
             min_debt: "Q2. 총 채무 1천만원 이상 여부",
             age: "Q3. 만 나이",
             income_source: "Q4. 소득 형태",
-            monthly_income: "Q5. 월 소득 (원)",
+            monthly_income: "Q5. 월 소득 (만원)",
             total_debt: "Q6. 총 채무액 (만원)",
             my_assets: "Q7. 본인 재산 (만원)",
             spouse_dependent: "Q8. 배우자 부양",
