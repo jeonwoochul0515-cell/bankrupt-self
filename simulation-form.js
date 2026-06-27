@@ -460,22 +460,38 @@ class SimulationForm extends HTMLElement {
         const myAssets = parseFloat(this.formData.my_assets) || 0;
 
         if (age < 19 || age > 99) {
-            this.showInlineError('age', '나이는 19세~99세 범위로 입력해주세요.');
+            this.showFieldErrorOnItsStep('age', '나이는 19세~99세 범위로 입력해주세요.');
             return false;
         }
         if (monthlyIncome < 0) {
-            this.showInlineError('monthly_income', '월소득은 0 이상이어야 합니다.');
+            this.showFieldErrorOnItsStep('monthly_income', '월소득은 0 이상이어야 합니다.');
             return false;
         }
         if (totalDebt <= 0) {
-            this.showInlineError('total_debt', '채무액은 0보다 커야 합니다.');
+            this.showFieldErrorOnItsStep('total_debt', '채무액은 0보다 커야 합니다.');
             return false;
         }
         if (myAssets < 0) {
-            this.showInlineError('my_assets', '자산은 0 이상이어야 합니다.');
+            this.showFieldErrorOnItsStep('my_assets', '자산은 0 이상이어야 합니다.');
             return false;
         }
         return true;
+    }
+
+    // 검증 실패한 필드가 숨겨진 이전 단계에 있으면, 그 단계로 이동해 에러를 보이게 한다
+    // (마지막 단계에서 '결과 보기'가 반응 없이 막히는 문제 방지)
+    showFieldErrorOnItsStep(fieldId, message) {
+        const field = this.shadowRoot.querySelector(`#${fieldId}`) ||
+                      this.shadowRoot.querySelector(`[data-question="${fieldId}"]`);
+        const stepEl = field && field.closest('.form-step');
+        if (stepEl) {
+            const step = parseInt(stepEl.dataset.step, 10);
+            if (!isNaN(step) && this.currentStep !== step) {
+                this.currentStep = step;
+                this.updateFormView();
+            }
+        }
+        this.showInlineError(fieldId, message);
     }
 
     saveToLocalStorage() {
