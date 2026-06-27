@@ -375,73 +375,61 @@
 
     <main>
         <!-- ========== Hero ========== -->
-        <section class="relative isolate flex items-center overflow-hidden min-h-[88vh] lg:min-h-[92vh]">
-            <!-- 배경 영상 (풀블리드) -->
-            <video id="hero-video" class="absolute inset-0 -z-20 size-full object-cover" autoplay muted loop playsinline preload="metadata" poster="/jagajindan-poster.jpg" aria-hidden="true">
-                <source src="/jagajindan.mp4" type="video/mp4">
-            </video>
-            <!-- 가벼운 스크림(영상 가시성↑) + 상·하단만 진하게(가독성·전환) -->
-            <div class="absolute inset-0 -z-10 bg-navy-900/30"></div>
-            <div class="absolute inset-0 -z-10 bg-gradient-to-b from-navy-900/55 via-transparent to-navy-900"></div>
-            <div class="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_70%_55%_at_50%_-5%,rgba(15,91,84,0.18),transparent_70%)]"></div>
-
-            <div class="relative z-10 mx-auto max-w-4xl px-6 py-28 lg:py-32 text-center">
-                <div class="hero-in hero-in-1 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/15 backdrop-blur">
-                    <span class="relative flex size-2">
-                        <span class="absolute inline-flex h-full w-full rounded-full bg-primary opacity-60 animate-ping"></span>
-                        <span class="relative inline-flex size-2 rounded-full bg-primary"></span>
-                    </span>
-                    <span class="text-xs font-bold text-stone-200 tracking-wide font-sans">2026년 최신 생계비 기준 반영</span>
-                </div>
-                <h2 class="hero-in hero-in-2 mt-8 text-balance font-serif font-bold text-white tracking-tight leading-[1.12] text-4xl sm:text-5xl lg:text-[3.7rem] [text-shadow:0_2px_18px_rgba(0,0,0,0.7),0_1px_3px_rgba(0,0,0,0.5)]">
-                    내 <span class="text-primary-light">실제 변제금</span>,<br>1분이면 알 수 있습니다.
-                </h2>
-                <p class="hero-in hero-in-3 mx-auto mt-7 max-w-2xl text-pretty text-lg text-white leading-relaxed font-sans [text-shadow:0_1px_10px_rgba(0,0,0,0.75),0_1px_2px_rgba(0,0,0,0.5)]">
-                    부산회생법원 실무준칙을 반영한 정밀 시뮬레이션으로 부산·울산·경남 개인회생 변제금을 직접 확인하세요. <strong class="text-white font-semibold">자가진단·전문가 상담 모두 무료</strong>입니다.
-                </p>
-                <div class="hero-in hero-in-4 mt-10 flex flex-col sm:flex-row items-center justify-center gap-3 font-sans">
-                    <!-- pill 래퍼 primary CTA -->
-                    <div class="bg-white/10 rounded-[14px] border border-white/15 p-0.5 backdrop-blur">
-                        <a href="#simulation" class="group flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark text-white text-base font-bold py-3.5 px-7 rounded-xl shadow-lg shadow-primary/30 transition-all no-underline">
-                            <span class="text-nowrap">1분 무료 진단 시작</span>
-                            <i data-lucide="arrow-right" class="size-5 transition-transform group-hover:translate-x-0.5"></i>
-                        </a>
+        <section class="relative bg-background-light overflow-hidden">
+            <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
+            <div class="max-w-7xl mx-auto px-6 lg:px-8 pt-14 pb-16 lg:pt-20 lg:pb-24">
+                <div class="grid lg:grid-cols-[1.05fr_0.95fr] gap-12 lg:gap-16 items-center">
+                    <!-- 카피 -->
+                    <div>
+                        <div class="hero-in hero-in-1 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
+                            <span class="relative flex size-2">
+                                <span class="absolute inline-flex h-full w-full rounded-full bg-primary opacity-50 animate-ping"></span>
+                                <span class="relative inline-flex size-2 rounded-full bg-primary"></span>
+                            </span>
+                            <span class="text-xs font-bold text-primary tracking-wide font-sans">2026년 최신 생계비 기준 반영</span>
+                        </div>
+                        <h2 class="hero-in hero-in-2 mt-7 text-balance font-serif font-bold text-navy-900 tracking-tight leading-[1.1] text-4xl sm:text-5xl lg:text-[3.6rem]">
+                            내 <span class="text-primary">실제 변제금</span>,<br>1분이면 알 수 있습니다.
+                        </h2>
+                        <p class="hero-in hero-in-3 mt-6 max-w-xl text-pretty text-lg text-navy-900/70 leading-relaxed font-sans">
+                            부산회생법원 실무준칙을 반영한 정밀 시뮬레이션으로 부산·울산·경남 개인회생 변제금을 직접 확인하세요. <strong class="text-navy-900 font-semibold">자가진단·전문가 상담 모두 무료</strong>입니다.
+                        </p>
+                        <div class="hero-in hero-in-4 mt-9 flex flex-col sm:flex-row items-start sm:items-center gap-3 font-sans">
+                            <div class="bg-navy-900/5 rounded-[14px] border border-navy-900/10 p-0.5">
+                                <a href="#simulation" class="group flex items-center justify-center gap-2 bg-primary hover:bg-primary-dark text-white text-base font-bold py-3.5 px-7 rounded-xl shadow-lg shadow-primary/25 transition-all no-underline">
+                                    <span class="text-nowrap">1분 무료 진단 시작</span>
+                                    <i data-lucide="arrow-right" class="size-5 transition-transform group-hover:translate-x-0.5"></i>
+                                </a>
+                            </div>
+                            <a href="#data-sources" class="flex items-center justify-center text-navy-900 hover:bg-navy-900/5 border border-navy-900/15 hover:border-navy-900/30 text-base font-semibold h-[50px] px-6 rounded-xl transition-colors no-underline">
+                                <span class="text-nowrap">계산 근거 보기</span>
+                            </a>
+                        </div>
+                        <div class="hero-in hero-in-5 mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-navy-900/55 font-sans">
+                            <span class="flex items-center gap-2"><i data-lucide="gavel" class="text-primary size-4"></i>부산회생법원 실무준칙</span>
+                            <span class="flex items-center gap-2"><i data-lucide="landmark" class="text-primary size-4"></i>2026 중위소득 고시</span>
+                            <span class="flex items-center gap-2"><i data-lucide="bar-chart-3" class="text-primary size-4"></i>인가율 92.3%</span>
+                        </div>
                     </div>
-                    <!-- ghost secondary -->
-                    <a href="#data-sources" class="flex items-center justify-center text-white hover:text-white bg-white/5 hover:bg-white/10 border border-white/25 hover:border-white/45 text-base font-semibold h-[50px] px-6 rounded-xl backdrop-blur transition-colors no-underline">
-                        <span class="text-nowrap">계산 근거 보기</span>
-                    </a>
-                </div>
-                <div class="hero-in hero-in-4 mt-7 flex items-center justify-center gap-2.5 text-sm text-stone-300 font-sans">
-                    <i data-lucide="badge-check" class="text-primary-light size-5"></i>
-                    <span class="font-medium">보건복지부 고시 · 법원행정처 통계 기반</span>
-                </div>
-            </div>
-
-            <!-- 하단 글래스 계산근거 스트립 (증거기반 시그니처) -->
-            <div class="hero-in hero-in-5 absolute bottom-5 inset-x-0 z-10 px-4">
-                <div class="mx-auto max-w-3xl bg-navy-900/55 backdrop-blur-md rounded-xl border border-white/10 px-4 py-2.5 font-sans">
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 text-xs text-stone-100">
-                        <div class="flex items-center justify-center gap-2">
-                            <i data-lucide="gavel" class="text-primary-light size-4"></i>
-                            <span>부산회생법원 실무준칙</span>
+                    <!-- 인물 (실사 변호사 프로필) -->
+                    <div class="hero-in hero-in-3 relative mx-auto w-full max-w-sm lg:max-w-md">
+                        <div class="absolute -right-3 -bottom-3 w-full h-full rounded-2xl bg-primary/15"></div>
+                        <div class="absolute -left-3 -top-3 size-24 rounded-2xl border border-primary/25"></div>
+                        <div class="relative overflow-hidden rounded-2xl border border-navy-900/10 shadow-soft bg-[#e8e6e0]">
+                            <img src="/attorney.jpg" alt="법률사무소 청송 개인회생 전문 변호사" class="w-full h-auto object-cover" width="478" height="609" loading="eager">
                         </div>
-                        <div class="flex items-center justify-center gap-2">
-                            <i data-lucide="landmark" class="text-primary-light size-4"></i>
-                            <span>2026 기준 중위소득 고시</span>
-                        </div>
-                        <div class="flex items-center justify-center gap-2">
-                            <i data-lucide="bar-chart-3" class="text-primary-light size-4"></i>
-                            <span>인가율 92.3% (법원행정처)</span>
+                        <div class="absolute -bottom-4 left-4 bg-white rounded-xl border border-navy-900/10 shadow-soft px-4 py-3 font-sans">
+                            <div class="flex items-center gap-2.5">
+                                <i data-lucide="scale" class="text-primary size-5 shrink-0"></i>
+                                <div>
+                                    <p class="text-sm font-bold text-navy-900 leading-tight">법률사무소 청송</p>
+                                    <p class="text-xs text-navy-900/55 leading-tight">부산·울산·경남 개인회생 전문</p>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!-- reduced-motion: 영상 자동재생 억제 -->
-            <script>
-            (function(){var v=document.getElementById('hero-video');if(!v)return;
-            if(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches){v.removeAttribute('autoplay');try{v.pause();}catch(e){}}})();
-            </script>
         </section>
 
         <!-- ========== Stats ========== -->
