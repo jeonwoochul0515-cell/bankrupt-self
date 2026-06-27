@@ -20,7 +20,7 @@
     <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
     <link rel="canonical" href="https://busan-hoiseng.pro/">
     <link rel="manifest" href="/manifest.json">
-    <meta name="theme-color" content="#137fec">
+    <meta name="theme-color" content="#0f5b54">
 
     <!-- 파비콘 -->
     <link rel="icon" href="/favicon.ico" sizes="48x48">
@@ -77,7 +77,9 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <!-- Pretendard (Swiss Modern 타이포) -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="tailwind-built.css">
 
@@ -382,7 +384,7 @@
             <!-- 가벼운 스크림(영상 가시성↑) + 상·하단만 진하게(가독성·전환) -->
             <div class="absolute inset-0 -z-10 bg-navy-900/30"></div>
             <div class="absolute inset-0 -z-10 bg-gradient-to-b from-navy-900/55 via-transparent to-navy-900"></div>
-            <div class="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_70%_55%_at_50%_-5%,rgba(19,127,236,0.16),transparent_70%)]"></div>
+            <div class="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_70%_55%_at_50%_-5%,rgba(15,91,84,0.18),transparent_70%)]"></div>
 
             <div class="relative z-10 mx-auto max-w-4xl px-6 py-28 lg:py-32 text-center">
                 <div class="hero-in hero-in-1 inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/15 backdrop-blur">
@@ -390,10 +392,10 @@
                         <span class="absolute inline-flex h-full w-full rounded-full bg-primary opacity-60 animate-ping"></span>
                         <span class="relative inline-flex size-2 rounded-full bg-primary"></span>
                     </span>
-                    <span class="text-xs font-bold text-blue-100 tracking-wide font-sans">2026년 최신 생계비 기준 반영</span>
+                    <span class="text-xs font-bold text-stone-200 tracking-wide font-sans">2026년 최신 생계비 기준 반영</span>
                 </div>
                 <h2 class="hero-in hero-in-2 mt-8 text-balance font-serif font-bold text-white tracking-tight leading-[1.12] text-4xl sm:text-5xl lg:text-[3.7rem] [text-shadow:0_2px_18px_rgba(0,0,0,0.7),0_1px_3px_rgba(0,0,0,0.5)]">
-                    내 <span class="text-primary-light italic">실제 변제금</span>,<br>1분이면 알 수 있습니다.
+                    내 <span class="text-primary-light">실제 변제금</span>,<br>1분이면 알 수 있습니다.
                 </h2>
                 <p class="hero-in hero-in-3 mx-auto mt-7 max-w-2xl text-pretty text-lg text-white leading-relaxed font-sans [text-shadow:0_1px_10px_rgba(0,0,0,0.75),0_1px_2px_rgba(0,0,0,0.5)]">
                     부산회생법원 실무준칙을 반영한 정밀 시뮬레이션으로 부산·울산·경남 개인회생 변제금을 직접 확인하세요. <strong class="text-white font-semibold">자가진단·전문가 상담 모두 무료</strong>입니다.
@@ -411,7 +413,7 @@
                         <span class="text-nowrap">계산 근거 보기</span>
                     </a>
                 </div>
-                <div class="hero-in hero-in-4 mt-7 flex items-center justify-center gap-2.5 text-sm text-blue-100/80 font-sans">
+                <div class="hero-in hero-in-4 mt-7 flex items-center justify-center gap-2.5 text-sm text-stone-300 font-sans">
                     <span class="material-symbols-outlined text-primary-light text-lg">verified</span>
                     <span class="font-medium">보건복지부 고시 · 법원행정처 통계 기반</span>
                 </div>
@@ -420,7 +422,7 @@
             <!-- 하단 글래스 계산근거 스트립 (증거기반 시그니처) -->
             <div class="hero-in hero-in-5 absolute bottom-5 inset-x-0 z-10 px-4">
                 <div class="mx-auto max-w-3xl bg-navy-900/55 backdrop-blur-md rounded-xl border border-white/10 px-4 py-2.5 font-sans">
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 text-xs text-blue-50">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-1.5 sm:gap-4 text-xs text-stone-100">
                         <div class="flex items-center justify-center gap-2">
                             <span class="material-symbols-outlined text-primary-light text-sm">gavel</span>
                             <span>부산회생법원 실무준칙</span>
@@ -629,7 +631,7 @@
                         <div class="inline-block px-3 py-1 rounded bg-white/10 border border-white/20 text-xs font-bold uppercase tracking-wide mb-6 font-sans">
                             왜 저희를 선택해야 할까요?
                         </div>
-                        <h2 class="text-3xl lg:text-5xl font-serif font-bold mb-6 leading-tight">지역법원 기준<br><span class="text-primary-light italic">정밀 변제금</span> 시뮬레이션</h2>
+                        <h2 class="text-3xl lg:text-5xl font-serif font-bold mb-6 leading-tight">지역법원 기준<br><span class="text-primary-light">정밀 변제금</span> 시뮬레이션</h2>
                         <p class="text-gray-300 text-lg mb-8 leading-relaxed font-sans">
                             같은 채무액이라도 지역 법원에 따라 변제금이 달라집니다. 2026년 최신 생계비 기준과 각 지역 회생법원의 실무준칙을 정확히 반영한 시뮬레이션으로 실제 변제금을 예측합니다.
                         </p>

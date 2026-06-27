@@ -7,20 +7,25 @@
 @source "./main.js";
 
 @theme {
-    --color-primary: #137fec;
-    --color-primary-dark: #0e5eb0;
-    --color-primary-light: #e0effd;
-    --color-background-light: #f6f7f8;
-    --color-navy-900: #0a1f33;
-    --color-navy-800: #112a45;
-    --font-serif: 'Nanum Myeongjo', serif;
-    --font-sans: 'Noto Sans KR', sans-serif;
+    /* Swiss Modern 팔레트 — AI 기본 블루 폐기, 딥틸 단일 액센트 + 잉크 + 종이색 */
+    --color-primary: #0f5b54;        /* deep teal 액센트 */
+    --color-primary-dark: #0a433e;
+    --color-primary-light: #d9e7e4;
+    --color-background-light: #f3f1ea; /* 따뜻한 종이색 표면 */
+    --color-navy-900: #17191d;        /* 잉크(near-black) */
+    --color-navy-800: #242832;
+    /* 타이포: Pretendard 단일 (명조/Noto = AI 티 제거) */
+    --font-serif: 'Pretendard Variable', 'Pretendard', -apple-system, sans-serif;
+    --font-sans: 'Pretendard Variable', 'Pretendard', -apple-system, sans-serif;
 }
 
 /* Custom utilities */
 html { scroll-behavior: smooth; }
 #floating-cta { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-.shadow-soft { box-shadow: 0 4px 20px -2px rgba(19, 127, 236, 0.08); }
+.shadow-soft { box-shadow: 0 1px 2px rgba(23,25,29,0.04), 0 10px 30px -16px rgba(23,25,29,0.18); }
+/* Swiss: 본문 종이색 + 잉크 텍스트 톤, 명조 잔재 제거 */
+body { background-color: #f3f1ea; }
+h1, h2, h3, h4 { letter-spacing: -0.02em; }
 .faq-icon.open { transform: rotate(180deg); }
 .faq-content { transition: max-height 0.3s ease, padding 0.3s ease; }
 
