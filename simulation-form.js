@@ -447,7 +447,8 @@ class SimulationForm extends HTMLElement {
     collectInputData() {
         this.shadowRoot.querySelectorAll('input[type="number"], input[type="text"]').forEach(input => {
             if (input.dataset.question) {
-                this.formData[input.dataset.question] = input.value || '0';
+                // 빈 칸은 빈 값으로 저장 (계산은 parseFloat||0으로 처리). '0' 강제 금지 → 입력칸에 0이 되살아나지 않음
+                this.formData[input.dataset.question] = input.value.trim();
             }
         });
         this.saveToLocalStorage();
@@ -506,7 +507,9 @@ class SimulationForm extends HTMLElement {
                     const btn = input.querySelector(`[data-value='${this.formData[key]}']`);
                     if (btn) btn.classList.add('selected');
                 } else if (input.tagName === 'INPUT') {
-                    input.value = this.formData[key];
+                    // 빈 값·'0'(구버전 저장 잔재)은 입력칸에 쓰지 않음 → "0원 잔존" 방지
+                    const v = this.formData[key];
+                    if (v != null && v !== '' && v !== '0') input.value = v;
                 }
             }
         }
